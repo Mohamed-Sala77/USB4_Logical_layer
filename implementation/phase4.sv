@@ -52,8 +52,8 @@ parameter        SLOS1   = 4'b1000,
         status  = wrong; 
         while (status != right)
         begin
-            gen2_3_OS();
             elec_ag_Rx.get (E_transaction);
+            gen2_3_OS();
            //#1;  
         end
     end
