@@ -1,11 +1,13 @@
-
+/////////////////////****scoreboard package****//////////////////////////////
+package electrical_layer_scoreboard_pkg;
+import electrical_layer_transaction_pkg::*;
 class elec_scoreboard;
     // Mailboxes for module and monitor transactions
-    mailbox #(upper_layer_tr) elec_mod_scr;
-    mailbox #(upper_layer_tr) elec_mon_scr;
+    mailbox #(elec_layer_tr) elec_mod_scr;
+    mailbox #(elec_layer_tr) elec_mon_scr;
 
     // Constructor
-    function new(mailbox #(upper_layer_tr) elec_mod_scr , mailbox #(upper_layer_tr) elec_mon_scr);
+    function new(mailbox #(elec_layer_tr) elec_mod_scr , mailbox #(elec_layer_tr) elec_mon_scr);
         this.elec_mod_scr = elec_mod_scr;
         this.elec_mon_scr = elec_mon_scr;
     endfunction
@@ -30,3 +32,4 @@ class elec_scoreboard;
         end
     endtask
 endclass
+endpackage:electrical_layer_scoreboard_pkg
