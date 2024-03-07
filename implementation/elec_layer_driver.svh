@@ -553,7 +553,8 @@
 
 					3'b010: begin // phase 2
 						@(posedge v_if.SB_clock);
-						v_if.sbrx = 1;
+						v_if.sbrx = elec_tr.sbrx;
+						v_if.phase = elec_tr.phase;
 						sbrx_raised_time = $time;
 						#(tConnectRx);
 					end

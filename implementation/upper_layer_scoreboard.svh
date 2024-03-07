@@ -25,23 +25,27 @@
 				
 				UL_tr = new();
 
-				// if(UL_mod_scr.try_get(UL_tr_model))
-				// 	begin
-				// 		$display("[upper_layer_tr]: MODEL transaction: %p",UL_tr_model);
+				if(UL_mod_scr.try_get(UL_tr_model))
+					begin
+						$display("[UL SCOREBOARD]: MODEL transaction: %p",UL_tr_model);
+					end
 
-				// 	end
+				UL_mon_scr.get(UL_tr);
+				$display("[UL SCOREBOARD]: DUT transaction: %p",UL_tr);
 
+				assert(	UL_tr_model.T_Data === UL_tr.T_Data ) $display("[UL SCOREBOARD] CORRECT transaction received ");
+				else $error("[UL SCOREBOARD] Transactions don't match");
 
-				UL_mod_scr.get(UL_tr_model);
-				$display("[upper_layer_tr]: MODEL transaction: %p",UL_tr_model);
+				// UL_mod_scr.get(UL_tr_model);
+				// $display("[upper_layer_tr]: MODEL transaction: %p",UL_tr_model);
 
 				////////////////////////////////////////////////////////////////////////////////
 				//////RECEIVING DATA FROM GENERATOR AND MONITOR FOR EQUIVALENCE CHECKING////////
 				////////////////////////////////////////////////////////////////////////////////
 
-				//UL_mon_scr.get(UL_tr);
 				
-				//$display("[%0t], UL_tr= [%0d]",$time(),UL_tr.T_Data);
+				
+				
 				
 				
 			end

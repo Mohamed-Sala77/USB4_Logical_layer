@@ -1,8 +1,8 @@
 package tb_pkg;
 	
 	// Transactions
-	`include "upper_layer_tr.svh"
 	`include "elec_layer_tr.svh"
+	`include "upper_layer_tr.svh"
 	`include "config_space_pkg.sv"
 
 	// Symbol Generator

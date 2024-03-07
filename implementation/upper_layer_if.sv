@@ -12,6 +12,7 @@ interface upper_layer_if(input clk,
 	logic [7:0] transport_layer_data_out;
 
 	GEN generation_speed;
+	logic [2:0] phase; 
 
 endinterface: upper_layer_if
 

@@ -37,17 +37,48 @@
 		
 
 	
-	task sbrx_high;
+	task sbrx_high (input string router_type);
 
 		transaction = new();
-		transaction.sbrx = 1'b1;
-		transaction.electrical_to_transport = 0;
-		transaction.phase = 3'b010; // phase 2
-		elec_gen_drv.put(transaction); // Sending transaction to the Driver
-		elec_gen_mod.put(transaction); // Sending transaction to the Reference model
-		$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH");
+
+		case (router_type) // The behaviour of the host router is different than the device router in phase 2
+			"Host": begin
+				host_device = 0;
+				transaction.phase = 3'b010; // phase 2
+				transaction.sbrx = 1'b0;
+				elec_gen_drv.put(transaction); // Sending transaction to the Driver
+				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+
+				$display("[ELEC GENERATOR] Waiting for SBTX high");
+				@(sbtx_high_recieved);
+
+				transaction.sbrx = 1'b1;
+				transaction.electrical_to_transport = 0;
+				transaction.phase = 3'b010; // phase 2
+				elec_gen_drv.put(transaction); // Sending transaction to the Driver
+				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a HOST router");
+
+
+
+			end
+
+			"Device": begin
+				host_device = 1;
+				transaction.sbrx = 1'b1;
+				transaction.electrical_to_transport = 0;
+				transaction.phase = 3'b010; // phase 2
+				elec_gen_drv.put(transaction); // Sending transaction to the Driver
+				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a DEVICE router");
 		
-		@(sbtx_high_recieved);
+				@(sbtx_high_recieved);
+				
+			end
+
+		endcase
+
+		
 
 	endtask : sbrx_high
 
@@ -360,6 +391,60 @@
 									end
 							end
 
+							//Storing the time when first TS1 gen4 was sent to calculate tTrainingError
+							if (OS == TS1_gen4)
+							begin
+								if (counter_lane_0 == 1)
+								begin
+									lane_0_tTrainingError_time = $time;
+									lane_0_tGen4TS1  = $time;
+								end
+
+								if (counter_lane_1 == 1)
+								begin
+									lane_1_tTrainingError_time = $time;
+									lane_1_tGen4TS1  = $time;
+									
+								end
+							end
+
+
+							//Checking that the duration of the transition from first TS1 to TS2 is less than tGen4TS1 (400ms)
+							if (OS == TS2_gen4)
+							begin
+								if (counter_lane_0 == 1) //First TS2
+								begin
+									assert($time <= (lane_0_tGen4TS1 + tGen4TS1) );
+
+									//Storing the time when first TS2 gen4 was sent to calculate tGen4TS1
+									lane_0_tGen4TS2  = $time;
+
+								end
+
+								if (counter_lane_1 == 1) //First TS2
+								begin
+									assert($time <= (lane_1_tGen4TS1 + tGen4TS1) );
+									
+									//Storing the time when first TS2 gen4 was sent to calculate tGen4TS1
+									lane_1_tGen4TS2  = $time;
+
+								end
+							end
+
+							//Checking that the duration of the transition from first TS2 to TS3 is less than tGen4TS2 (200ms)
+							if (OS == TS3)
+							begin
+								if (counter_lane_0 == 1) //First TS3
+								begin
+									assert($time <= (lane_0_tGen4TS2 + tGen4TS2) );
+								end
+
+								if (counter_lane_1 == 1) //First TS3
+								begin
+									assert($time <= (lane_1_tGen4TS2 + tGen4TS2) );
+								end
+							end
+
 						end
 					end
 
@@ -395,6 +480,17 @@
 									begin
 										counter_lane_1 = 0;
 									end
+							end
+
+							//Checking that the training duration is less than tTrainingError (500us)
+							if (counter_lane_0 == 1) //should be == 16
+							begin
+								assert($time <= (lane_0_tTrainingError_time + tTrainingError) );
+							end
+
+							if (counter_lane_1 == 1) //should be == 16
+							begin
+								assert($time <= (lane_1_tTrainingError_time + tTrainingError) );
 							end
 
 						end

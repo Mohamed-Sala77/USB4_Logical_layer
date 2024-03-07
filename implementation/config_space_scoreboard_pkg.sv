@@ -19,26 +19,33 @@
 			forever
 			begin
 
-				//$display("scoreboard run");
 
 				if (mb_model.try_get(transaction_model))
 					begin
 						$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
 					end
-				// mb_model.get(transaction_model);
-				// $display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
-
+				
 				mb_mon.get(transaction_mon);
-				// $display("Ref transaction in scoreboard: 			%p at time: %0t", transaction_model, $time);
-				// $display("Dut transaction in scoreboard: 			%p at time: %0t", transaction_mon, $time);
+				//$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
+				
 
-				// assert(transaction_model == transaction_mon);
+				
+				// assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
+				// assert(transaction_model.c_write === transaction_mon.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
+				// assert(transaction_model.c_address === transaction_mon.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
+				// assert(transaction_model.c_data_out === transaction_mon.c_data_out) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
 
-				// if (transaction_model == transaction_mon)
-				// 	$display("Correct Operation at: %0t", $time);
-				// else
-				// 	$display("Wrong Operation at: %0t", $time);
+				// assert(	(transaction_model.c_read === transaction_mon.c_read) 		&&
+				// 		(transaction_model.c_write === transaction_mon.c_write) 	&&
+				// 		(transaction_model.c_address === transaction_mon.c_address)	&&
+				// 		(transaction_model.c_data_out === transaction_mon.c_data_out)
+				// 		) $display("[CONFIG SCOREBOARD] CORRECT transaction received ");
 
+
+
+
+
+				
 			end
 
 		endtask : run

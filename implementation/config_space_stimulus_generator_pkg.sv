@@ -7,16 +7,17 @@
 
 
 		//Events
-		event usb_received, gen_received;
+		
+		event config_cap_req_received; // indicates capability read request from monitor
+		event config_gen_req_received; // indicates generation read request from monitor
 
-
-		function new (mailbox #(config_transaction) mb_stim_drv, mb_stim_mod, mailbox mb_done, event usb_received, gen_received);
+		function new (mailbox #(config_transaction) mb_stim_drv, mb_stim_mod, mailbox mb_done, event config_cap_req_received, config_gen_req_received);
 
 			this.mb_stim_drv = mb_stim_drv;
 			this.mb_stim_mod = mb_stim_mod;
 			this.mb_done = mb_done;
-			this.usb_received = usb_received;
-			this.gen_received = gen_received;
+			this.config_cap_req_received = config_cap_req_received;
+			this.config_gen_req_received = config_gen_req_received;
 			transaction_stim = new();
 
 		endfunction : new
@@ -32,9 +33,9 @@
 					$display("[CONFIG GENERATOR] SENDING USB4 capability info");
 					mb_stim_drv.put(transaction_stim);
 					mb_stim_mod.put(transaction_stim);
-					$display("ALIIIIII config: %d: %d",mb_stim_drv.num(), mb_stim_mod.num() );
+					//$display("ALIIIIII config: %d: %d",mb_stim_drv.num(), mb_stim_mod.num() );
 					//$display("Stim after put");
-					@(usb_received);
+					@(config_cap_req_received);
 				end
 
 				"generation": begin
@@ -43,7 +44,7 @@
 					$display("[CONFIG GENERATOR] SENDING GENERATION SPEED info");
 					mb_stim_drv.put(transaction_stim);
 					mb_stim_mod.put(transaction_stim);
-					@(usb_received); // should be @(gen_received)
+					@(config_cap_req_received); // should be @(config_gen_req_received)
 				end
 
 			endcase // select

@@ -35,13 +35,15 @@
 
 				UL_tr = new();
 				UL_gen_drv.get(UL_tr);
-				
+				v_if.phase = UL_tr.phase;
+				v_if.generation_speed = UL_tr.gen_speed;
 
 				//////////////////////////////////////////////////
 				//////////////PIN LEVEL ASSIGNMENT ///////////////
 				//////////////////////////////////////////////////
 
-				@(posedge v_if.clk) begin
+				wait_negedge(UL_tr.gen_speed); 
+				begin
 					v_if.transport_layer_data_in = UL_tr.T_Data;
 					-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
 				end
@@ -50,6 +52,21 @@
 			
 
 		endtask : run
+
+		task wait_negedge (input GEN generation);
+			if (generation == gen2)
+			begin
+				@(negedge v_if.gen2_fsm_clk);
+			end
+			else if (generation == gen3)
+			begin
+				@(negedge v_if.gen3_fsm_clk);
+			end
+			else if (generation == gen4)
+			begin
+				@(negedge v_if.gen4_fsm_clk);
+			end
+		endtask
 
 		
 	endclass : upper_layer_driver

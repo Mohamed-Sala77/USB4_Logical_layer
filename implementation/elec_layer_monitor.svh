@@ -17,6 +17,9 @@
 		//Events
 		event sbtx_high_recieved;
 
+		// Flag to indicate that sbtx high was received
+		logic sbtx_high_flag;
+
 		// Queues to save DUT signals
 		bit SB_data_received [$];
 		bit lane_0_gen4_received [$];
@@ -100,6 +103,9 @@
 
 						SB_data_received.push_back(v_if.sbrx); // sbrx for debugging
 						
+						// MONITOR DISPLAY FUNCTION FOR DEBUGGING
+						//$display("[%0t] SB_data_received outside:[%0p]",$time(),SB_data_received);
+
 						// Detecting Transaction types from the first 2 symbols (AT COMMAND/ AT RESPONSE / LT FALL)
 						if (SB_data_received.size() == TR_HEADER_SIZE) // can remove the if condition 
 							begin
@@ -116,266 +122,265 @@
 		
 					begin 
 
-					// LANES RECEIVER CLOCK
+						// LANES RECEIVER CLOCK
 						#1
 						wait_negedge (v_if.generation_speed);
 						//#1
 
 
-				//$display("[%0t] lane_0_gen4_received outside:[%0b]",$time(),v_if.lane_0_rx);
+						//$display("[%0t] lane_0_gen4_received outside:[%0b]",$time(),v_if.lane_0_rx);
 
-				// Reading SBTX, lane 0  and lane 1, and storing the read values in queues
-				case  (v_if.generation_speed)
-					gen2, gen3:
-					begin
-						lane_0_gen23_SLOS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-						lane_1_gen23_SLOS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
-						lane_0_gen23_TS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-						lane_1_gen23_TS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
-					end
+						// Reading SBTX, lane 0  and lane 1, and storing the read values in queues
+						case  (v_if.generation_speed)
+							gen2, gen3:
+							begin
+								lane_0_gen23_SLOS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
+								lane_1_gen23_SLOS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
+								lane_0_gen23_TS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
+								lane_1_gen23_TS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
 
+								//$display("[%0t] lane_0_gen23_received outside:[%0p]",$time(),lane_0_gen23_SLOS_received);
 
-					gen4:
-					begin
-						lane_0_gen4_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-						lane_1_gen4_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
-					end
-
-				endcase
-				
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (SLOS1/SLOS2)               ///////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 
-				// MONITOR DISPLAY FUNCTIONS FOR DEBUGGING
-				//$display("[%0t] SB_data_received outside:[%0p]",$time(),SB_data_received);
-				//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
-				//$display("[%0t] lane_1_gen4_received outside:[%0p]",$time(),lane_1_gen4_received);
-				//$display("EXPECTED LT_FALL[%b]",{start_bit,reverse_data(DLE),stop_bit,start_bit,reverse_data(LSE_lane0),stop_bit});
+								if (lane_0_gen23_SLOS_received.size() == SLOS_SIZE)
+								begin
 
-				//$display("[%0t] lane_0_gen23_received outside:[%0p]",$time(),lane_0_gen23_SLOS_received);
-				
-				
+									gen_23_SLOS_detection(elec_tr_lane0, lane_0_gen23_SLOS_received, lane_0);
 
-				fork
-					
-				begin
-					
+								end
 
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////                LANE 0 RECEIVER (gen4)               /////////////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////          LANE 1 RECEIVER (gen2/3) (SLOS1/SLOS2)               ///////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+								if (lane_1_gen23_SLOS_received.size() == SLOS_SIZE)
+								begin
+
+									gen_23_SLOS_detection(elec_tr_lane1, lane_1_gen23_SLOS_received, lane_1);
+
+								end
+
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+								if (lane_0_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
+								begin
+
+									gen_23_TS_detection(elec_tr_lane0,lane_0_gen23_TS_received,lane_0);
+
+								end
+
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////          LANE 1 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+								if (lane_1_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
+								begin
+
+									gen_23_TS_detection(elec_tr_lane1,lane_1_gen23_TS_received,lane_1);
+									
+								end
+
+
+							end
+
+
+							gen4:
+							begin
+								lane_0_gen4_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
+								lane_1_gen4_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
+
+								// MONITOR DISPLAY FUNCTIONS FOR DEBUGGING
+								//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
+								//$display("[%0t] lane_1_gen4_received outside:[%0p]",$time(),lane_1_gen4_received);
+
+								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////                LANE 0 RECEIVER (gen4)               /////////////////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 														//////////////////////////////////////////////////
 														//////  GENERATION 4 HEADER DETECTOR  // /////////
 														//////////////////////////////////////////////////
-					
-					if (lane_0_gen4_received.size() > (TS_GEN_4_HEADER_SIZE - 1) )
-					begin
-						//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
-						//$display("[%0t] expected ts1 header[%b]",$time(),{CURSOR, 4'h2, ~(4'h2), 8'h0F});
-						
 
-						gen_4_header_detection(elec_tr_lane0, lane_0_gen4_received, lane_0);
-
-
-														////////////////////////////////////////////////////////////
-														//////  GENERATION 4 ORDERED SET PAYLOAD DETECTOR  /////////
-														////////////////////////////////////////////////////////////				
-						case (elec_tr_lane0.o_sets)
-							TS1_gen4:
-							begin
-								if (lane_0_gen4_received.size() == PRBS11_SYMBOL_SIZE)
+								if (lane_0_gen4_received.size() > (TS_GEN_4_HEADER_SIZE - 1) )
 								begin
-									//$display("Size of queue %0d", lane_0_gen4_received.size());
-									//$display("Size of TS1 %0d", $size(TS.TS1_lane_0[0]));
 									//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
+									//$display("[%0t] expected ts1 header[%b]",$time(),{CURSOR, 4'h2, ~(4'h2), 8'h0F});
 									
-									TS1_gen4_order_detection(elec_tr_lane0, lane_0_gen4_received, TS.TS1_lane_0, lane_0);
-									
-								end
-							end
 
-							TS2_gen4,TS3, TS4:
-							begin
-								
-								
-								if (lane_0_gen4_received.size() == PRTS7_SYMBOL_SIZE)
+									gen_4_header_detection(elec_tr_lane0, lane_0_gen4_received, lane_0);
+
+
+																	////////////////////////////////////////////////////////////
+																	//////  GENERATION 4 ORDERED SET PAYLOAD DETECTOR  /////////
+																	////////////////////////////////////////////////////////////				
+									case (elec_tr_lane0.o_sets)
+										TS1_gen4:
+										begin
+											if (lane_0_gen4_received.size() == PRBS11_SYMBOL_SIZE)
+											begin
+												//$display("Size of queue %0d", lane_0_gen4_received.size());
+												//$display("Size of TS1 %0d", $size(TS.TS1_lane_0[0]));
+												//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
+												
+												TS1_gen4_order_detection(elec_tr_lane0, lane_0_gen4_received, TS.TS1_lane_0, lane_0);
+												
+											end
+										end
+
+										TS2_gen4,TS3, TS4:
+										begin
+											
+											
+											if (lane_0_gen4_received.size() == PRTS7_SYMBOL_SIZE)
+											begin
+												//lane_0_gen4_received.reverse();
+												//$display("lane_0_gen4_received %p",lane_0_gen4_received);
+												//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_0[0]);
+
+												TS234_DATA = {<< 2{ {<<{lane_0_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
+
+												//TS234_DATA = TS234_DATA.reverse();
+												//$display("TS234_DATA: %b",TS234_DATA);
+
+											
+												TS_234_gen4_order_detection(elec_tr_lane0, TS234_DATA, TS.TS_234_lane_0, lane_0);
+												
+											end
+										end
+
+										
+									endcase
+
+								end
+
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								/////////////////////////////////                LANE 1 RECEIVER  (GEN4)              /////////////////////////////////////////
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+																		//////////////////////////////////////////////////
+																		//////  GENERATION 4 HEADER DETECTOR  // /////////
+																		//////////////////////////////////////////////////
+
+								if (lane_1_gen4_received.size() > (TS_GEN_4_HEADER_SIZE - 1) )
 								begin
-									//lane_0_gen4_received.reverse();
-									//$display("lane_0_gen4_received %p",lane_0_gen4_received);
-									//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_0[0]);
-
-									TS234_DATA = {<< 2{ {<<{lane_0_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
-
-									//TS234_DATA = TS234_DATA.reverse();
-									//$display("TS234_DATA: %b",TS234_DATA);
-
-								
-									TS_234_gen4_order_detection(elec_tr_lane0, TS234_DATA, TS.TS_234_lane_0, lane_0);
+									//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
+									//$display("[%0t] expected ts1 header[%b]",$time(),{CURSOR, 4'h2, ~(4'h2), 8'h0F});
 									
+
+									gen_4_header_detection(elec_tr_lane1, lane_1_gen4_received, lane_1);
+
+
+																	////////////////////////////////////////////////////////////
+																	//////  GENERATION 4 ORDERED SET PAYLOAD DETECTOR  /////////
+																	////////////////////////////////////////////////////////////	
+
+									case (elec_tr_lane1.o_sets)
+
+										TS1_gen4:
+										begin
+
+											if (lane_1_gen4_received.size() == PRBS11_SYMBOL_SIZE)
+											begin
+												//$display("Size of queue %0d", lane_1_gen4_received.size());
+												//$display("Size of TS1 %0d", $size(TS.TS1_lane_1[0]));
+												//$display("[%0t] lane_1_gen4_received outside:[%0p]",$time(),lane_1_gen4_received);
+												//PRBS11 (420, 11'b11111111111, PRBS11_lane0);
+												
+												TS1_gen4_order_detection(elec_tr_lane1, lane_1_gen4_received, TS.TS1_lane_1, lane_1);
+
+											end
+
+										end
+
+										TS2_gen4, TS3, TS4:
+										begin
+
+											if (lane_1_gen4_received.size() == PRTS7_SYMBOL_SIZE)
+											begin
+												//lane_1_gen4_received.reverse();
+												//$display("lane_1_gen4_received %p",lane_1_gen4_received);
+												//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_1[0]);
+
+
+												TS234_DATA = {<< 2{ {<<{lane_1_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
+												//$display("TS234_DATA: %b",TS234_DATA);
+
+												TS_234_gen4_order_detection(elec_tr_lane1, TS234_DATA, TS.TS_234_lane_1, lane_1);
+
+											end
+
+										end
+						
+									endcase
 								end
 							end
-
-							
 						endcase
 
 					end
-
-				end
-	
-				begin
-						
-
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////                LANE 1 RECEIVER  (GEN4)              /////////////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-														//////////////////////////////////////////////////
-														//////  GENERATION 4 HEADER DETECTOR  // /////////
-														//////////////////////////////////////////////////
-
-					
-					if (lane_1_gen4_received.size() > (TS_GEN_4_HEADER_SIZE - 1) )
-					begin
-						//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
-						//$display("[%0t] expected ts1 header[%b]",$time(),{CURSOR, 4'h2, ~(4'h2), 8'h0F});
-						
-
-						gen_4_header_detection(elec_tr_lane1, lane_1_gen4_received, lane_1);
-
-
-														////////////////////////////////////////////////////////////
-														//////  GENERATION 4 ORDERED SET PAYLOAD DETECTOR  /////////
-														////////////////////////////////////////////////////////////	
-
-						case (elec_tr_lane1.o_sets)
-
-							TS1_gen4:
-							begin
-
-								if (lane_1_gen4_received.size() == PRBS11_SYMBOL_SIZE)
-								begin
-									//$display("Size of queue %0d", lane_1_gen4_received.size());
-									//$display("Size of TS1 %0d", $size(TS.TS1_lane_1[0]));
-									//$display("[%0t] lane_1_gen4_received outside:[%0p]",$time(),lane_1_gen4_received);
-									//PRBS11 (420, 11'b11111111111, PRBS11_lane0);
-									
-									TS1_gen4_order_detection(elec_tr_lane1, lane_1_gen4_received, TS.TS1_lane_1, lane_1);
-
-								end
-
-							end
-
-							TS2_gen4, TS3, TS4:
-							begin
-
-								if (lane_1_gen4_received.size() == PRTS7_SYMBOL_SIZE)
-								begin
-									//lane_1_gen4_received.reverse();
-									//$display("lane_1_gen4_received %p",lane_1_gen4_received);
-									//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_1[0]);
-
-
-									TS234_DATA = {<< 2{ {<<{lane_1_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
-									//$display("TS234_DATA: %b",TS234_DATA);
-
-									TS_234_gen4_order_detection(elec_tr_lane1, TS234_DATA, TS.TS_234_lane_1, lane_1);
-
-								end
-
-							end
-			
-						endcase
-					end
-				end
-
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (SLOS1/SLOS2)               ///////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				begin
-					
-					if (lane_0_gen23_SLOS_received.size() == SLOS_SIZE)
-					begin
-
-						gen_23_SLOS_detection(elec_tr_lane0, lane_0_gen23_SLOS_received, lane_0);
-
-					end
-				
-				end
-
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////          LANE 1 RECEIVER (gen2/3) (SLOS1/SLOS2)               ///////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				begin
-		
-					if (lane_1_gen23_SLOS_received.size() == SLOS_SIZE)
-					begin
-
-						gen_23_SLOS_detection(elec_tr_lane1, lane_1_gen23_SLOS_received, lane_1);
-
-					end
-
-				end
-
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				begin
-
-					if (lane_0_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
-					begin
-
-						gen_23_TS_detection(elec_tr_lane0,lane_0_gen23_TS_received,lane_0);
-
-					end
-				
-				end
-
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				/////////////////////////////////          LANE 1 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				begin
-
-					if (lane_1_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
-					begin
-
-						gen_23_TS_detection(elec_tr_lane1,lane_1_gen23_TS_received,lane_1);
-						
-					end
-					
-				end
-
-
-				join_any // can be join_any or join
-
 				
 				
-
-					end
 				join_any
+				
+				
 			
 
 				if (v_if.phase == 3'b010)
 				begin
-					if ($time < (sbrx_raised_time + tConnectRx) )
-					begin
-						assert(v_if.sbtx == 0);
-						//$display("Current time: %0t", $time);
-					end
+					case (host_device)
 
-					if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) )) // sbtx high from DUT
-					begin
-						-> sbtx_high_recieved;
-						elec_tr.sbtx = 1;
-						elec_tr.phase = 3'b010;
-						elec_mon_scr.put(elec_tr);
-						elec_tr = new();
+						0: begin // In case of host router
+							if (v_if.sbtx && !sbtx_high_flag)
+							begin
+								sbtx_raised_time = $time;
+								//$display("[ELEC MON] sbtx_raised_time:%t", sbtx_raised_time);
+								sbtx_high_flag = 1;
+							end
 
-						//$stop;
-					end
+							if (!v_if.sbtx)
+							begin
+								sbtx_high_flag = 0;
+							end
+
+							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) )) // sbtx high from DUT
+							begin
+								-> sbtx_high_recieved;
+								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
+								elec_tr.sbtx = 1;
+								elec_tr.phase = 3'b010;
+								elec_mon_scr.put(elec_tr);
+								elec_tr = new();
+
+							end
+						end
+
+						1: begin // In case of device router
+							if ($time < (sbrx_raised_time + tConnectRx) )
+							begin
+								assert(v_if.sbtx == 0);
+								//$display("Current time: %0t", $time);
+							end
+
+							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) )) // sbtx high from DUT
+							begin
+								-> sbtx_high_recieved;
+								//$display("[ELEC MON] sbrx_raised_time:%t", sbrx_raised_time);
+								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
+								elec_tr.sbtx = 1;
+								elec_tr.phase = 3'b010;
+								elec_mon_scr.put(elec_tr);
+								elec_tr = new();
+
+							end
+						end
+
+					endcase
+					
 				end
 				
 		
