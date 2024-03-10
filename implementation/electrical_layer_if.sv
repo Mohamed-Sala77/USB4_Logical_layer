@@ -19,4 +19,5 @@ interface electrical_layer_if(input clk,
 	GEN generation_speed;
 	logic [2:0] phase;
 
+
 endinterface : electrical_layer_if

@@ -12,5 +12,15 @@
 
 
 	logic [63:0] sbrx_raised_time;
+	logic [63:0] sbtx_raised_time;
 	logic [63:0] lane_0_tTrainingError_time;
 	logic [63:0] lane_1_tTrainingError_time;
+	logic [63:0] lane_0_tGen4TS1;
+	logic [63:0] lane_1_tGen4TS1;
+	logic [63:0] lane_0_tGen4TS2;
+	logic [63:0] lane_1_tGen4TS2;
+
+
+
+	//To be moved to another file later
+	logic host_device; // 0: Host, 1: Device	

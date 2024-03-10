@@ -29,8 +29,12 @@
 		//Event Signals
 		event elec_gen_drv_done;
 		event sbtx_high_recieved; // to identify phase 2 completion (sbtx high received)
-		event usb_received, gen_received;
+		//event config_cap_req_received, config_gen_req_received;
 		event UL_gen_drv_done;
+
+		event config_cap_req_received; // indicates capability read request from monitor
+		event config_gen_req_received; // indicates generation read request from monitor
+
 
 		// Mailboxes 
 		mailbox #(upper_layer_tr) UL_gen_drv; // connects Stimulus generator to the driver inside the agent
@@ -88,12 +92,12 @@
 			// Agents
 			agent_UL = new (v_if, UL_gen_drv, UL_mon_scr, UL_gen_drv_done);
 			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
-			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, usb_received, gen_received);
+			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_cap_req_received, config_gen_req_received);
 			agent_config.build();
 
 			//Sequences
 			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
-			config_gen = new (mb_stim_drv, config_stim_model, mb_drv_done, usb_received, gen_received);
+			config_gen = new (mb_stim_drv, config_stim_model, mb_drv_done, config_cap_req_received, config_gen_req_received);
 			UL_gen = new(UL_gen_mod, UL_gen_drv, UL_gen_drv_done);
 			
 
@@ -133,8 +137,11 @@
 				// Virtual Sequence run phase
 				vseq_config.run();
 
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Reference model
 				ref_model.run_phase();
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				
 
 
 			join

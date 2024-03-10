@@ -83,9 +83,9 @@ module top;
 	
 	always #((10**15)/(2*freq_40)) gen4_lane_clk = ~gen4_lane_clk;
 
-	//always #((10**15)/(2*freq_1_212)) gen2_fsm_clk = ~gen2_fsm_clk;
+	always #((10**15)/(2*freq_1_212)) gen2_fsm_clk = ~gen2_fsm_clk;
 	
-	//always #((10**15)/(2*freq_2_424)) gen3_fsm_clk = ~gen3_fsm_clk;
+	always #((10**15)/(2*freq_2_424)) gen3_fsm_clk = ~gen3_fsm_clk;
 
 	always #((10**15)/(2*freq_4_95)) gen4_fsm_clk = ~gen4_fsm_clk;
 
@@ -128,6 +128,13 @@ module top;
 		elec_if.sbtx = 0;
 		//#(500000000 + tConnectRx - 1000000000) elec_if.sbtx = 1;
 		#(500000000 + tConnectRx) elec_if.sbtx = 1;
+		/*
+		//Testing while the DUT is Host router
+		#(500000000 + tConnectRx) elec_if.sbtx = 1;
+		#(tConnectRx) elec_if.sbtx = 0;
+		#(500000000 + tConnectRx) elec_if.sbtx = 1;
+		*/
+		
 		#(2000) elec_if.sbtx = 1;
 	end
 
