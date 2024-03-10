@@ -32,8 +32,8 @@ class ub_agent;
         this.driveDone = driveDone;
 
         // Initialize agent components
-        up_gen = new(mb_mod_gen, mb_drv_gen, driveDone);
-        up_drv = new(vif, mb_drv_gen, driveDone);
+        up_gen   = new(mb_mod_gen, mb_drv_gen, driveDone);
+        up_drv   = new(vif, mb_drv_gen, driveDone);
         up_mon = new(vif, mb_mon_scr);
     endfunction
 
