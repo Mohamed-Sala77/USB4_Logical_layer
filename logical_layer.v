@@ -276,13 +276,13 @@ sb_registers sb_reg
   .sb_read                 ( sb_read                 )
 );
 
-pulse_sync_4bit pul_sync_fsm_gen
+pulse_sync_3bit pul_sync_fsm_gen
 (
-  .sig_4bit                ( trans_sel               ), 
+  .sig_3bit                ( trans_sel               ), 
   .rst                     ( rst                     ), 
   .clk_a                   ( fsm_clk                 ), 
   .clk_b                   ( sb_clk                  ), 
-  .sig_sync_4bit           ( trans_sel_pul           ), 
+  .sig_sync_3bit           ( trans_sel_pul           ), 
   .busy                    ( busy                    )
 );
 
