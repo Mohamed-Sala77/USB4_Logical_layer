@@ -25,35 +25,35 @@ wire [2:0] busy_3bit;
 
 pulse_sync sync1
 (
-.sig(sig_4bit[0]), 
+.sig(sig_3bit[0]), 
 .rst(rst), 
 .clk_a(clk_a), 
 .clk_b(clk_b), 
-.sig_sync(sig_sync_4bit[0]),
-.busy(busy_4bit[0])
+.sig_sync(sig_sync_3bit[0]),
+.busy(busy_3bit[0])
 );
 
 pulse_sync sync2
 (
-.sig(sig_4bit[1]), 
+.sig(sig_3bit[1]), 
 .rst(rst), 
 .clk_a(clk_a), 
 .clk_b(clk_b), 
-.sig_sync(sig_sync_4bit[1]),
-.busy(busy_4bit[1])
+.sig_sync(sig_sync_3bit[1]),
+.busy(busy_3bit[1])
 );
 
 pulse_sync sync3
 (
-.sig(sig_4bit[2]), 
+.sig(sig_3bit[2]), 
 .rst(rst), 
 .clk_a(clk_a), 
 .clk_b(clk_b), 
-.sig_sync(sig_sync_4bit[2]),
-.busy(busy_4bit[2])
+.sig_sync(sig_sync_3bit[2]),
+.busy(busy_3bit[2])
 );
 
-assign busy = |busy_4bit;
+assign busy = |busy_3bit;
   
 endmodule
 
