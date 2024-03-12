@@ -33,6 +33,7 @@ module control_fsm
   input  wire        ttraining_error_timeout,
   input  wire        tgen4_ts1_timeout,
   input  wire        tgen4_ts2_timeout, 
+  input  wire        trans_sent, 
   output reg  [2:0]  trans_sel,
   output reg         disconnect_sbtx, //send zeros in sbtx to complete disconnection
   output reg         fsm_disabled, //indicating fsm is DISABLED
@@ -55,22 +56,23 @@ localparam DISABLED            = 'b0000, //DISABLED state
            //cld sub-state machine
            CLD_CABLE_PROP      = 'b0001,
            CLD_DET_DEVICE      = 'b0010,
-           CLD_PARAMETERS      = 'b0011, 
-           CLD_CLK_SWITCH      = 'b0100, 
+           CLD_PARAMETERS_1    = 'b0011, 
+           CLD_PARAMETERS_2    = 'b0100, 
+           CLD_CLK_SWITCH      = 'b0101, 
 		   
 		   //training GEN4 sub-state machine
-           TRAINING_GEN4_TS1   = 'b0101,
-           TRAINING_GEN4_TS2   = 'b0110,
-           TRAINING_GEN4_TS3   = 'b0111,
-           TRAINING_GEN4_TS4   = 'b1000,
+           TRAINING_GEN4_TS1   = 'b0110,
+           TRAINING_GEN4_TS2   = 'b0111,
+           TRAINING_GEN4_TS3   = 'b1000,
+           TRAINING_GEN4_TS4   = 'b1001,
 		   
 		   //training GEN3 and GEN2 sub-state machine
-           TRAINING_GEN3_SLOS1 = 'b1001,
-           TRAINING_GEN3_SLOS2 = 'b1010,
-           TRAINING_GEN3_TS1   = 'b1011,
-           TRAINING_GEN3_TS2   = 'b1100,
+           TRAINING_GEN3_SLOS1 = 'b1010,
+           TRAINING_GEN3_SLOS2 = 'b1011,
+           TRAINING_GEN3_TS1   = 'b1100,
+           TRAINING_GEN3_TS2   = 'b1101,
 		   
-           CL0                 = 'b1101; //data sent normally
+           CL0                 = 'b1110; //data sent normally
 
 
 localparam GEN4 = 'b00,
@@ -135,21 +137,33 @@ always @(*)
         if (lane_disable) 
 		  ns = DISABLED;
         else if (!disconnect_sbrx) 
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else 
 		  ns = CLD_DET_DEVICE; 
       end
 	  
-    CLD_PARAMETERS : 
+    CLD_PARAMETERS_1 : 
       begin 
         if (lane_disable) 
 		  ns = DISABLED;
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
-        else if (t_valid && !s_read_i && !s_write_i) //AT response received with no errors
+        else if (t_valid && !trans_error) //AT response received with no errors
+		  ns = CLD_PARAMETERS_2;
+        else 
+		  ns = CLD_PARAMETERS_1; 
+      end
+	  
+    CLD_PARAMETERS_2 : 
+      begin 
+        if (lane_disable) 
+		  ns = DISABLED;
+        else if (disconnect_sbrx) 
+		  ns = CLD_DET_DEVICE;
+        else if (trans_sent) //AT response sent
 		  ns = CLD_CLK_SWITCH;
         else 
-		  ns = CLD_PARAMETERS; 
+		  ns = CLD_PARAMETERS_2; 
       end
 	  
     CLD_CLK_SWITCH : 
@@ -171,9 +185,9 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
 		else if (tgen4_ts1_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN4_TS2;
         else 
@@ -187,9 +201,9 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
 		else if (tgen4_ts2_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN4_TS3;
         else 
@@ -203,7 +217,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN4_TS4;
         else 
@@ -217,7 +231,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = CL0;
         else 
@@ -231,7 +245,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN3_SLOS2;
         else 
@@ -245,7 +259,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN3_TS1;
         else 
@@ -259,7 +273,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = TRAINING_GEN3_TS2;
         else 
@@ -273,7 +287,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
-		  ns = CLD_PARAMETERS;
+		  ns = CLD_PARAMETERS_1;
         else if (enough_os_sent && os_received) 
 		  ns = CL0;
         else 
@@ -383,7 +397,7 @@ always @ (posedge fsm_clk or negedge reset_n)
             os_received <= 0;
           end
 		  
-        CLD_PARAMETERS : 
+        CLD_PARAMETERS_1 : 
           begin
 	        //deciding which gen speed to operate with
 			if (cable_gen == GEN2 || opp_adapter_gen == GEN2)
@@ -401,6 +415,14 @@ always @ (posedge fsm_clk or negedge reset_n)
 			else
 			  opp_adapter_gen <= GEN2;
 			  
+			d_sel <= 'h9; //zeros in lanes   
+	        os_sent_cnt <= 'h0;
+            enough_os_sent <= 0;
+            os_received <= 0;
+          end
+		  
+        CLD_PARAMETERS_2 : 
+          begin  
 			d_sel <= 'h9; //zeros in lanes   
 	        os_sent_cnt <= 'h0;
             enough_os_sent <= 0;
@@ -627,10 +649,10 @@ always @ (posedge fsm_clk or negedge reset_n)
 	
 	else
 	  begin
-	    if (cs == CLD_PARAMETERS)
+	    if (cs == CLD_PARAMETERS_1)
 	      begin
 	        AT_req_trans_send_flag <= 1; //command to send AT transaction next clk cycle to request parameters from other lane
-		    AT_req_trans_sent_flag <= (trans_sel == 'h2); //if the tranaction is executed, this flag is raised
+		    AT_req_trans_sent_flag <= (trans_sel == 'h2)? 1: AT_req_trans_sent_flag; //if the tranaction is executed, this flag is raised
 	      end
 		else
 		  begin
@@ -646,7 +668,7 @@ always @ (posedge fsm_clk or negedge reset_n)
 			s_write_o <= 0;
           end
 		
-		else if ((AT_req_trans_send_flag && !AT_req_trans_sent_flag) || (cs == CLD_PARAMETERS && trans_error))
+		else if ((AT_req_trans_send_flag && !AT_req_trans_sent_flag) || (cs == CLD_PARAMETERS_1 && trans_error))
 		  begin
 		    if(!sync_busy)
 			  trans_sel <= 'h2; //to send AT transaction to obtain parameters from other lane
