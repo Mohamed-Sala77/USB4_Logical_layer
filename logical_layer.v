@@ -57,6 +57,7 @@ wire         enable_deskew;
 wire [2:0]   trans_sel, 
              trans_sel_pul;
 wire         busy;
+wire         trans_sent;
 
 wire         disconnect_sbtx;
 wire         disconnected_s;
@@ -146,6 +147,7 @@ control_fsm ctrl_fsm
   .tgen4_ts1_timeout       ( tgen4_ts1_timeout       ),
   .tgen4_ts2_timeout       ( tgen4_ts2_timeout       ), 
   .trans_sel               ( trans_sel               ),
+  .trans_sent              ( trans_sent              ),
   .disconnect_sbtx         ( disconnect_sbtx         ),
   .fsm_disabled            ( fsm_disabled            ),
   .fsm_training            ( fsm_training            ),
@@ -291,6 +293,7 @@ transactions_gen_fsm trans_gen
   .sb_read                 ( sb_read                 ),             
   .control_unit_data       ( control_unit_data       ),   
   .trans_sel               ( trans_sel_pul           ), 
+  .trans_sent              ( trans_sent              ), 
   .disconnect_sbtx         ( disconnect_sbtx         ),    
   .disconnected_s          ( disconnected_s          ),    
   .tdisconnect_tx_min      ( tdisconnect_tx_min      ),    
