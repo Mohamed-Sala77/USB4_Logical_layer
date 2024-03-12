@@ -36,7 +36,7 @@
 
 				wait_negedge(v_if.generation_speed); 
 				begin 
-					UL_tr.T_Data = v_if.transport_layer_data_in;
+					UL_tr.T_Data = v_if.transport_layer_data_out; //transport_layer_data_in for debugging
 				end 
 				
 				

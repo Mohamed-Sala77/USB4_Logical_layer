@@ -3,10 +3,11 @@ interface config_space_if (input clk,
 	);
 
 	logic lane_disable;
-	logic [7:0] c_data_in;
+	logic [31:0] c_data_in;
 
 	logic c_read, c_write;
-	logic [7:0] c_address, c_data_out;
+	logic [7:0] c_address;
+	logic [31:0] c_data_out;
 
 	//GEN generation_speed;
 	

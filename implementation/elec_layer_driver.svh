@@ -116,6 +116,9 @@
 							 			v_if.sbrx = data_sent[i][j];
 							 		end
 
+							 	-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
+
 							end
 
 
@@ -144,7 +147,7 @@
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(ETX), stop_bit}};
 
-								$display("[ELEC DRIVER] AT_cmd Data to be sent: [%0p]",data_sent);
+								$display("[ELEC DRIVER] Time: %0t   AT_cmd Data to be sent: [%0p]", $time, data_sent);
 								//$display("[DRIVER] AT_cmd length to be sent: [%0p]",{ reverse_data({elec_tr.read_write,elec_tr.len})});
 								foreach (data_sent[i,j])
 									begin
@@ -152,6 +155,10 @@
 								//		$display("[DRIVER] AT_cmd data sent[%0d]",data_sent[i][j]);
 										v_if.sbrx = data_sent[i][j];
 									end
+
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
+
 							end
 
 
@@ -170,12 +177,16 @@
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(ETX), stop_bit}};
 
-								$display("[ELEC DRIVER] AT_Rsp Data to be sent: [%0p]",data_sent);
+								$display("[ELEC DRIVER] Time: %0t, AT_Rsp Data to be sent: [%0p]",$time, data_sent);
 								foreach (data_sent[i,j])
 									begin
 										@(negedge v_if.SB_clock);
 										v_if.sbrx = data_sent[i][j];
 									end
+
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
+
 							end
 
 						endcase // elec_tr.transaction_type
@@ -215,7 +226,8 @@
 									
 								end
 
-
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 								
 							end
 
@@ -248,7 +260,8 @@
 										
 								end
 
-								
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 
 							end
 
@@ -274,6 +287,8 @@
 										//$display("Element [%0d] in TS1_GEN_2_3_lane0: %0b", i, TS1_GEN_2_3_lane0[i]);	
 									end
 
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 								
 							end
 
@@ -298,8 +313,8 @@
 										v_if.lane_1_rx = TS2_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];		
 									end
 
-								
-
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 
 							end
 
@@ -352,7 +367,8 @@
 								join
 								
 
-								
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);	
 
 
 							end
@@ -406,7 +422,8 @@
 									end
 								join
 								
-
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 									
 
 							end
@@ -458,8 +475,8 @@
 									end
 								join
 
-								
-
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 
 							end
 
@@ -509,21 +526,23 @@
 								fork
 									begin
 										foreach (PRTS7_lane0[i,j])
-									begin
-										@(negedge v_if.gen4_lane_clk);		
-										v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
-									end
+										begin
+											@(negedge v_if.gen4_lane_clk);		
+											v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
+										end
 									end
 
 									begin
 										foreach (PRTS7_lane1[i,j])
-									begin
-										@(negedge v_if.gen4_lane_clk);
-										v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
-									end
+										begin
+											@(negedge v_if.gen4_lane_clk);
+											v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
+										end
 									end
 								join
 								
+								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+								$display("elec_gen_drv_done at time: %0t", $time);
 
 							end
 
@@ -538,13 +557,13 @@
 				endcase // elec_tr.tr_os
 
 					
-
-
-				-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
-
-
-					
-
+				/*
+				if ( (elec_tr.tr_os == tr) || (elec_tr.tr_os == ord_set) )
+				begin
+					-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+					$display("elec_gen_drv_done at time: %0t", $time);
+				end
+					*/
 
 				//#200  
 				// for phase 2 only for now
@@ -557,6 +576,8 @@
 						v_if.phase = elec_tr.phase;
 						sbrx_raised_time = $time;
 						#(tConnectRx);
+						-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+						$display("elec_gen_drv_done at time: %0t", $time);
 					end
 					/*
 					3'b011: begin // phase 3

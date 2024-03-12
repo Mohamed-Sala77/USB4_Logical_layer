@@ -59,6 +59,7 @@
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a HOST router");
 
+				@(elec_gen_drv_done);
 
 
 			end
@@ -71,8 +72,8 @@
 				elec_gen_drv.put(transaction); // Sending transaction to the Driver
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a DEVICE router");
-		
-				@(sbtx_high_recieved);
+				@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
+				@(sbtx_high_recieved); // wait for the monitor to receive SBTX high for tConnectTx
 				
 			end
 
@@ -111,7 +112,7 @@
 					transaction.cmd_rsp_data = cmd_rsp_data;
 
 					transaction.tr_os = tr; 
-					$display("[ELEC GENERATOR] sending [%0p] Transaction",trans_type);
+					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 

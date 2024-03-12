@@ -17,8 +17,10 @@
 		//Events
 		event sbtx_high_recieved;
 
-		// Flag to indicate that sbtx high was received
-		logic sbtx_high_flag;
+		// Flags
+		logic sbtx_high_flag; // to indicate that sbtx high was received
+		logic sent_to_scr; // to indicate that the transaction was already sent to the scoreboard 
+
 
 		// Queues to save DUT signals
 		bit SB_data_received [$];
@@ -80,6 +82,8 @@
 			TS = new();
 			TS.calculate_TS();
 
+			sent_to_scr = 1'b0;
+
 			forever begin
 				
 				//elec_tr =new();
@@ -90,6 +94,7 @@
 
 				//@(negedge v_if.clk);
 				//wait_negedge (v_if.generation_speed);
+				
 
 				fork
 					begin 
@@ -101,7 +106,7 @@
 						@(negedge v_if.SB_clock);
 						#1 // needed to detect changes correctly
 
-						SB_data_received.push_back(v_if.sbrx); // sbrx for debugging
+						SB_data_received.push_back(v_if.sbtx); // sbrx for debugging
 						
 						// MONITOR DISPLAY FUNCTION FOR DEBUGGING
 						//$display("[%0t] SB_data_received outside:[%0p]",$time(),SB_data_received);
@@ -134,10 +139,10 @@
 						case  (v_if.generation_speed)
 							gen2, gen3:
 							begin
-								lane_0_gen23_SLOS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-								lane_1_gen23_SLOS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
-								lane_0_gen23_TS_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-								lane_1_gen23_TS_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
+								lane_0_gen23_SLOS_received.push_back(v_if.lane_0_tx); // lane_0_rx for debugging
+								lane_1_gen23_SLOS_received.push_back(v_if.lane_1_tx); // lane_1_rx for debugging
+								lane_0_gen23_TS_received.push_back(v_if.lane_0_tx); // lane_0_rx for debugging
+								lane_1_gen23_TS_received.push_back(v_if.lane_1_tx); // lane_1_rx for debugging
 
 								//$display("[%0t] lane_0_gen23_received outside:[%0p]",$time(),lane_0_gen23_SLOS_received);
 
@@ -192,8 +197,8 @@
 
 							gen4:
 							begin
-								lane_0_gen4_received.push_back(v_if.lane_0_rx); // lane_0_rx for debugging
-								lane_1_gen4_received.push_back(v_if.lane_1_rx); // lane_1_rx for debugging
+								lane_0_gen4_received.push_back(v_if.lane_0_tx); // lane_0_rx for debugging
+								lane_1_gen4_received.push_back(v_if.lane_1_tx); // lane_1_rx for debugging
 
 								// MONITOR DISPLAY FUNCTIONS FOR DEBUGGING
 								//$display("[%0t] lane_0_gen4_received outside:[%0p]",$time(),lane_0_gen4_received);
@@ -328,7 +333,11 @@
 				join_any
 				
 				
-			
+				if (v_if.phase != 3'b010)
+				begin
+					sent_to_scr = 1'b0;
+				end
+
 
 				if (v_if.phase == 3'b010)
 				begin
@@ -347,12 +356,13 @@
 								sbtx_high_flag = 0;
 							end
 
-							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) )) // sbtx high from DUT
+							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) ) && !sent_to_scr ) // sbtx high from DUT
 							begin
 								-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
-								elec_tr.sbtx = 1;
+								elec_tr.sbtx = 1; 
 								elec_tr.phase = 3'b010;
+								sent_to_scr = 1'b1;
 								elec_mon_scr.put(elec_tr);
 								elec_tr = new();
 
@@ -366,13 +376,14 @@
 								//$display("Current time: %0t", $time);
 							end
 
-							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) )) // sbtx high from DUT
+							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) ) && !sent_to_scr) // sbtx high from DUT
 							begin
 								-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbrx_raised_time:%t", sbrx_raised_time);
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1;
 								elec_tr.phase = 3'b010;
+								sent_to_scr = 1'b1;
 								elec_mon_scr.put(elec_tr);
 								elec_tr = new();
 
@@ -472,7 +483,7 @@
 				end
 				{start_bit,reverse_data(DLE),stop_bit,start_bit,reverse_data(STX_rsp),stop_bit}: // AT response Received
 				begin
-					$display("[ELEC MONITOR] AT_RESPONSE DETECTED!!!!!!!!!!!!!!!");
+					$display("[ELEC MONITOR] Time: %0t   AT_RESPONSE DETECTED!!!!!!!!!!!!!!!", $time);
 					elec_tr.transaction_type = AT_rsp;
 				end
 				
@@ -514,9 +525,10 @@
 						else // case of Correct LT_Fall transaction, assign transaction compnents
 						begin
 							$display("[ELEC MONITOR] LT_FALL Transaction Confirmed ");
+							elec_tr.phase = v_if.phase;
 							elec_mon_scr.put(elec_tr); // send transaction to the scoreboard
 							SB_data_received = {};
-
+							
 							elec_tr = new();
 						end
 					end
@@ -534,7 +546,7 @@
 					 	end
 						 else // case of a correct AT command, assign transaction components
 						begin
-							$display("[ELEC MONITOR] Correct AT Command Received");
+							$display("[ELEC MONITOR] Time: %0t  Correct AT Command Received", $time);
 							elec_tr.transaction_type = AT_cmd;
 							elec_tr.address = { << { SB_data_received[21:28] }}; 
 							elec_tr.len =  { << { SB_data_received[31:37] }};
@@ -542,6 +554,7 @@
 							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
 							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
 
+							elec_tr.phase = v_if.phase;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -582,8 +595,9 @@
 						elec_tr.crc_received [15:8] = { << {SB_data_received[1:8]} };
 						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
 
-
+						elec_tr.phase = v_if.phase;
 						elec_mon_scr.put(elec_tr);
+
 						repeat(40)
 						begin
 							void'(SB_data_received.pop_back()); // empty the QUEUE to start receiving the next transaction

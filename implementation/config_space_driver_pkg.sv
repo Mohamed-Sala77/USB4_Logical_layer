@@ -2,14 +2,14 @@
 
 		config_transaction transaction_drv;
 		mailbox #(config_transaction) mb_drv;
-		mailbox mb_done;
+		event config_gen_drv_done;
 		virtual config_space_if config_vif;
 
 
-		function new (mailbox #(config_transaction) mb_drv, mailbox mb_done);
+		function new (mailbox #(config_transaction) mb_drv, event config_gen_drv_done);
 
 			this.mb_drv = mb_drv;
-			this.mb_done = mb_done;
+			this.config_gen_drv_done = config_gen_drv_done;
 			transaction_drv = new();
 
 		endfunction : new
@@ -30,6 +30,8 @@
 				config_vif.lane_disable = transaction_drv.lane_disable;
 				config_vif.c_data_in = transaction_drv.c_data_in;
 
+				-> config_gen_drv_done;
+				
 				//@(negedge config_vif.clk);
 				//mb_done.put(1'b1);
 

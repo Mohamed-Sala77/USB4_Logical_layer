@@ -2,13 +2,13 @@
 
 		//Driver Components
 		rand bit lane_disable;
-		rand bit [7:0] c_data_in;
+		rand bit [31:0] c_data_in;
 
 
 		//Monitor Components
 		logic c_read, c_write;
 		logic [7:0] c_address;	
-		logic [7:0] c_data_out;
+		logic [31:0] c_data_out;
 
 
 		

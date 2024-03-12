@@ -32,8 +32,8 @@
 				transaction_mon.c_data_out = config_vif.c_data_out;
 			
 
-				transaction_mon.c_read = 1; // SHOULD BE REMOVEDDDDDD
-				transaction_mon.c_address = 4; // SHOULD BE REMOVEDDDDDD
+				//transaction_mon.c_read = 1; // SHOULD BE REMOVEDDDDDD
+				//transaction_mon.c_address = 4; // SHOULD BE REMOVEDDDDDD
 
 				if (transaction_mon.c_read || transaction_mon.c_write)
 					begin
@@ -42,24 +42,32 @@
 				
 
 			
-
-
-
 				if (transaction_mon.c_read)
 					begin
-						if (transaction_mon.c_address == 'd4 ) // CAPABILITY READ REQUEST
+						if (transaction_mon.c_address == 'd18 ) // CAPABILITY READ REQUEST
+							begin
+								-> config_cap_req_received;
+							end
+					end
+
+
+				/*	
+				if (transaction_mon.c_read)
+					begin
+						if (transaction_mon.c_address == 'd1 ) // CAPABILITY READ REQUEST
 							begin
 								-> config_cap_req_received;
 							end
 
-						else if (transaction_mon.c_address == 'd4 )  // GENERATION READ REQUEST
+						else if (transaction_mon.c_address == 'h12 )  // GENERATION READ REQUEST
 							begin
-								-> config_cap_req_received;
+								-> config_gen_req_received;
 								//-> config_req_req_received; // correct one to be used
 
 							end
 
 					end
+				*/
 
 			end
 

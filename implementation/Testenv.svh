@@ -32,6 +32,8 @@
 		//event config_cap_req_received, config_gen_req_received;
 		event UL_gen_drv_done;
 
+		
+		event config_gen_drv_done;
 		event config_cap_req_received; // indicates capability read request from monitor
 		event config_gen_req_received; // indicates generation read request from monitor
 
@@ -49,7 +51,6 @@
 		mailbox #(elec_layer_tr) elec_gen_mod; // connects stimulus generator to the reference model
 
 		mailbox #(config_transaction) mb_stim_drv; // connects sequence to the driver
-		mailbox mb_drv_done; // connects driver to the sequence to indicate that the driver finished driving the sequence
 		mailbox #(config_transaction) config_mon_scr ; // connects monitor to the scoreboard
 		mailbox #(config_transaction) config_model_scr; // connects reference model to the scoreboard
 		mailbox #(config_transaction) config_stim_model; // connects stimulus generator to the reference model
@@ -81,7 +82,6 @@
 			os_received_mon_gen = new();
 
 			mb_stim_drv = new();
-			mb_drv_done = new();
 			config_mon_scr = new();
 			config_model_scr = new();
 			config_stim_model = new();
@@ -92,12 +92,12 @@
 			// Agents
 			agent_UL = new (v_if, UL_gen_drv, UL_mon_scr, UL_gen_drv_done);
 			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
-			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_cap_req_received, config_gen_req_received);
+			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
 			agent_config.build();
 
 			//Sequences
 			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
-			config_gen = new (mb_stim_drv, config_stim_model, mb_drv_done, config_cap_req_received, config_gen_req_received);
+			config_gen = new (mb_stim_drv, config_stim_model, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
 			UL_gen = new(UL_gen_mod, UL_gen_drv, UL_gen_drv_done);
 			
 
@@ -139,7 +139,7 @@
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Reference model
-				ref_model.run_phase();
+				//ref_model.run_phase();
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 
