@@ -64,7 +64,6 @@ class phase1 extends primary_steps;
   // task to get packets
   task  get_packets();
     begin
-      $display("ALIII: %d",config_ag_Rx.num());
       config_ag_Rx.get(C_transaction);
       $display ("in phase 1 geted C_transaction = %p",C_transaction);
       elec_ag_Rx.get(E_transaction);  // we should get here since i do peek in the ref model the handle will not be deleted if not so 
@@ -147,16 +146,11 @@ class phase1 extends primary_steps;
       create_transactions();
       //$display ("done creat transactions ");
       //write_in_config();    // ! are they need to write in config or not 
-      $display("1");
+      
       read_order1();
-      $display("2");
-      $display("ALIII: %d",config_ag_Rx.num());
       get_packets();
-      $display("3");
       check_usb4_data();
-      $display("4");
       read_order2();
-      $display("5");
       check_gen4_data ();
 
     end
