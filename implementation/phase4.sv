@@ -113,18 +113,138 @@ endtask
             end
         end
     endtask
-    
-    task  send_packet (input bit [3:0] packet, input next_ord next);
+
+    task send_SLOS1(input bit [3:0] packet);
     begin
+        repeat(2) begin
             $cast (E_transaction.o_sets , packet);
-            $display("we are in send packet and os is %s",E_transaction.o_sets);
-            next_order = next;
-            
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
-
-            //$display("in phase 4 E_transaction = %p",E_transaction);
         end
+    end
+    endtask
+
+    task send_SLOS2(input bit [3:0] packet);
+    begin
+        repeat(2) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_G2_TS1_G2(input bit [3:0] packet);
+    begin
+        repeat(32) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_G2_TS2_G2(input bit [3:0] packet);
+    begin
+        repeat(32) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_G3_TS1_G2(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_G3_TS2_G2(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_TS1_G4(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_TS2_G4(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_TS3_G4(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+
+    task send_TS4_G4(input bit [3:0] packet);
+    begin
+        repeat(16) begin
+            $cast (E_transaction.o_sets , packet);
+            elec_ag_Tx.put(E_transaction);
+            E_transaction = new();
+        end
+    end
+    endtask
+    
+
+    task send_packet(input bit [3:0] packet, input next_ord next);
+    begin
+        case (m_transaction.gen)
+            2: begin
+                case (packet)
+                    SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
+                    SLOS2: send_SLOS2(packet);             // send SLOS2 packet 2 times
+                    TS1_G2: send_G2_TS1_G2(packet);  // send TS1_G2 packet 32 times
+                    TS2_G2: send_G2_TS2_G2(packet); // send TS2_G2 packet 32 times
+                endcase
+            end
+            3: begin
+                case (packet)
+                    SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
+                    SLOS2: send_SLOS2(packet);              // send SLOS2 packet 2 times
+                    TS1_G2: send_G3_TS1_G2(packet);   // send TS1_G2 packet 16 times
+                    TS2_G2: send_G3_TS2_G2(packet);  // send TS2_G2 packet 16 times
+                endcase
+            end
+            4: begin
+                case (packet)
+                    TS1_G4: send_TS1_G4(packet);
+                    TS2_G4: send_TS2_G4(packet);
+                    TS3_G4: send_TS3_G4(packet);
+                    TS4_G4: send_TS4_G4(packet);
+                endcase
+            end
+        endcase
+        next_order = next;
+    end
     endtask
 
     task  get_transactions();
