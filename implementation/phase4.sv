@@ -166,7 +166,7 @@ endtask
 
     task send_G3_TS2_G2(input bit [3:0] packet);
     begin
-        repeat(16) begin
+        repeat(8) begin
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
@@ -213,7 +213,7 @@ endtask
         end
     end
     endtask
-    
+
 
     task send_packet(input bit [3:0] packet, input next_ord next);
     begin
@@ -231,7 +231,7 @@ endtask
                     SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);              // send SLOS2 packet 2 times
                     TS1_G2: send_G3_TS1_G2(packet);   // send TS1_G2 packet 16 times
-                    TS2_G2: send_G3_TS2_G2(packet);  // send TS2_G2 packet 16 times
+                    TS2_G2: send_G3_TS2_G2(packet);  // send TS2_G2 packet 8 times
                 endcase
             end
             4: begin
