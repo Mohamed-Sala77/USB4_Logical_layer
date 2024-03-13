@@ -30,7 +30,7 @@ class phase1 extends primary_steps;
     // Task to send sb data
     task read_order1;
     begin
-      C_transaction.c_address = 8'd5;   //!we should know that from d.team
+      C_transaction.c_address = 8'd18;   
       C_transaction.c_write = 0 ;   
       C_transaction.c_read = 1;   
       config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
@@ -48,7 +48,7 @@ class phase1 extends primary_steps;
 
   task read_order2;
     begin
-      C_transaction.c_address = 8'd6;   //!we should know that from d.team
+      C_transaction.c_address = 8'd18;   
       C_transaction.c_write = 0 ;   
       C_transaction.c_read = 1;   
       config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
@@ -99,7 +99,7 @@ class phase1 extends primary_steps;
     begin
       m_transaction=new();
       // Check the value representing the value of USB4 data
-      if (C_transaction.c_data_in == 8'h40) begin   //USB4 data
+      if (C_transaction.c_data_in == 32'h00200040) begin   //USB4 data
         m_transaction.usb4 = 1;       //USB4 connection
       end 
       else begin
@@ -111,25 +111,28 @@ class phase1 extends primary_steps;
  task  check_gen4_data ();
     begin
 
-      config_ag_Rx.get(C_transaction);     // get the c_transaction again to check the gen4 data
+      //config_ag_Rx.get(C_transaction);  //* we will get only one transcation 
      
-      if (C_transaction.c_data_in == 8'h44) begin   //Gen 4 data
-        m_transaction.gen_config = 4;       //gen 4 speed
+      if (C_transaction.c_data_in[20] == 1) begin   //Gen 3 data
+        m_transaction.gen_config = 3;       //gen 3 speed
       end 
-      else begin
-        m_transaction.gen_config = 0;         
+      else if (C_transaction.c_data_in[21] == 1) begin  //Gen 4 data
+        m_transaction.gen_config = 4;       //gen 4 speed
       end
-      ////$display ("m_transaction = %p",m_transaction);
+      else begin
+        m_transaction.gen_config = 2;         
+      end
+     //$display ("m_transaction = %p",m_transaction);
       mem_ag.put(m_transaction);     //Put the transaction into memory agent FIFO
       $display ("in model memory ] %p",m_transaction);
       m_transaction = new();
     end
   endtask
 
-
+/*
   task write_in_config();
-    C_transaction.c_data_out = 8'd12;   //!we should know that from d.team
-    C_transaction.c_address = 8'd5;   //!we should know that from d.team
+    C_transaction.c_data_out = 32'd12;   //!we should know that from d.team
+    C_transaction.c_address = 8'd18;   
     C_transaction.c_write = 1;   
     C_transaction.c_read = 0;   
     config_ag_Tx.put(C_transaction) ;  // this should go to scoreboard
@@ -139,13 +142,13 @@ class phase1 extends primary_steps;
 
     
   endtask
-
+*/
 
   task run_phase1();
     begin
       create_transactions();
       //$display ("done creat transactions ");
-      //write_in_config();    // ! are they need to write in config or not 
+      //write_in_config();    // ! they don't add this part
       
       read_order1();
       get_packets();
