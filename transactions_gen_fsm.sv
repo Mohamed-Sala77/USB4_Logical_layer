@@ -83,11 +83,11 @@ state cs,ns;
 
 
 
-localparam STX_COMMAND_SYMBOL = 8'b10100Z00;
-localparam STX_RESPONSE_SYMBOL = 8'b00100Z00;
+localparam STX_COMMAND_SYMBOL = 8'b00000101;
+localparam STX_RESPONSE_SYMBOL = 8'b00000100;
 
 
-localparam LSE_SYMBOL = 8'b0000Z010;
+localparam LSE_SYMBOL = 8'b10000000;
 localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 
 
