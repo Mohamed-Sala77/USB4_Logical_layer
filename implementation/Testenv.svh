@@ -29,7 +29,8 @@
 		//Event Signals
 		event elec_gen_drv_done;
 		event sbtx_high_recieved; // to identify phase 2 completion (sbtx high received)
-		//event config_cap_req_received, config_gen_req_received;
+		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
+		
 		event UL_gen_drv_done;
 
 		
@@ -91,12 +92,12 @@
 
 			// Agents
 			agent_UL = new (v_if, UL_gen_drv, UL_mon_scr, UL_gen_drv_done);
-			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
+			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
 			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
 			agent_config.build();
 
 			//Sequences
-			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved);
+			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
 			config_gen = new (mb_stim_drv, config_stim_model, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
 			UL_gen = new(UL_gen_mod, UL_gen_drv, UL_gen_drv_done);
 			

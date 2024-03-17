@@ -28,7 +28,7 @@
 		logic sbtx;
 		logic [7:0] transport_to_electrical; // Data sent after training between electrical layer and transport layer
 		logic [15:0] crc_received;	//crc field received in the AT cmd and AT rsp
-		logic [4:0] order; //Indicates the order of the TS recieved
+		logic [3:0] order; //Indicates the order of the TS recieved
 		
 		LANE lane;
 

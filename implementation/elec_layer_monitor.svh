@@ -16,6 +16,8 @@
 
 		//Events
 		event sbtx_high_recieved;
+		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
+
 
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
@@ -58,7 +60,7 @@
 		bit [419:0] TS234_DATA;
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_recieved);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_recieved, elec_AT_cmd_received);
 
 			//Interface Connections
 			this.v_if = v_if;
@@ -69,6 +71,7 @@
 
 			//Event Connections
 			this.sbtx_high_recieved = sbtx_high_recieved;
+			this.elec_AT_cmd_received = elec_AT_cmd_received;
 
 			elec_tr = new();
 			elec_tr_lane1 = new();
@@ -543,6 +546,7 @@
 						if(ETX_received != ETX) // STATIC TYPE CASTINGG
 					 	begin
 					 		$error("[ELEC MONITOR] Wrong AT Command Received");
+					 		$display("EXPECTED ETX: %b, received ETX: %b",ETX,ETX_received);
 					 	end
 						 else // case of a correct AT command, assign transaction components
 						begin
@@ -558,6 +562,7 @@
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
+							-> elec_AT_cmd_received;
 
 							elec_tr = new();
 						end
