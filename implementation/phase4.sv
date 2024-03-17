@@ -7,7 +7,7 @@ mem        m_transaction;   // memory transaction
 typedef enum logic [2:0]  {n_TS1,n_TS2,n_TS3,n_TS4,n_SLOS1,n_SLOS2,n_done} next_ord ;  // represent the next order set will be transmited
 enum {right , wrong} status ;  // represent the status of the order sets 
 next_ord   next_order ;
-int i ;
+int i , j;
 
 parameter        SLOS1   = 4'b1000,
                         SLOS2   = 4'b1001,
@@ -30,7 +30,7 @@ parameter        SLOS1   = 4'b1000,
     endfunction
 
     
-    task  os_g4(input LANE lanes);
+    task  os_g4();
     begin
         //$display("we are in os_g4");
         next_order = n_TS1 ;          
@@ -38,7 +38,7 @@ parameter        SLOS1   = 4'b1000,
         while (status != right)
         begin
             elec_ag_Rx.get (E_transaction);
-            gen4_OS(lanes);
+            gen4_OS();
             
 
 
@@ -46,7 +46,7 @@ parameter        SLOS1   = 4'b1000,
     end
     endtask  //os_g4
 
-    task  os_g2_3(input LANE lanes);
+    task  os_g2_3();
     begin
         //$display("we are in os_g2_3");
         next_order = n_SLOS1 ;         
@@ -54,25 +54,25 @@ parameter        SLOS1   = 4'b1000,
         while (status != right)
         begin
             elec_ag_Rx.get (E_transaction);
-            gen2_3_OS(lanes);
+            gen2_3_OS();
            //#1;  
         end
     end
 endtask
 
 
-task  gen4_OS( input LANE lanes);
+task  gen4_OS();
         begin
-            $display("we are in gen4_OS");
+            //$display("we are in gen4_OS");
             if(E_transaction.phase==4) begin    // double check in phase in case of any actions 
                 if (next_order == n_TS1) 
-                    send_packet(TS1_G4, n_TS2, lanes);
+                    send_packet(TS1_G4, n_TS2);
                 else if ((E_transaction.o_sets==TS1_G4 )&&(next_order == n_TS2)) 
-                    send_packet(TS2_G4, n_TS3 ,lanes);
+                    send_packet(TS2_G4, n_TS3);
                 else if ((E_transaction.o_sets==TS2_G4 )&&(next_order == n_TS3)) 
-                    send_packet(TS3_G4, n_TS4 ,lanes);
+                    send_packet(TS3_G4, n_TS4 );
                  else if ((E_transaction.o_sets==TS3_G4 )&&(next_order == n_TS4)) 
-                     send_packet(TS4_G4, n_done ,lanes);
+                     send_packet(TS4_G4, n_done );
                 else if ((E_transaction.o_sets==TS4_G4 )&&(next_order == n_done)) 
                     begin
                     status=right ;
@@ -88,18 +88,18 @@ task  gen4_OS( input LANE lanes);
         end
 endtask
                             
-            task  gen2_3_OS(input LANE lanes);
+            task  gen2_3_OS();
             begin
             //$display("we are in gen2_3_OS");
             if(E_transaction.phase==4) begin
                 if (next_order == n_SLOS1) 
-                    send_packet(SLOS1, n_SLOS2 , lanes);
+                    send_packet(SLOS1, n_SLOS2);
                  else if ((E_transaction.o_sets ==SLOS1 )&&(next_order == n_SLOS2)) 
-                    send_packet(SLOS2, n_TS1 , lanes);
+                    send_packet(SLOS2, n_TS1);
                  else if ((E_transaction.o_sets ==SLOS2 )&&(next_order == n_TS1)) 
-                    send_packet(TS1_G2, n_TS2 , lanes);
+                    send_packet(TS1_G2, n_TS2);
                  else if ((E_transaction.o_sets ==TS1_G2 )&&(next_order == n_TS2)) 
-                    send_packet(TS2_G2, n_done , lanes);
+                    send_packet(TS2_G2, n_done);
                  else if ((E_transaction.o_sets ==TS2_G2 )&&(next_order == n_done)) 
                     begin
                     status=right ;
@@ -246,9 +246,13 @@ endtask
     endtask
 
 
-    task send_packet(input bit [3:0] packet, input next_ord next, input LANE lanes);
+    task send_packet(input bit [3:0] packet, input next_ord next);
     begin
-        E_transaction.lane = lanes;
+        j=0 ;
+        repeat(2)begin
+            if(j==0)        E_transaction.lane = lane_0;
+             else             E_transaction.lane = lane_1;
+
         case (m_transaction.gen)
             2: begin
                 case (packet)
@@ -275,12 +279,14 @@ endtask
                 endcase
             end
         endcase
+        j++;
+    end
         next_order = next;
     end
     endtask
 
     task  get_transactions();
-         elec_ag_Rx.peek (E_transaction);    // peek instead of get to avoid the loss of the transaction when get in os_g4()
+         elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
         //$display("et E_transaction ");
          config_ag_Rx.try_get(C_transaction);
         $display ("in phase4 C_transaction = %p",C_transaction);
@@ -324,24 +330,13 @@ endtask
                         begin
                             
                     if ( m_transaction.gen == 4)       // we are gen 4 send in order (TS1->TS2 ->TS3-> TS4 )
-                          fork
-                           //$display("if cond ");
-                           os_g4(lane_0) ; 
-                           os_g4(lane_1) ; 
-                           join
+                           os_g4() ; 
+
                           
                           else if( m_transaction.gen == 2  ||  m_transaction.gen == 3)  // we are gen 2 or 3 send in order (SLOS1->SLOS2 ->TS1-> TS2 )
-                          fork
-                           //$display("if cond ");
-                          os_g2_3(lane_0) ; 
-                          os_g2_3(lane_1) ; 
-                          join
+                          os_g2_3() ; 
                           
-                          //$display ("we are in after if  ");
-                         /* else 
-                          begin
-                              //! ???????? from ali and karim 
-                          end*/
+                          
                          end
     end   
     endtask 
