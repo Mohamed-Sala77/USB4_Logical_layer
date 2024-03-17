@@ -9,6 +9,8 @@
 		// Event Signals
 		event elec_gen_drv_done;
 		event sbtx_high_recieved;
+		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
+
 
 		//Transaction
 		elec_layer_tr transaction;
@@ -19,7 +21,7 @@
 		mailbox #(elec_layer_tr) elec_gen_drv; // connects Stimulus generator to the driver inside the agent
 		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
-		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_recieved);
+		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
 
 			// Mailbox connections between generator and agent
 			this.elec_gen_mod = elec_gen_mod;
@@ -30,7 +32,7 @@
 			// Event Signals Connections
 			this.elec_gen_drv_done = elec_gen_drv_done;
 			this.sbtx_high_recieved = sbtx_high_recieved;
-
+			this.elec_AT_cmd_received = elec_AT_cmd_received;
 			
 
 		endfunction : new
@@ -112,6 +114,11 @@
 					transaction.cmd_rsp_data = cmd_rsp_data;
 
 					transaction.tr_os = tr; 
+					if (trans_type == AT_rsp)
+						begin
+							@(elec_AT_cmd_received); //  wait for an AT command to respond to it
+						end
+						
 					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
