@@ -180,8 +180,8 @@
 				
 				SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3 : 
 				begin
-					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 					repeat (2) begin
+					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
 
 					$display("[ELEC GENERATOR] SENDING [%0p]",OS);

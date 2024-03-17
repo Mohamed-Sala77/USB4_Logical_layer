@@ -2,6 +2,9 @@
 class phase4 extends primary_steps ;
 mailbox #(mem)    mem_ag ;      // internal memory agent
 mem        m_transaction;   // memory transaction
+elec_layer_tr   temp_elec_tr;  // temporary electrical transaction
+bit check_equlity ;             // check if the received two transaction are the same   
+
 
 
 typedef enum logic [2:0]  {n_TS1,n_TS2,n_TS3,n_TS4,n_SLOS1,n_SLOS2,n_done} next_ord ;  // represent the next order set will be transmited
@@ -52,10 +55,18 @@ parameter        SLOS1   = 4'b1000,
         next_order = n_SLOS1 ;         
         status  = wrong; 
         while (status != right)
-        begin
-            elec_ag_Rx.get (E_transaction);
-            gen2_3_OS();
-           //#1;  
+        begin           //` ---------the generator should send the same order set 2 times //
+            if (next_order != n_SLOS1) 
+            begin
+                elec_ag_Rx.get (temp_elec_tr);          // first get
+                elec_ag_Rx.get (temp_elec_tr);          // second get
+                check_equlity = (E_transaction.o_sets == temp_elec_tr.o_sets) ? 1 : 0 ;     //! here we should do the check cond. 
+                gen2_3_OS();
+            end
+            else
+                begin
+                    elec_ag_Rx.get (E_transaction);         // for first one two know that we are in phase 4
+                end
         end
     end
 endtask
