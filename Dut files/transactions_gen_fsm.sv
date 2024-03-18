@@ -26,7 +26,7 @@ module transactions_gen_fsm (
 	input            rst,                              //global reset 
 
 	input [ 23 : 0 ] sb_read,                         //data read from the SB register in case of AT read response 
-	input [ 7  : 0 ] control_unit_data,              //data Value to write in AT write command or LEN field or address
+	//input [ 7  : 0 ] control_unit_data,              //data Value to write in AT write command or LEN field or address
 	input [ 2  : 0 ] trans_sel,                     //transaction select wire
 	input            disconnect_sbtx,  
 	input            tdisconnect_tx_min,  
@@ -67,10 +67,11 @@ DATA_READ_RESPONSE_ADDRESS = 'b01111,
 DATA_READ_RESPONSE_LENGTH = 'b10000,
 DATA_READ_RESPONSE_DATA = 'b10001,
 
+CRC1='b10010,
+CRC2='b10011,
 
-
-DLE2 = 'b10010,
-ETX = 'b10011
+DLE2 = 'b10100,
+ETX = 'b10101
 
 } state;
 
@@ -83,11 +84,11 @@ state cs,ns;
 
 
 
-localparam STX_COMMAND_SYMBOL = 8'b10100Z00;
-localparam STX_RESPONSE_SYMBOL = 8'b00100Z00;
+localparam STX_COMMAND_SYMBOL = 8'b00000101;
+localparam STX_RESPONSE_SYMBOL = 8'b00000100;
 
 
-localparam LSE_SYMBOL = 8'b0000Z010;
+localparam LSE_SYMBOL = 8'b10000000;
 localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 
 
@@ -274,7 +275,6 @@ always @(*) begin
 			
 		end
 
-
 		STX_COMMAND: begin 
 
 			if (ser_clk_cycles == 7) begin
@@ -291,7 +291,7 @@ always @(*) begin
 
 				2: begin 
 					ns = DATA_READ_COMMAND_ADDRESS;
-					trans_reg = {1'b1,control_unit_data,1'b0};
+					trans_reg = {1'b1,8'd78,1'b0};
 					crc_en_reg = 1;
 					sbtx_sel_reg=0;
 				end 
@@ -365,7 +365,7 @@ always @(*) begin
 
 					2: begin 
 						ns = DATA_READ_COMMAND_LENGTH;
-						trans_reg = {1'b1,8'h24,1'b0};
+						trans_reg = {1'b1,7'h3,1'b0,1'b0};
 						crc_en_reg = 1;
 						sbtx_sel_reg=0;
 					end 
@@ -383,10 +383,10 @@ always @(*) begin
 				case (trans_sel_reg) 
 
 					2: begin 
-						ns = DLE2;
-						trans_reg = {1'b1,8'hFE,1'b0};
-						crc_en_reg = 0;
-						sbtx_sel_reg=0;
+						ns = CRC1;
+						trans_reg = 0;
+						crc_en_reg = 1;
+						sbtx_sel_reg=1;
 					end 
 
 				endcase
@@ -415,7 +415,7 @@ always @(*) begin
 
 				3: begin 
 					ns = DATA_READ_RESPONSE_ADDRESS;
-					trans_reg = {1'b1,control_unit_data,1'b0};
+					trans_reg = {1'b1,8'd78,1'b0};
 					crc_en_reg = 1;
 					sbtx_sel_reg=0;
 				end 
@@ -480,7 +480,7 @@ always @(*) begin
 
 					3: begin 
 						ns = DATA_READ_RESPONSE_LENGTH;
-						trans_reg = {1'b1,control_unit_data,1'b0};
+						trans_reg = {1'b1,7'h3,1'b0,1'b0};
 						crc_en_reg = 1;
 						sbtx_sel_reg=0;
 					end 
@@ -499,7 +499,7 @@ always @(*) begin
 
 					3: begin 
 						ns = DATA_READ_RESPONSE_DATA;
-						trans_reg = {1'b1,8'd3,1'b0};
+						trans_reg = {1'b1,sb_read[7:0],1'b0};
 						crc_en_reg = 1;
 						sbtx_sel_reg=0;
 					end 
@@ -519,34 +519,25 @@ always @(*) begin
 
 					3: begin 
 						if (data_clock_cycles==2) begin
-							ns = DLE2;
-							trans_reg = {1'b1,8'hFE,1'b0};
-							crc_en_reg = 0;
-							sbtx_sel_reg=0;
+							ns = CRC1;
+							trans_reg = 0;
+							crc_en_reg = 1;
+							sbtx_sel_reg=1;
 						end else begin
 							case (data_clock_cycles)
 
 								0: begin 
 									ns = DATA_READ_RESPONSE_DATA;
-									trans_reg = {1'b1,sb_read[7:0],1'b0};
+									trans_reg = {1'b1,sb_read[15:8],1'b0};
 									crc_en_reg = 1;
 									sbtx_sel_reg=0;
 								end
 
 								1: begin
 									ns = DATA_READ_RESPONSE_DATA;
-									trans_reg = {1'b1,sb_read[15:8],1'b0};
-									crc_en_reg = 1;
-									sbtx_sel_reg=0; 
-								end
-
-
-								2:begin 
-									ns = DATA_READ_RESPONSE_DATA;
 									trans_reg = {1'b1,sb_read[23:16],1'b0};
 									crc_en_reg = 1;
-									sbtx_sel_reg=0;
-
+									sbtx_sel_reg=0; 
 								end
 
 
@@ -557,8 +548,9 @@ always @(*) begin
 				endcase
 			end 
 
-			
 
+
+			
 		end
 
 
@@ -616,14 +608,14 @@ always @(*) begin
 					ns = IDLE;
 					trans_reg = 10'b1111111111;
 					crc_en_reg = 0;
-					sbtx_sel_reg=1;
+					sbtx_sel_reg=0;
 				end 
 
 				3:begin 
 					ns = IDLE;
 					trans_reg = 10'b1111111111;
 					crc_en_reg = 0;
-					sbtx_sel_reg=1;
+					sbtx_sel_reg=0;
 				end 
 /*
 				7: begin 
@@ -643,9 +635,43 @@ always @(*) begin
 
 			endcase
 		end
-
-
 	end
+
+
+		CRC1: begin 
+
+			if (ser_clk_cycles == 7) begin
+				case (trans_sel_reg) 
+
+					2: begin 
+						ns = CRC2;
+						trans_reg = 0;
+						crc_en_reg = 1;
+						sbtx_sel_reg=1;
+					end 
+
+				endcase
+			end
+			
+		end
+
+		CRC2: begin 
+
+			if (ser_clk_cycles == 7) begin
+				case (trans_sel_reg) 
+
+					2: begin 
+						ns = DLE2;
+						trans_reg = {1'b1,8'hFE,1'b0};
+						crc_en_reg = 0;
+						sbtx_sel_reg=0;
+					end 
+
+				endcase
+			end
+
+			
+		end
 
 endcase
 

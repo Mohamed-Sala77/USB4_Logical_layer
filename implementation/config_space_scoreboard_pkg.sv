@@ -3,11 +3,15 @@
 		mailbox #(config_transaction) mb_model, mb_mon;
 		config_transaction transaction_model, transaction_mon;
 
+		//Events
+		event config_req_received;	// indicates capability and generation read request from DUT
 
-		function new (mailbox #(config_transaction) mb_model, mb_mon);
+
+		function new (mailbox #(config_transaction) mb_model, mb_mon, event config_req_received);
 
 			this.mb_mon = mb_mon;
 			this.mb_model = mb_model;
+			this.config_req_received = config_req_received;
 			transaction_model = new();
 			transaction_mon = new();
 
@@ -26,6 +30,7 @@
 					end
 				
 				mb_mon.get(transaction_mon);
+				event_trigger();
 				//$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
 				
 
@@ -50,6 +55,18 @@
 
 		endtask : run
 
+
+		task event_trigger;
+
+			if (transaction_mon.c_read)
+			begin
+				if (transaction_mon.c_address == 'd18 ) // CAPABILITY READ REQUEST
+				begin
+					-> config_req_received;
+				end
+			end
+
+		endtask : event_trigger
 
 	endclass : config_space_scoreboard
 

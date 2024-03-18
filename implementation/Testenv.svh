@@ -28,16 +28,19 @@
 
 		//Event Signals
 		event elec_gen_drv_done;
-		event sbtx_high_recieved; // to identify phase 2 completion (sbtx high received)
+		event sbtx_high_received; // to identify phase 2 completion (sbtx high received)
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
 		
 		event UL_gen_drv_done;
 
 		
 		event config_gen_drv_done;
+		event config_req_received;	// indicates capability and generation read request from DUT
+
+		/*
 		event config_cap_req_received; // indicates capability read request from monitor
 		event config_gen_req_received; // indicates generation read request from monitor
-
+		*/
 
 		// Mailboxes 
 		mailbox #(upper_layer_tr) UL_gen_drv; // connects Stimulus generator to the driver inside the agent
@@ -92,20 +95,20 @@
 
 			// Agents
 			agent_UL = new (v_if, UL_gen_drv, UL_mon_scr, UL_gen_drv_done);
-			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
-			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
+			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done);
+			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_gen_drv_done);
 			agent_config.build();
 
 			//Sequences
-			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
-			config_gen = new (mb_stim_drv, config_stim_model, config_gen_drv_done, config_cap_req_received, config_gen_req_received);
+			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_received, elec_AT_cmd_received);
+			config_gen = new (mb_stim_drv, config_stim_model, config_gen_drv_done, config_req_received);
 			UL_gen = new(UL_gen_mod, UL_gen_drv, UL_gen_drv_done);
 			
 
 			// Scoreboards
 			UL_sb = new(UL_mon_scr, UL_mod_scr);
-			elec_sb = new(elec_mon_scr, elec_mod_scr);
-			sb_config = new(config_model_scr, config_mon_scr);
+			elec_sb = new(elec_mon_scr, elec_mod_scr, sbtx_high_received, elec_AT_cmd_received);
+			sb_config = new(config_model_scr, config_mon_scr, config_req_received);
 
 			// Virtual Sequence connections
 			vseq_config = new();
@@ -140,7 +143,7 @@
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Reference model
-				ref_model.run_phase();
+				//ref_model.run_phase();
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 

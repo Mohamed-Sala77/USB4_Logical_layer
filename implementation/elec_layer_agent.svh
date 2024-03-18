@@ -19,12 +19,13 @@
 
 		//Event Signals
 		event elec_gen_drv_done;
+		/*
 		event sbtx_high_recieved; // to identify phase 2 completion (sbtx high received)
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
-
+		*/
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, event sbtx_high_recieved, event elec_AT_cmd_received);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done);
 
 			//Interface Connections
 			this.v_if = v_if;
@@ -37,11 +38,13 @@
 
 			//Events
 			this.elec_gen_drv_done = elec_gen_drv_done;
+			/*
 			this.sbtx_high_recieved = sbtx_high_recieved;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
+			*/
 
 			// Agent's Component Handles
-			elec_mon = new(v_if, elec_mon_scr, os_received_mon_gen, sbtx_high_recieved, elec_AT_cmd_received);
+			elec_mon = new(v_if, elec_mon_scr, os_received_mon_gen);
 			elec_drv = new(v_if, elec_gen_drv, elec_gen_drv_done);
 		
 		endfunction : new
