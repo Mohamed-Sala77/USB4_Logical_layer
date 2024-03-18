@@ -291,7 +291,7 @@ transactions_gen_fsm trans_gen
   .sb_clk                  ( sb_clk                  ),                           
   .rst                     ( rst                     ),                              
   .sb_read                 ( sb_read                 ),             
-  .control_unit_data       ( control_unit_data       ),   
+  // .control_unit_data       ( control_unit_data       ),   
   .trans_sel               ( trans_sel_pul           ), 
   .trans_sent              ( trans_sent              ), 
   .disconnect_sbtx         ( disconnect_sbtx         ),    
