@@ -215,7 +215,7 @@
 				case (OS)
 				
 					SLOS1, SLOS2: begin
-						while ( (counter_lane_0 < 2) || (counter_lane_1 < 2) )  // should be (counter != 2)
+						while ( (counter_lane_0 < 2) || (counter_lane_1 < 2) )  // should be (counter < 2)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -273,7 +273,7 @@
 						else if (generation == gen2)
 							limit = 32;
 
-						while ((counter_lane_0 < 2) || (counter_lane_1 < 2)) // should be (counter != limit)
+						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -317,7 +317,7 @@
 						else if (generation == "gen2")
 							limit = 16;
 
-						while ((counter_lane_0 < 2) || (counter_lane_1 < 2)) // should be (counter != limit)
+						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
 						begin 
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -351,12 +351,12 @@
 
 
 							//Checking that the training duration is less than tTrainingError (500us)
-							if (counter_lane_0 == 2) //should be == limit
+							if (counter_lane_0 == limit) //should be == limit
 							begin
 								assert($time <= (lane_0_tTrainingError_time + tTrainingError) );
 							end
 
-							if (counter_lane_1 == 2) //should be == limit
+							if (counter_lane_1 == limit) //should be == limit
 							begin
 								assert($time <= (lane_1_tTrainingError_time + tTrainingError) );
 							end
@@ -367,7 +367,7 @@
 
 					TS1_gen4, TS2_gen4, TS3: 
 					begin
-						while ((counter_lane_0 < 1) || (counter_lane_1 < 1))  // should be 16
+						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  // should be 16
 							begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -402,13 +402,13 @@
 							//Storing the time when first TS1 gen4 was sent to calculate tTrainingError
 							if (OS == TS1_gen4)
 							begin
-								if (counter_lane_0 == 1)
+								if (counter_lane_0 == 1) //First TS1
 								begin
 									lane_0_tTrainingError_time = $time;
 									lane_0_tGen4TS1  = $time;
 								end
 
-								if (counter_lane_1 == 1)
+								if (counter_lane_1 == 1) //First TS1
 								begin
 									lane_1_tTrainingError_time = $time;
 									lane_1_tGen4TS1  = $time;
@@ -458,7 +458,7 @@
 
 					TS4: 
 					begin
-						while ((counter_lane_0 < 1) || (counter_lane_1 < 1))  //should be 16
+						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  //should be 16
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 	
 							os_received_mon_gen.get(tr_mon);
@@ -491,12 +491,12 @@
 							end
 
 							//Checking that the training duration is less than tTrainingError (500us)
-							if (counter_lane_0 == 1) //should be == 16
+							if (counter_lane_0 == 16) //should be == 16 (or 15????????????)
 							begin
 								assert($time <= (lane_0_tTrainingError_time + tTrainingError) );
 							end
 
-							if (counter_lane_1 == 1) //should be == 16
+							if (counter_lane_1 == 16) //should be == 16 (or 15????????????)
 							begin
 								assert($time <= (lane_1_tTrainingError_time + tTrainingError) );
 							end

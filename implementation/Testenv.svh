@@ -95,7 +95,7 @@
 
 			// Agents
 			agent_UL = new (v_if, UL_gen_drv, UL_mon_scr, UL_gen_drv_done);
-			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, os_received_mon_gen, elec_gen_drv_done);
+			agent_elec = new (elec_v_if, elec_gen_drv, elec_mon_scr, elec_gen_drv_done);
 			agent_config = new (v_cif, mb_stim_drv, config_mon_scr, config_gen_drv_done);
 			agent_config.build();
 
@@ -107,7 +107,7 @@
 
 			// Scoreboards
 			UL_sb = new(UL_mon_scr, UL_mod_scr);
-			elec_sb = new(elec_mon_scr, elec_mod_scr, sbtx_high_received, elec_AT_cmd_received);
+			elec_sb = new(elec_mon_scr, elec_mod_scr, os_received_mon_gen, sbtx_high_received, elec_AT_cmd_received);
 			sb_config = new(config_model_scr, config_mon_scr, config_req_received);
 
 			// Virtual Sequence connections
@@ -143,7 +143,7 @@
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Reference model
-				//ref_model.run_phase();
+				ref_model.run_phase();
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 

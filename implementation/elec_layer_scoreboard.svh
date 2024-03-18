@@ -7,17 +7,20 @@
 		//Mailboxes
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
 		mailbox #(elec_layer_tr) elec_mod_scr; // connects reference model to the scoreboard 
+		mailbox #(elec_layer_tr) os_received_mon_gen; // connects scoreboard to the stimulus generator to indicated received ordered sets
+
 
 		//Events
 		event sbtx_high_received;
 		event elec_AT_cmd_received;
 
 		//NEW Function
-		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr, event sbtx_high_received, elec_AT_cmd_received);
+		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_received, elec_AT_cmd_received);
 
 			// Mailbox connections
-			this.elec_mon_scr = elec_mon_scr; // connections between scoreboard and UL Agent's Monitor
-			this.elec_mod_scr = elec_mod_scr; // connections between scoreboard and Reference Model
+			this.elec_mon_scr = elec_mon_scr;				// connections between scoreboard and UL Agent's Monitor
+			this.elec_mod_scr = elec_mod_scr;				// connections between scoreboard and Reference Model
+			this.os_received_mon_gen = os_received_mon_gen; // connections between scoreboard and sequence
 
 			this.sbtx_high_received = sbtx_high_received; 		//connected between scoreboard and sequence
 			this.elec_AT_cmd_received = elec_AT_cmd_received;	//connected between scoreboard and sequence
@@ -139,8 +142,13 @@
 				-> elec_AT_cmd_received;
 			end
 
+			if (elec_tr.tr_os == ord_set)
+			begin
+				os_received_mon_gen.put(elec_tr);
+			end
 
 
 		endtask : event_trigger
+
 		
 	endclass : elec_layer_scoreboard

@@ -12,7 +12,7 @@
 
 		// Mailboxes
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
-		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
+		//mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
 		/*
 		//Events
@@ -61,14 +61,14 @@
 		bit [419:0] TS234_DATA;
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr);
 
 			//Interface Connections
 			this.v_if = v_if;
 
 			// Mailbox connections 
 			this.elec_mon_scr = elec_mon_scr; //between (monitor) and (Agent)
-			this.os_received_mon_gen = os_received_mon_gen;
+			//this.os_received_mon_gen = os_received_mon_gen;
 
 			/*
 			//Event Connections
@@ -858,9 +858,10 @@
 			elec_tr_lane_x.o_sets = TS1_gen4;
 			elec_tr_lane_x.order = order;
 			elec_tr_lane_x.lane = lane;
+			elec_tr_lane_x.tr_os = ord_set;
 			
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			$display("[ELEC MONITOR] TS1 Gen 4 with order [%0d] RECEIVED CORRECTLY ON %0d", order, elec_tr_lane_x.lane.name());
 			
 		endtask : TS1_gen4_detected		
@@ -934,8 +935,10 @@
 			end
 
 			elec_tr_lane_x.lane = lane;
+			elec_tr_lane_x.tr_os = ord_set;
+
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			if (error_detected == 0)
 			begin
 				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  elec_tr_lane_x.lane.name());	
@@ -964,7 +967,7 @@
 			lane_x_gen23_received = {};
 
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			elec_tr_lane_x = new();
 
 		endtask	
