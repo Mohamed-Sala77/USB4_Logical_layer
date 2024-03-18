@@ -8,7 +8,7 @@
 
 		// Event Signals
 		event elec_gen_drv_done;
-		event sbtx_high_recieved;
+		event sbtx_high_received;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
 
 
@@ -21,7 +21,7 @@
 		mailbox #(elec_layer_tr) elec_gen_drv; // connects Stimulus generator to the driver inside the agent
 		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
-		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
+		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_received, elec_AT_cmd_received);
 
 			// Mailbox connections between generator and agent
 			this.elec_gen_mod = elec_gen_mod;
@@ -31,7 +31,7 @@
 
 			// Event Signals Connections
 			this.elec_gen_drv_done = elec_gen_drv_done;
-			this.sbtx_high_recieved = sbtx_high_recieved;
+			this.sbtx_high_received = sbtx_high_received;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
 			
 
@@ -52,7 +52,7 @@
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
 				$display("[ELEC GENERATOR] Waiting for SBTX high");
-				@(sbtx_high_recieved);
+				@(sbtx_high_received);
 
 				transaction.sbrx = 1'b1;
 				transaction.electrical_to_transport = 0;
@@ -75,7 +75,7 @@
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a DEVICE router");
 				@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
-				@(sbtx_high_recieved); // wait for the monitor to receive SBTX high for tConnectTx
+				@(sbtx_high_received); // wait for the monitor to receive SBTX high for tConnectTx
 				
 			end
 
@@ -181,8 +181,8 @@
 				SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3 : 
 				begin
 					repeat (2) begin
-					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
+					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
 					$display("[ELEC GENERATOR] SENDING [%0p]",OS);
 					@(elec_gen_drv_done);	// To wait for the driver to finish driving the data		

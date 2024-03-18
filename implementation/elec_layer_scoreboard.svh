@@ -8,13 +8,19 @@
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
 		mailbox #(elec_layer_tr) elec_mod_scr; // connects reference model to the scoreboard 
 
+		//Events
+		event sbtx_high_received;
+		event elec_AT_cmd_received;
+
 		//NEW Function
-		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr);
+		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr, event sbtx_high_received, elec_AT_cmd_received);
 
 			// Mailbox connections
 			this.elec_mon_scr = elec_mon_scr; // connections between scoreboard and UL Agent's Monitor
 			this.elec_mod_scr = elec_mod_scr; // connections between scoreboard and Reference Model
-			
+
+			this.sbtx_high_received = sbtx_high_received; 		//connected between scoreboard and sequence
+			this.elec_AT_cmd_received = elec_AT_cmd_received;	//connected between scoreboard and sequence
 			elec_tr_model = new();
 
 		endfunction : new
@@ -35,6 +41,8 @@
 			
 				elec_mon_scr.get(elec_tr);
 				$display("[ELEC SCOREBOARD] Time: %0t   Transaction Received: %p", $time, elec_tr);
+				event_trigger(); // to trigger the sbtx_high_received event
+
 				//$display("[ELEC SCOREBOARD] DUT transaction: %p",elec_tr);
 
 
@@ -117,5 +125,22 @@
 			
 
 		endtask : run
+
+
+		//Task to trigger an event connected between the scoreboard and the sequence(stimulus generator)
+		task event_trigger;	
+			if ( (elec_tr.sbtx == 1'b1) && (elec_tr.phase == 3'b010) )
+			begin
+				-> sbtx_high_received;
+			end
+
+			if (elec_tr.transaction_type == AT_cmd)
+			begin
+				-> elec_AT_cmd_received;
+			end
+
+
+
+		endtask : event_trigger
 		
 	endclass : elec_layer_scoreboard

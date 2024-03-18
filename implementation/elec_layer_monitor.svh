@@ -14,10 +14,11 @@
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
 		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
+		/*
 		//Events
 		event sbtx_high_recieved;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
-
+		*/
 
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
@@ -60,7 +61,7 @@
 		bit [419:0] TS234_DATA;
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_recieved, elec_AT_cmd_received);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen);
 
 			//Interface Connections
 			this.v_if = v_if;
@@ -69,9 +70,11 @@
 			this.elec_mon_scr = elec_mon_scr; //between (monitor) and (Agent)
 			this.os_received_mon_gen = os_received_mon_gen;
 
+			/*
 			//Event Connections
 			this.sbtx_high_recieved = sbtx_high_recieved;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
+			*/
 
 			elec_tr = new();
 			elec_tr_lane1 = new();
@@ -361,7 +364,7 @@
 
 							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) ) && !sent_to_scr ) // sbtx high from DUT
 							begin
-								-> sbtx_high_recieved;
+								//-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1; 
 								elec_tr.phase = 3'b010;
@@ -381,7 +384,7 @@
 
 							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) ) && !sent_to_scr) // sbtx high from DUT
 							begin
-								-> sbtx_high_recieved;
+								//-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbrx_raised_time:%t", sbrx_raised_time);
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1;
@@ -562,7 +565,7 @@
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
-							-> elec_AT_cmd_received;
+							//-> elec_AT_cmd_received;
 
 							elec_tr = new();
 						end
