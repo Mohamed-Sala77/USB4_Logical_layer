@@ -17,7 +17,8 @@ module control_fsm
 (
   input  wire        fsm_clk, 
   input  wire        reset_n,
-  input  wire [3:0]  os_in, //received from data bus indicating which os received
+  input  wire [3:0]  os_in_l0, //received from data bus indicating which os received on lane 0
+  input  wire [3:0]  os_in_l1, //received from data bus indicating which os received on lane 1
   input  wire        disconnect_sbrx, //disconnection requested from other lane
   input  wire        s_write_i,
   input  wire        s_read_i,
@@ -34,6 +35,7 @@ module control_fsm
   input  wire        tgen4_ts1_timeout,
   input  wire        tgen4_ts2_timeout, 
   input  wire        trans_sent, 
+  input  wire        new_sym, 
   output reg  [2:0]  trans_sel,
   output reg         disconnect_sbtx, //send zeros in sbtx to complete disconnection
   output reg         fsm_disabled, //indicating fsm is DISABLED
@@ -51,28 +53,28 @@ module control_fsm
   output reg         s_write_o
 );
 
-localparam DISABLED            = 'b0000, //DISABLED state
+localparam DISABLED              = 'b0000, //DISABLED state
 
            //cld sub-state machine
-           CLD_CABLE_PROP      = 'b0001,
-           CLD_DET_DEVICE      = 'b0010,
-           CLD_PARAMETERS_1    = 'b0011, 
-           CLD_PARAMETERS_2    = 'b0100, 
-           CLD_CLK_SWITCH      = 'b0101, 
+           CLD_CABLE_PROP        = 'b0001,
+           CLD_DET_DEVICE        = 'b0010,
+           CLD_PARAMETERS_1      = 'b0011, 
+           CLD_PARAMETERS_2      = 'b0100, 
+           CLD_CLK_SWITCH        = 'b0101, 
 		   
 		   //training GEN4 sub-state machine
-           TRAINING_GEN4_TS1   = 'b0110,
-           TRAINING_GEN4_TS2   = 'b0111,
-           TRAINING_GEN4_TS3   = 'b1000,
-           TRAINING_GEN4_TS4   = 'b1001,
+           TRAINING_GEN4_TS1     = 'b0110,
+           TRAINING_GEN4_TS2     = 'b0111,
+           TRAINING_GEN4_TS3     = 'b1000,
+           TRAINING_GEN4_TS4     = 'b1001,
 		   
 		   //training GEN3 and GEN2 sub-state machine
-           TRAINING_GEN3_SLOS1 = 'b1010,
-           TRAINING_GEN3_SLOS2 = 'b1011,
-           TRAINING_GEN3_TS1   = 'b1100,
-           TRAINING_GEN3_TS2   = 'b1101,
+           TRAINING_GEN2_3_SLOS1 = 'b1010,
+           TRAINING_GEN2_3_SLOS2 = 'b1011,
+           TRAINING_GEN2_3_TS1   = 'b1100,
+           TRAINING_GEN2_3_TS2   = 'b1101,
 		   
-           CL0                 = 'b1110; //data sent normally
+           CL0                   = 'b1110; //data sent normally
 
 
 localparam GEN4 = 'b00,
@@ -82,8 +84,8 @@ localparam GEN4 = 'b00,
 reg [3:0]  cs, ns;
 	   
 reg [5:0]  os_sent_cnt;
-reg        enough_os_sent;
-reg        os_received;
+reg [1:0]  os_rec_cnt_l0;
+reg [1:0]  os_rec_cnt_l1;
 		   
 reg [1:0]  gen_speed_reg,
            cable_gen,
@@ -172,10 +174,12 @@ always @(*)
 		  ns = DISABLED;
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
-        else if (gen_speed == GEN4) 
+        else if (gen_speed == GEN4 && new_sym) 
 		  ns = TRAINING_GEN4_TS1;
+        else if (new_sym)
+		  ns = TRAINING_GEN2_3_SLOS1; 
         else 
-		  ns = TRAINING_GEN3_SLOS1; 
+		  ns = CLD_CLK_SWITCH; 
       end
     
     TRAINING_GEN4_TS1 : 
@@ -188,7 +192,7 @@ always @(*)
 		  ns = CLD_PARAMETERS_1;
 		else if (tgen4_ts1_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
+        else if (os_sent_cnt==16 && os_rec_cnt_l0==1 && os_rec_cnt_l1==1) 
 		  ns = TRAINING_GEN4_TS2;
         else 
 		  ns = TRAINING_GEN4_TS1; 
@@ -204,7 +208,7 @@ always @(*)
 		  ns = CLD_PARAMETERS_1;
 		else if (tgen4_ts2_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
+        else if (os_sent_cnt==16 && os_rec_cnt_l0==1 && os_rec_cnt_l1==1) 
 		  ns = TRAINING_GEN4_TS3;
         else 
 		  ns = TRAINING_GEN4_TS2; 
@@ -218,7 +222,7 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
+        else if (os_sent_cnt==16 && os_rec_cnt_l0==1 && os_rec_cnt_l1==1) 
 		  ns = TRAINING_GEN4_TS4;
         else 
 		  ns = TRAINING_GEN4_TS3; 
@@ -232,13 +236,13 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
+        else if (os_sent_cnt==16 && os_rec_cnt_l0==1 && os_rec_cnt_l1==1 && new_sym) 
 		  ns = CL0;
         else 
 		  ns = TRAINING_GEN4_TS4; 
       end
 	  
-    TRAINING_GEN3_SLOS1 : 
+    TRAINING_GEN2_3_SLOS1 : 
       begin 
         if (lane_disable) 
 		  ns = DISABLED;
@@ -246,13 +250,13 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
-		  ns = TRAINING_GEN3_SLOS2;
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+		  ns = TRAINING_GEN2_3_SLOS2;
         else 
-		  ns = TRAINING_GEN3_SLOS1; 
+		  ns = TRAINING_GEN2_3_SLOS1; 
       end
 	  
-    TRAINING_GEN3_SLOS2 : 
+    TRAINING_GEN2_3_SLOS2 : 
       begin 
         if (lane_disable) 
 		  ns = DISABLED;
@@ -260,13 +264,13 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
-		  ns = TRAINING_GEN3_TS1;
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+		  ns = TRAINING_GEN2_3_TS1;
         else 
-		  ns = TRAINING_GEN3_SLOS2; 
+		  ns = TRAINING_GEN2_3_SLOS2; 
       end
 	  
-    TRAINING_GEN3_TS1 : 
+    TRAINING_GEN2_3_TS1 : 
       begin 
         if (lane_disable) 
 		  ns = DISABLED;
@@ -274,13 +278,15 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
-		  ns = TRAINING_GEN3_TS2;
+        else if (gen_speed==GEN2 && os_sent_cnt==32 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+		  ns = TRAINING_GEN2_3_TS2;
+        else if (gen_speed==GEN3 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+		  ns = TRAINING_GEN2_3_TS2;
         else 
-		  ns = TRAINING_GEN3_TS1; 
+		  ns = TRAINING_GEN2_3_TS1; 
       end
 	  
-    TRAINING_GEN3_TS2 : 
+    TRAINING_GEN2_3_TS2 : 
       begin 
         if (lane_disable) 
 		  ns = DISABLED;
@@ -288,10 +294,12 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (enough_os_sent && os_received) 
+        else if (gen_speed==GEN2 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
+		  ns = CL0;
+        else if (gen_speed==GEN3 && os_sent_cnt==8 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = CL0;
         else 
-		  ns = TRAINING_GEN3_TS2; 
+		  ns = TRAINING_GEN2_3_TS2; 
       end
 	  
     CL0 : 
@@ -321,8 +329,8 @@ always @ (posedge fsm_clk or negedge reset_n)
         c_address_sent_flag <= 0;
         c_data_received_flag <= 0;		
 	    os_sent_cnt <= 'h0;
-        enough_os_sent <= 0;
-        os_received <= 0;
+        os_rec_cnt_l0 <= 0;
+        os_rec_cnt_l1 <= 0;
         cable_gen <= GEN4;
         opp_adapter_gen <= GEN4;
         is_usb4 <= 0;
@@ -349,8 +357,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address_sent_flag <= 0;
             c_data_received_flag <= 0;			
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
             cable_gen <= GEN4;
             opp_adapter_gen <= GEN4;
             is_usb4 <= 0;
@@ -362,8 +370,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             d_sel <= 'h9; //zeros in lanes
             gen_speed <= GEN4;				
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
 		    // reading from cfg spaces
             c_address <= 'd18;
             c_read_write <= 1; //read
@@ -393,8 +401,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             d_sel <= 'h9; //zeros in lanes
             gen_speed <= GEN4;				
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
           end
 		  
         CLD_PARAMETERS_1 : 
@@ -417,16 +425,16 @@ always @ (posedge fsm_clk or negedge reset_n)
 			  
 			d_sel <= 'h9; //zeros in lanes   
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
           end
 		  
         CLD_PARAMETERS_2 : 
           begin  
 			d_sel <= 'h9; //zeros in lanes   
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
           end
 		  
         TRAINING_GEN4_TS1 : 
@@ -439,16 +447,16 @@ always @ (posedge fsm_clk or negedge reset_n)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h4)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd16)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h4)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h4)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		   
@@ -462,16 +470,16 @@ always @ (posedge fsm_clk or negedge reset_n)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h5)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd16)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h5)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h5)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
@@ -484,126 +492,126 @@ always @ (posedge fsm_clk or negedge reset_n)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h6)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd16)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h6)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h6)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
         TRAINING_GEN4_TS4 : 
           begin
             fsm_training <= 1;
-			d_sel <= 'h7; //GEN4 TS4 in lanes back-to-back			
+			d_sel <= (ns == CL0)? 'h8 : 'h7; //GEN4 TS4 in lanes back-to-back			
 	        
 			if (ns == TRAINING_GEN4_TS4)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h7)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd16)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h7)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h7)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
-        TRAINING_GEN3_SLOS1 : 
+        TRAINING_GEN2_3_SLOS1 : 
           begin
             fsm_training <= 1;
 			d_sel <= 'h0; //GEN3 SLOS1 in lanes back-to-back			
 	        
-			if (ns == TRAINING_GEN3_SLOS1)
+			if (ns == TRAINING_GEN2_3_SLOS1)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h0)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd32)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h0)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h0)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
-        TRAINING_GEN3_SLOS2 : 
+        TRAINING_GEN2_3_SLOS2 : 
           begin
             fsm_training <= 1;
 			d_sel <= 'h1; //GEN3 SLOS2 in lanes back-to-back			
 	        
-			if (ns == TRAINING_GEN3_SLOS2)
+			if (ns == TRAINING_GEN2_3_SLOS2)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h1)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd32)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h1)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h1)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
-        TRAINING_GEN3_TS1 : 
+        TRAINING_GEN2_3_TS1 : 
           begin
             fsm_training <= 1;
 			d_sel <= 'h2; //GEN3 TS1 in lanes back-to-back			
 	        
-			if (ns == TRAINING_GEN3_TS1)
+			if (ns == TRAINING_GEN2_3_TS1)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h2)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd32)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h2)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h2)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
 		  
-        TRAINING_GEN3_TS2 : 
+        TRAINING_GEN2_3_TS2 : 
           begin
             fsm_training <= 1;
-			d_sel <= 'h3; //GEN3 TS2 in lanes back-to-back			
+			d_sel <= (ns == CL0)? 'h8 : 'h3; //GEN3 TS2 in lanes back-to-back			
 	        
-			if (ns == TRAINING_GEN3_TS2)
+			if (ns == TRAINING_GEN2_3_TS2)
 			  begin
 				if (os_sent)
 				  os_sent_cnt <= os_sent_cnt + 1;
-				if (os_in == 'h3)
-				  os_received <= 1;
-				if (os_sent_cnt == 'd32)
-				  enough_os_sent <= 1;
+				if (os_in_l0 == 'h3)
+				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				if (os_in_l1 == 'h3)
+				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
 				os_sent_cnt <= 'h0;
-                enough_os_sent <= 0;
-                os_received <= 0;
+                os_rec_cnt_l0 <= 0;
+                os_rec_cnt_l1 <= 0;
 			  end
           end
     
@@ -621,8 +629,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address_sent_flag <= 0;
             c_data_received_flag <= 0;			
 	        os_sent_cnt <= 'h0;
-            enough_os_sent <= 0;
-            os_received <= 0;
+            os_rec_cnt_l0 <= 0;
+            os_rec_cnt_l1 <= 0;
             cable_gen <= GEN4;
             opp_adapter_gen <= GEN4;
             is_usb4 <= 0;
