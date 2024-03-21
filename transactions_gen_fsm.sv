@@ -147,7 +147,7 @@ always @(*) begin
 
 		DISCONNECT: begin 
 
-			if (disconnect_sbtx && !tdisconnect_tx_min) begin
+			if (disconnect_sbtx || !tdisconnect_tx_min) begin
 
 				ns = DISCONNECT;
 				trans_reg = 0;
