@@ -42,7 +42,8 @@ wire         fsm_clk,
 wire [1:0]   gen_speed;
 
 wire [3:0]   d_sel;
-wire [3:0]   os_in;
+wire [3:0]   os_in_l0,
+             os_in_l1;
 wire         os_sent;
 
 wire         tx_lanes_on;
@@ -89,7 +90,9 @@ wire         tdisabled_min,
              ts2_gen4_s;
 
 wire [7:0]   lane_0_tx_bus_dis, 
-             lane_0_rx_bus_dis;
+             lane_1_tx_bus_dis,
+             lane_0_rx_bus_dis,
+             lane_1_rx_bus_dis;
 
 wire [7:0]   lane_0_tx_dis_enc, lane_1_tx_dis_enc,
              lane_0_rx_dis_enc, lane_1_rx_dis_enc;
@@ -124,12 +127,15 @@ wire         scr_rst,
 
 wire         data_os;
 
+wire         new_sym, new_sym_pul;
+
 
 control_fsm ctrl_fsm
 (
   .fsm_clk                 ( fsm_clk                 ), 
   .reset_n                 ( rst                     ),
-  .os_in                   ( os_in                   ),
+  .os_in_l0                ( os_in_l0                ),
+  .os_in_l1                ( os_in_l1                ),
   .disconnect_sbrx         ( disconnect              ),
   .s_write_i               ( s_write_pul             ),
   .s_read_i                ( s_read_pul              ),
@@ -154,6 +160,7 @@ control_fsm ctrl_fsm
   .ts1_gen4_s              ( ts1_gen4_s              ),
   .ts2_gen4_s              ( ts2_gen4_s              ),
   .d_sel                   ( d_sel                   ),
+  .new_sym                 ( new_sym_pul             ),
   .gen_speed               ( gen_speed               ),
   .c_address               ( c_address               ),
   .c_read_write            ( c_read_write            ),
@@ -169,28 +176,35 @@ data_bus bus
   .fsm_clk                 ( fsm_clk                 ),
   .d_sel                   ( d_sel                   ),
   .lane_0_rx               ( lane_0_rx_bus_dis       ),
-  .os_in                   ( os_in                   ),
+  .lane_1_rx               ( lane_1_rx_bus_dis       ),
+  .os_in_l0                ( os_in_l0                ),
+  .os_in_l1                ( os_in_l1                ),
   .lane_0_tx               ( lane_0_tx_bus_dis       ),
+  .lane_1_tx               ( lane_1_tx_bus_dis       ),
   .os_sent                 ( os_sent                 ),
   .transport_layer_data_in ( transport_layer_data_in ),
   .transport_layer_data_out( transport_layer_data_out),
   .data_os                 ( data_os                 ),
-  .tx_lanes_on             ( tx_lanes_on             )
+  .tx_lanes_on             ( tx_lanes_on             ),
+  .lane_rx_on              ( rx_lanes_on             )
 );                                                   
 												     
 lane_distributer lane_dist                           
 (                                                    
-  .clk_a                   ( fsm_clk                 ),               
-  .clk_b                   ( enc_clk                 ),               
+  .clk                     ( fsm_clk                 ),             
   .rst                     ( rst                     ),                   
   .enable_t                ( tx_lanes_on             ),           
   .enable_r                ( enable_deskew           ),         
-  .data_in                 ( lane_0_tx_bus_dis       ), 
-  .lane_0_rx               ( lane_0_rx_dis_enc       ), 
-  .lane_1_rx               ( lane_1_rx_dis_enc       ), 
-  .lane_0_tx               ( lane_0_tx_dis_enc       ), 
-  .lane_1_tx               ( lane_1_tx_dis_enc       ), 
-  .data_out                ( lane_0_rx_bus_dis       ),
+  .data_os                 ( data_os                 ),         
+  .d_sel                   ( d_sel                   ),         
+  .lane_0_tx_in            ( lane_0_tx_bus_dis       ), 
+  .lane_1_tx_in            ( lane_1_tx_bus_dis       ), 
+  .lane_0_rx_in            ( lane_0_rx_dis_enc       ), 
+  .lane_1_rx_in            ( lane_1_rx_dis_enc       ), 
+  .lane_0_tx_out           ( lane_0_tx_dis_enc       ), 
+  .lane_1_tx_out           ( lane_1_tx_dis_enc       ), 
+  .lane_0_rx_out           ( lane_0_rx_bus_dis       ),
+  .lane_1_rx_out           ( lane_1_rx_bus_dis       ),
   .enable_enc              ( enable_enc              ),
   .rx_lanes_on             ( rx_lanes_on             )
 );
@@ -206,7 +220,16 @@ encoding_block enc_block
   .gen_speed               ( gen_speed               ),    
   .lane_0_tx_enc_old       ( lane_0_tx_enc_ser       ),
   .lane_1_tx_enc_old       ( lane_1_tx_enc_ser       ),
-  .enable_ser              ( enable_ser              )
+  .enable_ser              ( enable_ser              ),
+  .new_sym                 ( new_sym                 )
+);
+
+pul_gen new_symbol
+(
+.clk(fsm_clk), 
+.reset_n(rst),
+.lvl_sig(new_sym),
+.pulse_sig(new_sym_pul)
 );
 
 decoding_block dec_block
