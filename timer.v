@@ -88,7 +88,10 @@ always @(posedge clk_b or negedge rst)
 	else
 	  begin
         if(disconnected_s) //if zeros are sent in sbtx
-		  tdisconnect_tx_cnt <= tdisconnect_tx_cnt + 1;
+		  if (tdisconnect_tx_cnt != TDISCONNECT_TX)
+		    tdisconnect_tx_cnt <= tdisconnect_tx_cnt + 1;
+		  else
+		    tdisconnect_tx_cnt <= tdisconnect_tx_cnt;
 		else
 		  tdisconnect_tx_cnt <= 'd0;
         if(fsm_disabled)
@@ -129,10 +132,10 @@ always @(posedge clk_b or negedge rst)
   begin
     if(!rst)
 	  begin
-        tdisconnect_tx_cnt  <= 'd0;
-        tdisabled_cnt      <= 'd0;
-        tgen4_ts1_cnt       <= 'd0;
-        tgen4_ts2_cnt       <= 'd0;
+        tdisconnect_tx_min  <= 'd0;
+        tdisabled_min      <= 'd0;
+        tgen4_ts1_timeout       <= 'd0;
+        tgen4_ts2_timeout       <= 'd0;
 	  end
 	  
 	else
