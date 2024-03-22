@@ -6,9 +6,9 @@
 
 
 		//Monitor Components
-		logic c_read, c_write;
-		logic [7:0] c_address;	
-		logic [31:0] c_data_out;
+		bit c_read, c_write;
+		bit [7:0] c_address;	
+		bit [31:0] c_data_out;
 
 
 		

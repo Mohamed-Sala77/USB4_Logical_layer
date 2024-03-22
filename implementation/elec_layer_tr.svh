@@ -25,10 +25,10 @@
 		rand tr_os_type tr_os; // indicates whether the driver will send transaction or ordered set
 
 		//Monitor Components
-		logic sbtx;
-		logic [7:0] transport_to_electrical; // Data sent after training between electrical layer and transport layer
-		logic [15:0] crc_received;	//crc field received in the AT cmd and AT rsp
-		logic [3:0] order; //Indicates the order of the TS recieved
+		bit sbtx;
+		bit [7:0] transport_to_electrical; // Data sent after training between electrical layer and transport layer
+		bit [15:0] crc_received;	//crc field received in the AT cmd and AT rsp
+		bit [3:0] order; //Indicates the order of the TS recieved
 		
 		LANE lane;
 
