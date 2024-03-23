@@ -21,16 +21,15 @@ module logical_layer
   input  wire [7:0]  transport_layer_data_in, 
   input  wire        lane_0_rx_i, 
   input  wire        lane_1_rx_i,
-  input  wire [7:0]  control_unit_data,
   input  wire        data_incoming,
   output wire [7:0]  transport_layer_data_out,
   output wire        sbtx, 
   output wire        lane_0_tx_o, 
-  output wire        lane_1_tx_o, 
+  output wire        lane_1_tx_o,  
   output wire        c_read_write, 
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
-  output wire        enable_rs
+  output wire        enable_scr
 );
 
 
@@ -63,6 +62,7 @@ wire         trans_sent;
 wire         disconnect_sbtx;
 wire         disconnected_s;
 
+wire [1:0]   trans_state;
 wire [23:0]  payload_in;
 wire [7:0]   s_address_i;
 wire         s_read_lvl, 
@@ -247,39 +247,19 @@ decoding_block dec_block
   .enable_deskew           ( enable_deskew           )
 );
 
-scrambler_descrambler #(.SEED('h1f_eedd)) scr_descr
-(
-  .clk                     ( ser_clk                 ), 
-  .rst                     ( rst                     ), 
-  .enable_scr              ( enable_scr              ), 
-  .data_incoming           ( data_incoming           ), 
-  .scr_rst                 ( scr_rst                 ),  
-  .descr_rst               ( descr_rst               ),
-  .lane_0_tx               ( lane_0_tx_ser_scr       ), 
-  .lane_1_tx               ( lane_1_tx_ser_scr       ), 
-  .lane_0_rx_scr           ( lane_0_rx_i             ),
-  .lane_1_rx_scr           ( lane_1_rx_i             ), 
-  .lane_0_tx_scr           ( lane_0_tx_o             ),
-  .lane_1_tx_scr           ( lane_1_tx_o             ),
-  .lane_0_rx               ( lane_0_rx_ser_scr       ), 
-  .lane_1_rx               ( lane_1_rx_ser_scr       ), 
-  .enable_deser            ( enable_deser            ), 
-  .enable_rs               ( enable_rs               ) 
-);
-
 lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
 (
   .clk                     ( ser_clk                 ), 
   .rst                     ( rst                     ),
   .enable_ser              ( enable_ser              ),
-  .enable_deser            ( enable_deser            ),
+  .enable_deser            ( data_incoming           ),
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),
-  .lane_0_rx_ser           ( lane_0_rx_ser_scr       ),
-  .lane_1_rx_ser           ( lane_1_rx_ser_scr       ),
-  .lane_0_tx_ser           ( lane_0_tx_ser_scr       ),
-  .lane_1_tx_ser           ( lane_1_tx_ser_scr       ),
+  .lane_0_rx_ser           ( lane_0_rx_i             ),
+  .lane_1_rx_ser           ( lane_1_rx_i             ),
+  .lane_0_tx_ser           ( lane_0_tx_o             ),
+  .lane_1_tx_ser           ( lane_1_tx_o             ),
   .scr_rst                 ( scr_rst                 ),
   .enable_scr              ( enable_scr              ),
   .lane_0_rx_parallel      ( lane_0_rx_enc_ser       ), 
@@ -313,16 +293,16 @@ transactions_gen_fsm trans_gen
 (
   .sb_clk                  ( sb_clk                  ),                           
   .rst                     ( rst                     ),                              
-  .sb_read                 ( sb_read                 ),             
-  .control_unit_data       ( control_unit_data       ),   
+  .sb_read                 ( sb_read                 ),    
   .trans_sel               ( trans_sel_pul           ), 
   .trans_sent              ( trans_sent              ), 
+  .trans_state             ( trans_state             ), 
   .disconnect_sbtx         ( disconnect_sbtx         ),    
   .disconnected_s          ( disconnected_s          ),    
   .tdisconnect_tx_min      ( tdisconnect_tx_min      ),    
   .trans                   ( trans                   ),               
   .crc_en                  ( crc_en                  ),              
-  .sbtx_sel                ( sbtx_sel                )             
+  .sbtx_sel                ( sbtx_sel                )            
 );
 
 serializer #(.WIDTH(10)) sbtx_serializer
@@ -330,7 +310,8 @@ serializer #(.WIDTH(10)) sbtx_serializer
   .clk                     ( sb_clk                  ), 
   .rst                     ( rst                     ),
   .parallel_in             ( trans                   ),
-  .ser_out                 ( trans_ser               )
+  .ser_out                 ( trans_ser               ),
+  .trans_state             ( trans_state             )
 );
 
 crc_16 #(.SEED('hFFFF)) crc_gen
