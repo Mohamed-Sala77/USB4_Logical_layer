@@ -21,6 +21,7 @@ module crc_16_rec #( parameter SEED = 16'hFFFF)
 );
             
 
+   reg    [3:0]                counter  ;   
    reg    [15:0]               lfsr     ;   
    reg                         flag     ;   
    wire                        feedback ; 
@@ -35,36 +36,42 @@ module crc_16_rec #( parameter SEED = 16'hFFFF)
              lfsr <= SEED;
              error <= 1'b0;
              flag <= 1'b0;
+             counter <= 0;
           end
         else if(crc_en) 
           begin
             error <= 1'b0;
-            flag <= 1'b0;
-	        lfsr[15] <= lfsr[14] ^ feedback;
-	        lfsr[14] <= lfsr[13];     // is equivalent to lfsr <= {feedback, lfsr[7] ^ feedback , lfsr[6:4], lfsr[3] ^ feedback, lfsr[2:1]} ;
-            lfsr[13] <= lfsr[12];
-            lfsr[12] <= lfsr[11]; 
-            lfsr[11] <= lfsr[10];
-            lfsr[10] <= lfsr[9];
-            lfsr[9]  <= lfsr[8];
-            lfsr[8]  <= lfsr[7];
-	        lfsr[7]  <= lfsr[6];
-	        lfsr[6]  <= lfsr[5];
-	        lfsr[5]  <= lfsr[4];
-	        lfsr[4]  <= lfsr[3];
-	        lfsr[3]  <= lfsr[2];
-	        lfsr[2]  <= lfsr[1] ^ feedback;
-	        lfsr[1]  <= lfsr[0];
-	        lfsr[0]  <= feedback; 
+			counter <= (counter==9)? 0 : counter + 1;
+            if(counter !=0 && counter!=9)
+			  begin
+			    flag <= 1'b0;
+	            lfsr[15] <= lfsr[14] ^ feedback;
+	            lfsr[14] <= lfsr[13];     // is equivalent to lfsr <= {feedback, lfsr[7] ^ feedback , lfsr[6:4], lfsr[3] ^ feedback, lfsr[2:1]} ;
+                lfsr[13] <= lfsr[12];
+                lfsr[12] <= lfsr[11]; 
+                lfsr[11] <= lfsr[10];
+                lfsr[10] <= lfsr[9];
+                lfsr[9]  <= lfsr[8];
+                lfsr[8]  <= lfsr[7];
+	            lfsr[7]  <= lfsr[6];
+	            lfsr[6]  <= lfsr[5];
+	            lfsr[5]  <= lfsr[4];
+	            lfsr[4]  <= lfsr[3];
+	            lfsr[3]  <= lfsr[2];
+	            lfsr[2]  <= lfsr[1] ^ feedback;
+	            lfsr[1]  <= lfsr[0];
+	            lfsr[0]  <= feedback; 
+			  end
           end
         else			 
           begin 
             error <= (lfsr != 'h0 && !flag); //if lfsr no having zeros --> error
             flag <= 1; //if lfsr no having zeros --> error
-            lfsr <= SEED;			
+            lfsr <= SEED;	
+            counter <= 0;			
           end                
      end
-                
+		  
 endmodule
 
 `default_nettype none
