@@ -60,7 +60,7 @@ module top;
 									.sbtx(elec_if.sbtx),
 									.c_read_write(config_if.c_read), // needs to be changed by design team
 									.c_address(config_if.c_address),
-									.c_data_in(config_if.c_data_in), // needs to be changed by design team
+									.c_data_in(config_if.c_data_in),
 									.c_data_out(config_if.c_data_out),
 									.transport_layer_data_in(UL_if.transport_layer_data_in),
 									.lane_0_rx_i(elec_if.lane_0_rx),		
@@ -102,6 +102,8 @@ module top;
 
 	always #((10**15)/(2*freq_80)) local_clk = ~local_clk;
 
+	always #((10**15)/(2*freq_80)) gen4_fsm_clk = ~gen4_fsm_clk;
+	
 	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
 	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
@@ -114,20 +116,18 @@ module top;
 	
 	always #((10**15)/(2*freq_38_788)) gen3_fsm_clk = ~gen3_fsm_clk;
 
-	always #((10**15)/(2*freq_80)) gen4_fsm_clk = ~gen4_fsm_clk;
 
 	//always #(Rx_clock_cycle/2) Rx_Clock = ~Rx_Clock;
 
 
 	// TEST 
 	initial begin 
-		Testenv t_env;
-		t_env = new(UL_if, elec_if, config_if);
-		reset();
-		t_env.build();
-
-
-		t_env.run();
+		 
+			Testenv t_env;
+			t_env = new(UL_if, elec_if, config_if);
+			reset();
+			t_env.build();
+			t_env.run();
 		
 	end
 

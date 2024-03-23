@@ -39,7 +39,8 @@ module encoding_block
   	    output reg [ 131 : 0 ] lane_0_tx_enc_old,
   	    output reg [ 131 : 0 ] lane_1_tx_enc_old,
 
-  	    output reg             enable_ser
+  	    output reg             enable_ser,
+  	    output reg             new_sym
 
   	    );
 
@@ -50,6 +51,7 @@ module encoding_block
 	reg [7:0] mem_1  [16];
 
 	reg [4:0] byte_numb;
+	reg [3:0] d_sel_reg;
 
 
 
@@ -126,12 +128,14 @@ module encoding_block
 			lane_0_tx_enc_old <= 0;
 			lane_1_tx_enc_old <= 0;
 			enable_ser <= 0 ;
+			d_sel_reg <= 0 ;
 
 		end else if(~enable) begin
 
 			lane_0_tx_enc_old <= 0;
 			lane_1_tx_enc_old <= 0;
 			enable_ser <= 0 ;
+			d_sel_reg <= 0 ;
 			
 		end else begin
 
@@ -141,10 +145,11 @@ module encoding_block
 
 					if (byte_numb <= 7) begin
 
+						d_sel_reg <= (byte_numb == 1)? d_sel : d_sel_reg;
 						mem_0 [byte_numb] <= lane_0_tx;
 						mem_1 [byte_numb] <= lane_1_tx;
 
-					end else if (d_sel != 8 && gen_speed==2) begin 
+					end else if (d_sel_reg != 8 && gen_speed==2) begin 
 						lane_0_tx_enc_old <= {2'b10,data_0[63:0]};
 						lane_1_tx_enc_old <= {2'b10,data_1[63:0]};
 						enable_ser <= 1;
@@ -152,7 +157,7 @@ module encoding_block
 						mem_0 [0] <= lane_0_tx;
 						mem_1 [0] <= lane_1_tx;
 
-					end else if (d_sel == 8 && gen_speed==2) begin 
+					end else if (d_sel_reg == 8 && gen_speed==2) begin 
 						lane_0_tx_enc_old <= {2'b01,data_0[63:0]};
 						lane_1_tx_enc_old <= {2'b01,data_1[63:0]};
 						enable_ser <= 1;
@@ -169,11 +174,12 @@ module encoding_block
 
 					if (byte_numb <= 15) begin
 
+						d_sel_reg <= (byte_numb == 1)? d_sel : d_sel_reg;
 						mem_0 [byte_numb] <= lane_0_tx;
 						mem_1 [byte_numb] <= lane_1_tx;
 
 
-					end else if (d_sel != 8 && gen_speed==1) begin 
+					end else if (d_sel_reg != 8 && gen_speed==1) begin 
 						lane_0_tx_enc_old <= {4'b1010,data_0[127:0]};
 						lane_1_tx_enc_old <= {4'b1010,data_1[127:0]};
 						enable_ser <= 1;
@@ -181,7 +187,7 @@ module encoding_block
 						mem_0 [0] <= lane_0_tx;
 						mem_1 [0] <= lane_1_tx;
 
-					end else if (d_sel == 8 && gen_speed==1) begin 
+					end else if (d_sel_reg == 8 && gen_speed==1) begin 
 						lane_0_tx_enc_old <= {4'b0101,data_0[127:0]};
 						lane_1_tx_enc_old <= {4'b0101,data_1[127:0]};
 						enable_ser <= 1;
@@ -212,6 +218,19 @@ module encoding_block
 
 		end 
 
+	end
+	
+	
+	always @(*) begin 
+		if(d_sel == 'h9) begin
+			new_sym <= enc_clk;
+		end else if(gen_speed == 'h2) begin
+			new_sym <= (byte_numb == 8);
+		end else if(gen_speed == 'h1) begin
+			new_sym <= (byte_numb == 16);
+		end else begin
+			new_sym <= enc_clk;
+		end
 	end
 
 endmodule

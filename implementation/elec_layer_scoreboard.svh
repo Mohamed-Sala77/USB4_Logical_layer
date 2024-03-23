@@ -35,15 +35,12 @@
 			
 
 
-				if(elec_mod_scr.try_get(elec_tr_model))
-					begin
-						$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
-					end
-
-				
-			
+				elec_mod_scr.get(elec_tr_model);
+				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
+					
 				elec_mon_scr.get(elec_tr);
 				$display("[ELEC SCOREBOARD] Time: %0t   Transaction Received: %p", $time, elec_tr);
+				
 				event_trigger(); // to trigger the sbtx_high_received event
 
 				//$display("[ELEC SCOREBOARD] DUT transaction: %p",elec_tr);

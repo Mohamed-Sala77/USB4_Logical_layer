@@ -51,6 +51,8 @@ reg [3:0] byte_numb;
 
 reg [3:0] max_byte_num;
 
+reg flag;
+
 
 	localparam GEN4 = 'b00,
                GEN3 = 'b01,
@@ -89,10 +91,12 @@ reg [3:0] max_byte_num;
 			enable_deskew <= 0;
 			lane_0_rx <= 'h0;
 			lane_1_rx <= 'h0;
+			flag <= 0;
 			
 		end else if(~enable_dec) begin
 
 			enable_deskew <= 0;
+			flag <= 0;
 			lane_0_rx <= mem_0[byte_numb];
 			lane_1_rx <= mem_1[byte_numb];
 
@@ -102,7 +106,10 @@ reg [3:0] max_byte_num;
 			lane_1_rx <= mem_1[byte_numb];
 			
 			if(byte_numb == 0) 
-			  enable_deskew <= 1;
+			  begin
+			    flag <= 1;
+			    enable_deskew <= (gen_speed == GEN4)? flag : 1;
+			  end
 			
 			if (byte_numb == max_byte_num) begin
 

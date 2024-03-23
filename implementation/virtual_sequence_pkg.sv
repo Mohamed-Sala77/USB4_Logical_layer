@@ -13,12 +13,12 @@
 			v_elec_layer_generator.phase_force(1);
 			
 			v_config_space_stim.execute;
-/*
+
 			//Phase 2
 			v_elec_layer_generator.sbrx_high("Host");
 
 			//$stop;
-
+/*
 			// Phase 3
 			v_elec_layer_generator.send_transaction(AT_rsp,3,1,8'h0B,7'h3,24'h123456);  
 

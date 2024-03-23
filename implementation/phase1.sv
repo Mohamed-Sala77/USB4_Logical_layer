@@ -33,6 +33,7 @@ class phase1 extends primary_steps;
       C_transaction.c_address = 8'd18;   
       C_transaction.c_write = 0 ;   
       C_transaction.c_read = 1;   
+      C_transaction.c_data_out=0;
       config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
       C_transaction = new ();
       E_transaction.sbtx = 0 ;        //? is that should be here 

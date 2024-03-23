@@ -38,8 +38,9 @@
 
 				//transaction_mon.c_read = 1; // SHOULD BE REMOVEDDDDDD
 				//transaction_mon.c_address = 4; // SHOULD BE REMOVEDDDDDD
-
-				if (transaction_mon.c_read || transaction_mon.c_write)
+  				 
+				//` exept here the case of address =0 since the design sure thay have the right data 
+				if ((transaction_mon.c_read || transaction_mon.c_write )&& (transaction_mon.c_address) )    
 					begin
 						mb_mon.put(transaction_mon);
 					end
