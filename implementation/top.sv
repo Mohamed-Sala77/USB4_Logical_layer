@@ -65,13 +65,13 @@ module top;
 									.transport_layer_data_in(UL_if.transport_layer_data_in),
 									.lane_0_rx_i(elec_if.lane_0_rx),		
 									.lane_1_rx_i(elec_if.lane_1_rx),
-									.control_unit_data(0),
+									//.control_unit_data(0),
 									.data_incoming(1),
 									.transport_layer_data_out(UL_if.transport_layer_data_out),
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
-									.lane_1_tx_o(elec_if.lane_1_tx),
-									.enable_rs(enable_rs_dummy)
+									.lane_1_tx_o(elec_if.lane_1_tx)
+									//.enable_rs(enable_rs_dummy)
 								);
 
 	//Clocks' Initialization

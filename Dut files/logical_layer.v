@@ -49,7 +49,6 @@ wire         tx_lanes_on;
 wire         rx_lanes_on;
 wire         enable_ser;
 wire         enable_deser;
-wire         enable_scr;
 wire         enable_enc;
 wire         enable_dec;
 wire         enable_deskew;
