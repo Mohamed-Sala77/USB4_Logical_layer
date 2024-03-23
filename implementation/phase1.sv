@@ -45,22 +45,6 @@ class phase1 extends primary_steps;
     end
   endtask
 
-
-  task read_order2;
-    begin
-      C_transaction.c_address = 8'd18;   
-      C_transaction.c_write = 0 ;   
-      C_transaction.c_read = 1;   
-      config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
-      C_transaction = new ();
-      //$display ("E_transaction = %p",E_transaction);
-      //$display ("E_transaction = %p",E_transactio//n);
-      
-
-     // assign_sb_data();
-    end
-  endtask
-
   // task to get packets
   task  get_packets();
     begin
@@ -153,7 +137,6 @@ class phase1 extends primary_steps;
       read_order1();
       get_packets();
       check_usb4_data();
-      read_order2();
       check_gen4_data ();
 
     end

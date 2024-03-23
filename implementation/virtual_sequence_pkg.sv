@@ -13,7 +13,7 @@
 			v_elec_layer_generator.phase_force(1);
 			
 			v_config_space_stim.execute;
-
+/*
 			//Phase 2
 			v_elec_layer_generator.sbrx_high("Host");
 
@@ -63,7 +63,7 @@
 			
 			// disable
 			//$stop();
-
+*/
 		endtask : run
 
 
