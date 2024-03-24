@@ -71,7 +71,7 @@ module top;
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
 									.lane_1_tx_o(elec_if.lane_1_tx)
-									//.enable_rs(enable_rs_dummy)
+									.enable_scr(enable_rs_dummy)
 								);
 
 	//Clocks' Initialization
