@@ -24,7 +24,7 @@
 			begin
 				
 				//` we put here get operation first to make scrb block until the model " who know which pahse we in" put tht data 
-				mb_model.get(transaction_model) ;
+				mb_model.get(transaction_model);
 				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
 				
 				mb_mon.get(transaction_mon);
@@ -69,4 +69,4 @@
 
 	endclass : config_space_scoreboard
 
- 
+  

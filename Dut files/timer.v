@@ -30,7 +30,7 @@ module timer
   output reg  tgen4_ts2_timeout      
 );
 
-localparam TDISCONNECT_TX  = 'd50,
+localparam TDISCONNECT_TX  = 'd1,   //! that should be 50 
            TDISCONNECT_RX  = 'd14,
            TCONNECT_RX     = 'd25,
            TDISABLED      = 'd10,

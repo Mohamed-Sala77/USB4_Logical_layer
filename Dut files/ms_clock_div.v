@@ -18,7 +18,7 @@ module ms_clock_div (
 	        r_reg1000 <= 9'b0;
         end	 
         else begin 
-	        if (r_reg1000 == 499) begin //clk/1000
+	        if (r_reg1000 == 2) begin //clk/1000   //! that should be a limititation to speed up simulation 
 		        r_reg1000 <= 9'b0;
 			    clk_div_1000 <= ~clk_div_1000;
 		    end

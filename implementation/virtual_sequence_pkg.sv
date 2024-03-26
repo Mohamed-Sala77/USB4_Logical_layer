@@ -18,7 +18,7 @@
 			v_elec_layer_generator.sbrx_high("Host");
 
 			//$stop;
-/*
+
 			// Phase 3
 			v_elec_layer_generator.send_transaction(AT_rsp,3,1,8'h0B,7'h3,24'h123456);  
 
@@ -27,7 +27,7 @@
 			
 			// v_elec_layer_generator.send_transaction(LT_fall);  // Testing LT Fall 
 
-			
+		/*	
 			// // Phase 4
 
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);

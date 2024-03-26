@@ -13,13 +13,13 @@ module top;
 
 	parameter Sys_clock_cycle = 1 * 10**6; parameter Rx_clock_cycle = 50;
 
-	parameter [63:0] SB_freq = 1 * 10**6;
-	parameter [63:0] freq_19_394 = 19.394 * 10 ** 9;	//19.394 GHz
-	parameter [63:0] freq_38_788 = 38.788 * 10 ** 9;	//38.788 GHz
-	parameter [63:0] freq_10 = 64'd10 * 10 ** 9;		//10 GHz
-	parameter [63:0] freq_20 = 64'd20 * 10 ** 9;		//20 GHz
-	parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
-	parameter [63:0] freq_80 = 80 * 10 ** 9;			//80 GHz
+localparam [63:0] SB_freq = 1 * 10**6,
+freq_19_394 = 19.394 * 10 ** 9,	//19.394 GHz
+freq_38_788 = 38.788 * 10 ** 9,	//38.788 GHz
+freq_10 = 64'd10 * 10 ** 9,		  //10 GHz
+freq_20 = 64'd20 * 10 ** 9,		//20 GHz
+freq_40 = 40 * 10 ** 9,			//40 GHz
+freq_80 = 80 * 10 ** 9;			//80 GHz
 
 	/*
 	parameter clock_10G = 100;
@@ -40,7 +40,8 @@ module top;
 
 	//Reset generation
 	task reset();
-		repeat (3) @(posedge SB_clock) SystemReset = 0;
+		SystemReset = 0;
+		#(3*SB_clock);
 		SystemReset = 1;
 		
 		
@@ -70,7 +71,7 @@ module top;
 									.transport_layer_data_out(UL_if.transport_layer_data_out),
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
-									.lane_1_tx_o(elec_if.lane_1_tx)
+									.lane_1_tx_o(elec_if.lane_1_tx),
 									.enable_scr(enable_rs_dummy)
 								);
 

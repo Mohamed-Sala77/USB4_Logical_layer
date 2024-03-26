@@ -39,7 +39,7 @@
 				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
 					
 				elec_mon_scr.get(elec_tr);
-				$display("[ELEC SCOREBOARD] ] : DUT Received Time: %0t  , Transaction Received: %p", $time, elec_tr);
+				//$display("[ELEC SCOREBOARD] ] : DUT Received Time: %0t  , Transaction Received: %p", $time, elec_tr);
 				
 				event_trigger(); // to trigger the sbtx_high_received event
 
