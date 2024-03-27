@@ -5,7 +5,7 @@
 //Description: the data bus reciever is used in detecting the different ordered sets of gen3 and gen4 and sending the control fsm 
 // a signal indicating the type of the ordered set, it also forowards the transport layer data to the transport layer.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module data_bus_receive #(parameter SEED = 11'b10000000000)(
+module data_bus_receive #(parameter SEED = 11'b00000000001)(
 
     input            rst, fsm_clk, data_os,
     input      [7:0] lane_0_rx,
@@ -74,24 +74,26 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 			start_detect_lane1 <= 1'b0;
         end
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        else if ( data_os == 1'b1 & d_sel == 4'h8 ) begin // transport layer data forowarding
+        else if ( data_os == 1'b1 & d_sel == 4'h8 & lane_rx_on == 1'b1 ) begin // transport layer data forowarding
 		    transport_layer_data_out <= lane_0_rx;
 			os_in_l0 <= 4'h8;
 		end	
 		    
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	    else begin //ordered sets detecting
-		    lane_0_rx_ser <= temp_piso[7];                          //serializer
-		    lane_1_rx_ser <= temp_piso_lane1[7];                          //serializer
-            temp_piso <= (piso_busy)? {temp_piso[6:0],1'b0} : lane_0_rx;
-            temp_piso_lane1 <= (piso_busy)? {temp_piso_lane1[6:0],1'b0} : lane_1_rx;
-            piso_busy = (!(count_piso == 7));
-			count_piso <= (piso_busy)? count_piso+1 : 1'b0;
+		    if (lane_rx_on == 1'b1) begin
+		        lane_0_rx_ser <= temp_piso[7];                          //serializer
+		        lane_1_rx_ser <= temp_piso_lane1[7];                          //serializer
+                temp_piso <= (piso_busy)? {temp_piso[6:0],1'b0} : lane_0_rx;
+                temp_piso_lane1 <= (piso_busy)? {temp_piso_lane1[6:0],1'b0} : lane_1_rx;
+                piso_busy = (!(count_piso == 7));
+			    count_piso <= (piso_busy)? count_piso+1 : 1'b0;
+			end	
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			if((lane_0_rx == 8'h7E | lane_0_rx == 8'h01 | lane_0_rx == 8'h20 | lane_0_rx == 8'hDF) &  (count_piso == 1)) begin
+			if((lane_0_rx == 8'h7E | lane_0_rx == 8'h01 | lane_0_rx == 8'h40 | lane_0_rx == 8'hBF) &  (count_piso == 1)) begin
 			    start_detect <= 1'b1;
 			end	
-			if((lane_1_rx == 8'h7E | lane_1_rx == 8'h01 | lane_1_rx == 8'h20 | lane_1_rx == 8'hDF) &  (count_piso == 1)) begin
+			if((lane_1_rx == 8'h7E | lane_1_rx == 8'h01 | lane_1_rx == 8'h40 | lane_1_rx == 8'hBF) &  (count_piso == 1)) begin
 			    start_detect_lane1 <= 1'b1;
 			end	
 			if (lane_rx_on == 1'b1 & count_piso == 1) begin
@@ -191,7 +193,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				                count_prbs_slos1 <= count_prbs_slos1 +1;
 					            if (count_prbs_slos1 == 2047) begin
 				                    os_in_l0 <=4'h0;
-								    if (lane_0_rx != 8'h20) begin 	
+								    if (lane_0_rx != 8'h40) begin 	
 								        start_detect <= 1'b0;
 									end
 					                count_prbs_slos1 <= 'b0;
@@ -205,7 +207,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					            count_prbs_slos1 <= 'b0;
 					            temp_prbs_slos1 <= SEED;
 				                os_in_l0 <= 4'h9;
-							    if (lane_0_rx != 8'h20) begin 	
+							    if (lane_0_rx != 8'h40) begin 	
 								        start_detect <= 1'b0;
 								end
  			                end
@@ -233,7 +235,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				                count_prbs_slos1_l1 <= count_prbs_slos1_l1 +1;
 					            if (count_prbs_slos1_l1 == 2047) begin
 				                    os_in_l1 <=4'h0;
-									if (lane_1_rx != 8'h20) begin
+									if (lane_1_rx != 8'h40) begin
 								        start_detect_lane1 <= 1'b0;
 									end
 					                count_prbs_slos1_l1 <= 'b0;
@@ -247,7 +249,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					            count_prbs_slos1_l1 <= 'b0;
 					            temp_prbs_slos1_l1 <= SEED;
 				                os_in_l1 <= 4'h9;
-							    if (lane_1_rx != 8'h20) begin
+							    if (lane_1_rx != 8'h40) begin
 								    start_detect_lane1 <= 1'b0;
 								end
  			                end
@@ -278,7 +280,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				                count_prbs_slos2 <= count_prbs_slos2 +1;
 					            if (count_prbs_slos2 == 2047) begin
 				                    os_in_l0 <=4'h1;
-								    if (lane_0_rx != 8'hDF) begin
+								    if (lane_0_rx != 8'hBF) begin
 								        start_detect <= 1'b0;
 									end
 					                count_prbs_slos2 <= 'b0;
@@ -292,7 +294,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					            count_prbs_slos2 <= 'b0;
 					            temp_prbs_slos2 <= SEED;
 				                os_in_l0 <= 4'h9;
-							    if (lane_0_rx != 8'hDF) begin
+							    if (lane_0_rx != 8'hBF) begin
 								    start_detect <= 1'b0;
 							    end
  			                end
@@ -320,7 +322,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				                count_prbs_slos2_l1 <= count_prbs_slos2_l1 +1;
 					            if (count_prbs_slos2_l1 == 2047) begin
 				                    os_in_l1 <=4'h1;
-								    if (lane_1_rx != 8'hDF) begin
+								    if (lane_1_rx != 8'hBF) begin
 								        start_detect_lane1 <= 1'b0;
 									end
 					                count_prbs_slos2_l1 <= 'b0;
@@ -334,7 +336,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					            count_prbs_slos2_l1 <= 'b0;
 					            temp_prbs_slos2_l1 <= SEED;
 				                os_in_l1 <= 4'h9;
-							    if (lane_1_rx != 8'hDF) begin
+							    if (lane_1_rx != 8'hBF) begin
 								    start_detect_lane1 <= 1'b0;
 								end
  			                end
@@ -543,7 +545,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					temp_prbs_slos2 <= SEED; 
 					temp_prbs_slos2_l1 <= SEED; 
 			        temp_prbs_ts1 <= SEED_GEN4;
-			        temp_prbs_ts1_l1 <= SEED_GEN4;
+			        temp_prbs_ts1_l1 <= SEED_GEN4_LANE1;
 		            temp_pipo_64 <= 64'b0;
 		            temp_pipo_64_lane1 <= 64'b0;
 		            temp_pipo_32 <= 32'b0;
@@ -556,6 +558,8 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 					count_prbs_ts1_l1 <= 'b0;
 			        os_in_l0 <= 4'h9;
 			        os_in_l1 <= 4'h9;
+					start_detect <= 1'b0;
+					start_detect_lane1 <= 1'b0;
 		        end	
 		
 			
@@ -566,7 +570,7 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				temp_prbs_slos2 <= SEED; 
 				temp_prbs_slos2_l1 <= SEED; 
 			    temp_prbs_ts1 <= SEED_GEN4;
-			    temp_prbs_ts1_l1 <= SEED_GEN4;
+			    temp_prbs_ts1_l1 <= SEED_GEN4_LANE1;
 		        temp_pipo_64 <= 64'b0;
 		        temp_pipo_64_lane1 <= 64'b0;
 		        temp_pipo_32 <= 32'b0;
@@ -579,7 +583,6 @@ module data_bus_receive #(parameter SEED = 11'b10000000000)(
 				count_prbs_ts1_l1 <= 'b0;
 				os_in_l0 <= 4'h9;
 				os_in_l1 <= 4'h9;
-				start_detect <= 1'b0;
 	        end			
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////				 
         end
