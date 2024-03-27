@@ -6,7 +6,7 @@
 // sent and then send it through the lane_0_tx, after sending the ordered set it sends the control fsm a signal indicating that the 
 // ordered set has been sent successfully, it also forwards the transport layer data coming from transport layer. 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module data_bus_transmit #(parameter SEED = 11'b10000000000)(
+module data_bus_transmit #(parameter SEED = 11'b00000000001)(
 
     input             rst, fsm_clk,
 	input      [7:0]  transport_layer_data_in,
@@ -84,7 +84,7 @@ module data_bus_transmit #(parameter SEED = 11'b10000000000)(
 					    lane_0_tx <= temp_sipo;
 					    lane_1_tx <= temp_sipo;
 					end
-					if(count_sipo == 'b1000) begin
+					if(count_sipo == 8) begin
 					    tx_lanes_on <= 1'b1;
 					end
 				os_sent <= 1'b0;	
