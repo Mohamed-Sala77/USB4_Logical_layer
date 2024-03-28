@@ -46,7 +46,8 @@ module control_fsm
   output reg  [1:0]  gen_speed, //GEN4, GEN3 or GEN2
   output reg  [31:0] c_data_out,
   output reg  [7:0]  c_address,
-  output reg         c_read_write,
+  output reg         c_read,
+  output reg         c_write,
   output reg  [7:0]  s_data_o,
   output reg  [7:0]  s_address_o,
   output reg         s_read_o,
@@ -325,7 +326,8 @@ always @ (posedge fsm_clk or negedge reset_n)
         gen_speed <= GEN4;
         c_data_out <= 'h0;
         c_address <= 'h0;
-        c_read_write <= 1;   
+        c_read <= 0;   
+        c_write <= 0;   
         c_address_sent_flag <= 0;
         c_data_received_flag <= 0;		
 	    os_sent_cnt <= 'h0;
@@ -353,7 +355,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             d_sel <= 'h9; //zeros in lanes
             gen_speed <= GEN4;
             c_address <= 'h0;
-            c_read_write <= 1;	
+            c_read <= 0;	
+            c_write <= 0;	
             c_address_sent_flag <= 0;
             c_data_received_flag <= 0;			
 	        os_sent_cnt <= 'h0;
@@ -374,17 +377,19 @@ always @ (posedge fsm_clk or negedge reset_n)
             os_rec_cnt_l1 <= 0;
 		    // reading from cfg spaces
             c_address <= 'd18;
-            c_read_write <= 1; //read
+			c_write <= 0;
 			
 			if (ns != CLD_CABLE_PROP)
 			  begin
 			    c_address_sent_flag <= 0;
 				c_data_received_flag <= 0;
+				c_read <= 0;
 			  end
 			else
 			  begin
                 c_address_sent_flag <= 1; //raised after entering this state by 1 clk cycle indicating address reached the cng spaces
                 c_data_received_flag <= c_address_sent_flag; //if address is sent --> data rec next clock cycle
+				c_read <= 1; //read
 			  end
 			  
             is_usb4 <= (c_data_in[7:0] == 'h40);
@@ -625,7 +630,8 @@ always @ (posedge fsm_clk or negedge reset_n)
             d_sel <= 'h9; //zeros in lanes
             gen_speed <= GEN4;
             c_address <= 'h0;
-            c_read_write <= 1;	
+            c_read <= 0;	
+            c_write <= 0;	
             c_address_sent_flag <= 0;
             c_data_received_flag <= 0;			
 	        os_sent_cnt <= 'h0;
