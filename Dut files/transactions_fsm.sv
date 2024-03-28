@@ -72,8 +72,6 @@ reg [7:0] s_address_reg;
 
 reg disconnect_reg;
 
-reg crc_det_en_reg;
-
 
 
 //systemverilog command for good visibility of the code state when debugging (synth.)
@@ -108,6 +106,8 @@ localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 //maximum # of received data symbols =69
 
 reg [6:0] max_data_counts; 
+
+reg [3:0] des_count;
 
 
 
@@ -213,7 +213,7 @@ always @(*) begin
 
 					CLSE_SYMBOL: ns=IDLE;
 
-					default: ns=IDLE;
+					default: ns=LT;
 
 				endcase
 			end
@@ -238,12 +238,15 @@ always @(*) begin
 
 					default: begin 
 
-						if (max_data_counts < 69) begin
+						if (des_count == 0) begin
 
-							ns = AT;
+							if (max_data_counts < 69) begin
 
-						end else begin 
-							ns = IDLE;
+								ns = AT;
+
+							end else begin 
+								ns = IDLE;
+							end
 						end
 
 					end
@@ -268,17 +271,7 @@ always @(*) begin
 
 					ETX_SYMBOL: ns= IDLE;
 
-					DLE_SYMBOL: begin
-
-						if (max_data_counts < 69) begin
-
-							ns = AT;
-
-						end else begin 
-							ns = IDLE;
-						end
-
-					end
+					DLE_SYMBOL: ns= DLE2;
 
 
 					STX_COMMAND_SYMBOL:ns= AT;
@@ -287,7 +280,7 @@ always @(*) begin
 					STX_RESPONSE_SYMBOL:ns= AT;
 
 
-					default : ns=IDLE;
+					default : ns=DLE2;
 
 				endcase
 
@@ -316,7 +309,7 @@ always @(*) begin
 			s_write_reg = 0;
 			s_address_reg = 0;
 			disconnect_reg = 1;
-			crc_det_en_reg = 0;
+			crc_det_en = 0;
 			trans_error_reg=0;
 
 			if (tconnect) begin
@@ -334,7 +327,7 @@ always @(*) begin
 			s_write_reg = 0;
 			s_address_reg = 0;
 			disconnect_reg = 0;
-			crc_det_en_reg = 0;
+			crc_det_en = 0;
 
 			if (error) begin
 				trans_error_reg=1;
@@ -342,6 +335,7 @@ always @(*) begin
 				storing_symbols[0] = sbrx [8:1];
 				trans_error_reg=0;
 				disconnect_reg=0;
+				crc_det_en=1;
 			end	if (tdisconnet) begin
 				disconnect_reg=1;
 			end
@@ -353,13 +347,14 @@ always @(*) begin
 
 			valid_reg = 0;
 			disconnect_reg = 0;
-			crc_det_en_reg = 0;
 			payload_in_reg=1;
 			s_address_reg=0;
+			crc_det_en = 1;
 
 
 			if (error) begin
 				trans_error_reg=1;
+				crc_det_en = 0;
 			end else begin
 
 				trans_error_reg=0;
@@ -369,6 +364,7 @@ always @(*) begin
 					LSE_SYMBOL: begin 
 
 						storing_symbols[1] = sbrx [8:1]; 
+						crc_det_en = 0;
 
 
 					end
@@ -376,7 +372,6 @@ always @(*) begin
 					STX_RESPONSE_SYMBOL: begin
 
 						storing_symbols[1] = sbrx [8:1]; 
-						crc_det_en_reg = 1;
 
 
 					end
@@ -384,7 +379,6 @@ always @(*) begin
 					STX_COMMAND_SYMBOL: begin 
 
 						storing_symbols[1] = sbrx [8:1];
-						crc_det_en_reg = 1;
 
 					end
 
@@ -402,7 +396,7 @@ always @(*) begin
 
 			valid_reg = 0;
 			disconnect_reg = 0;
-			crc_det_en_reg = 0;
+			crc_det_en = 0;
 
 			if (error) begin
 				trans_error_reg=1;
@@ -440,7 +434,7 @@ always @(*) begin
 
 			valid_reg = 0;
 			disconnect_reg = 0;
-			crc_det_en_reg = 0;
+			crc_det_en = 0;
 
 			if (error) begin
 				trans_error_reg=1;
@@ -451,7 +445,7 @@ always @(*) begin
 				case (sbrx [8:1])
 
 					DLE_SYMBOL: begin 
-						storing_symbols [2] = sbrx [8:1];
+						storing_symbols [2+max_data_counts] = sbrx [8:1];
 					end
 
 
@@ -459,10 +453,13 @@ always @(*) begin
 
 						if (max_data_counts < 69) begin
 							storing_symbols[2+max_data_counts]=sbrx [8:1];
-							crc_det_en_reg = 1;
-						end else begin 
-							storing_symbols[72]=0;
-							crc_det_en_reg = 0;
+							if (max_data_counts > read_write[7:1] + 1) begin
+								crc_det_en=0;
+							end else begin
+								crc_det_en=1;
+							end  		
+						end else begin storing_symbols[72]=0;
+							crc_det_en=0;
 						end
 
 					end
@@ -480,7 +477,7 @@ always @(*) begin
 
 			valid_reg = 0;
 			disconnect_reg = 0;
-			crc_det_en_reg = 0;
+			crc_det_en = 0;
 
 			if (error) begin
 				trans_error_reg=1;
@@ -499,10 +496,8 @@ always @(*) begin
 
 						if (max_data_counts < 69) begin
 							storing_symbols[2+max_data_counts]=sbrx [8:1];
-							crc_det_en_reg = 1;
 						end else begin 
 							storing_symbols[72]=0;
-							crc_det_en_reg = 0;
 						end
 
 					end
@@ -510,14 +505,14 @@ always @(*) begin
 					STX_COMMAND_SYMBOL: begin 
 
 						storing_symbols[2]=sbrx [8:1];
-						crc_det_en_reg = 1;
+						crc_det_en = 1;
 
 					end
 
 					STX_RESPONSE_SYMBOL: begin 
 
 						storing_symbols[2]=sbrx [8:1];
-						crc_det_en_reg = 1;
+						crc_det_en = 1;
 
 					end
 
@@ -542,7 +537,10 @@ always @(*) begin
 
 	payload_in_reg =  {storing_symbols[4],storing_symbols[5],storing_symbols[6]};
 
-	if (read_write[7]==1) begin
+	if (storing_symbols[1] == STX_RESPONSE_SYMBOL) begin
+		s_write_reg=0;
+		s_read_reg=0;
+	end else if (read_write[7]==1) begin
 		s_write_reg=1;
 		s_read_reg=0;
 	end else if (read_write[7]==0) begin 
@@ -559,10 +557,31 @@ always @ (posedge sb_clk or negedge rst) begin
 		max_data_counts <= 0;
 
 	end else if ((cs == AT || cs == DLE2 ) && max_data_counts != 70) begin
-		max_data_counts <= max_data_counts + 1 ;
+		case (des_count)
+
+			9: max_data_counts <= max_data_counts + 1;
+
+			default : max_data_counts <= max_data_counts;
+		endcase
 
 	end else begin
 		max_data_counts <= 0;
+
+	end
+end
+
+
+
+
+always @ (posedge sb_clk or negedge rst) begin 
+	if(~rst) begin
+		des_count <= 0;
+
+	end else if (cs == AT && des_count < 9 ) begin
+		des_count <= des_count + 1 ;
+
+	end else begin
+		des_count <= 0;
 
 	end
 end
@@ -586,8 +605,6 @@ always @(posedge sb_clk) begin
 	s_address <= s_address_reg;
 
 	disconnect <= disconnect_reg;
-
-	crc_det_en <= crc_det_en_reg;
 
 end
 

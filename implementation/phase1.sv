@@ -33,26 +33,11 @@ class phase1 extends primary_steps;
       C_transaction.c_address = 8'd18;   
       C_transaction.c_write = 0 ;   
       C_transaction.c_read = 1;   
+      C_transaction.c_data_out=0;
       config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
       C_transaction = new ();
-      E_transaction.sbtx = 0 ;        //? is that should be here 
-      elec_ag_Tx.put(E_transaction);
-      //$display ("E_transaction = %p",E_transaction);
-      //$display ("E_transaction = %p",E_transactio//n);
-      
-
-     // assign_sb_data();
-    end
-  endtask
-
-
-  task read_order2;
-    begin
-      C_transaction.c_address = 8'd18;   
-      C_transaction.c_write = 0 ;   
-      C_transaction.c_read = 1;   
-      config_ag_Tx.put(C_transaction) ;    // this should go to scoreboard "read case "
-      C_transaction = new ();
+      //E_transaction.sbtx = 0 ;        //? is that should be here 
+      //elec_ag_Tx.put(E_transaction);
       //$display ("E_transaction = %p",E_transaction);
       //$display ("E_transaction = %p",E_transactio//n);
       
@@ -65,7 +50,7 @@ class phase1 extends primary_steps;
   task  get_packets();
     begin
       config_ag_Rx.get(C_transaction);
-      $display ("in phase 1 geted C_transaction = %p",C_transaction);
+      $display ("in phase 1 got C_transaction = %p",C_transaction);
       elec_ag_Rx.get(E_transaction);  // we should get here since i do peek in the ref model the handle will not be deleted if not so 
       //elec_ag_Rx.get(E_transaction);
       //$display ("done get_packet");
@@ -153,7 +138,6 @@ class phase1 extends primary_steps;
       read_order1();
       get_packets();
       check_usb4_data();
-      read_order2();
       check_gen4_data ();
 
     end

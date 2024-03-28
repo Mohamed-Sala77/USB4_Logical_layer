@@ -24,6 +24,7 @@ module crc_16 #( parameter SEED = 16'hFFFF)
             
 
    reg    [15:0]               lfsr     ;   
+   reg    [3:0]                counter  ;   
    wire                        feedback ; 
 
    // feedback
@@ -34,56 +35,76 @@ module crc_16 #( parameter SEED = 16'hFFFF)
         if(!rst)
           begin
              lfsr <= SEED;
-             parity <= 1'b0;
+			 counter <= 0;
           end
         else
            if(!crc_en) 
              begin
              lfsr <= SEED;
-             parity <= 1'b0;
+			 counter <= 0;
              end
-           else if (crc_active)			 
-             begin 
-              lfsr[15] <= lfsr[14] ^ feedback;
-	            lfsr[14] <= lfsr[13];     // is equivalent to lfsr <= {feedback, lfsr[7] ^ feedback , lfsr[6:4], lfsr[3] ^ feedback, lfsr[2:1]} ;
-              lfsr[13] <=lfsr[12];
-              lfsr[12] <= lfsr[11]; 
-              lfsr[11] <= lfsr[10];
-              lfsr[10] <= lfsr[9];
-              lfsr[9]  <= lfsr[8];
-              lfsr[8]  <= lfsr[7];
-	            lfsr[7]  <= lfsr[6];
-	            lfsr[6]  <= lfsr[5];
-	            lfsr[5]  <= lfsr[4];
-	            lfsr[4]  <= lfsr[3];
-	            lfsr[3]  <= lfsr[2];
-	            lfsr[2]  <= lfsr[1] ^ feedback;
-	            lfsr[1]  <= lfsr[0];
-	            lfsr[0]  <= feedback; 			  
+           else if (!crc_active)			 
+             begin
+              if(counter !=0 && counter!=9)
+                begin			  
+                  lfsr[15] <= lfsr[14] ^ feedback;
+	              lfsr[14] <= lfsr[13];     // is equivalent to lfsr <= {feedback, lfsr[7] ^ feedback , lfsr[6:4], lfsr[3] ^ feedback, lfsr[2:1]} ;
+                  lfsr[13] <= lfsr[12];
+                  lfsr[12] <= lfsr[11]; 
+                  lfsr[11] <= lfsr[10];
+                  lfsr[10] <= lfsr[9];
+                  lfsr[9]  <= lfsr[8];
+                  lfsr[8]  <= lfsr[7];
+	              lfsr[7]  <= lfsr[6];
+	              lfsr[6]  <= lfsr[5];
+	              lfsr[5]  <= lfsr[4];
+	              lfsr[4]  <= lfsr[3];
+	              lfsr[3]  <= lfsr[2];
+	              lfsr[2]  <= lfsr[1] ^ feedback;
+	              lfsr[1]  <= lfsr[0];
+	              lfsr[0]  <= feedback; 
+                end				  
+              counter <= (counter == 9)? 0 : counter + 1;		  
              end 
            else
              begin
-              parity   <= lfsr[15];        // is equivalent to {lfsr,parity} <= {1'b0 , lfsr} ;
-              lfsr[15] <= lfsr[14];
-	            lfsr[14] <= lfsr[13];     
-              lfsr[13] <= lfsr[12];
-              lfsr[12] <= lfsr[11]; 
-              lfsr[11] <= lfsr[10];
-              lfsr[10] <= lfsr[9];
-              lfsr[9]  <= lfsr[8];
-              lfsr[8]  <= lfsr[7];
-	            lfsr[7]  <= lfsr[6];
-	            lfsr[6]  <= lfsr[5];
-	            lfsr[5]  <= lfsr[4];
-	            lfsr[4]  <= lfsr[3];
-	            lfsr[3]  <= lfsr[2];
-	            lfsr[2]  <= lfsr[1];
-	            lfsr[1]  <= lfsr[0];
-	            lfsr[0]  <= feedback;
+			  if(counter !=0 && counter!=9)
+			    begin
+                  lfsr[15] <= lfsr[14];
+	              lfsr[14] <= lfsr[13];     
+                  lfsr[13] <= lfsr[12];
+                  lfsr[12] <= lfsr[11]; 
+                  lfsr[11] <= lfsr[10];
+                  lfsr[10] <= lfsr[9];
+                  lfsr[9]  <= lfsr[8];
+                  lfsr[8]  <= lfsr[7];
+	              lfsr[7]  <= lfsr[6];
+	              lfsr[6]  <= lfsr[5];
+	              lfsr[5]  <= lfsr[4];
+	              lfsr[4]  <= lfsr[3];
+	              lfsr[3]  <= lfsr[2];
+	              lfsr[2]  <= lfsr[1];
+	              lfsr[1]  <= lfsr[0];
+	              lfsr[0]  <= feedback;
+				end
+		      counter <= (counter == 9)? 0 : counter + 1;
 
              end                  
      end
-                
+  
+  
+   always@ (*)
+     begin
+	   if (crc_active && counter==0)
+	     parity = 0;
+	   else if (crc_active && counter==9)
+	     parity = 1;
+	   else if (crc_active)
+	     parity = lfsr[15];
+	   else
+	     parity = 0;
+	 end
+  
 endmodule
 
 `default_nettype none

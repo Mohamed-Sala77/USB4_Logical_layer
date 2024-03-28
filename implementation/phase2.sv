@@ -51,6 +51,7 @@ endtask
         //E_transaction.sbtx = 0;     // we can't go throuhg phase 1 
 
         elec_ag_Tx.put(E_transaction);
+        $display ("E_transaction in phase 2 sent to scorbourd = %p",E_transaction);
         E_transaction = new();
         //get_elec_transaction();
         //check_phase();

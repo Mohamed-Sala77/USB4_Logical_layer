@@ -21,16 +21,15 @@ module logical_layer
   input  wire [7:0]  transport_layer_data_in, 
   input  wire        lane_0_rx_i, 
   input  wire        lane_1_rx_i,
-  input  wire [7:0]  control_unit_data,
   input  wire        data_incoming,
   output wire [7:0]  transport_layer_data_out,
   output wire        sbtx, 
   output wire        lane_0_tx_o, 
-  output wire        lane_1_tx_o, 
+  output wire        lane_1_tx_o,  
   output wire        c_read_write, 
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
-  output wire        enable_rs
+  output wire        enable_scr
 );
 
 
@@ -42,14 +41,14 @@ wire         fsm_clk,
 wire [1:0]   gen_speed;
 
 wire [3:0]   d_sel;
-wire [3:0]   os_in;
+wire [3:0]   os_in_l0,
+             os_in_l1;
 wire         os_sent;
 
 wire         tx_lanes_on;
 wire         rx_lanes_on;
 wire         enable_ser;
 wire         enable_deser;
-wire         enable_scr;
 wire         enable_enc;
 wire         enable_dec;
 wire         enable_deskew;
@@ -62,6 +61,7 @@ wire         trans_sent;
 wire         disconnect_sbtx;
 wire         disconnected_s;
 
+wire [1:0]   trans_state;
 wire [23:0]  payload_in;
 wire [7:0]   s_address_i;
 wire         s_read_lvl, 
@@ -89,7 +89,9 @@ wire         tdisabled_min,
              ts2_gen4_s;
 
 wire [7:0]   lane_0_tx_bus_dis, 
-             lane_0_rx_bus_dis;
+             lane_1_tx_bus_dis,
+             lane_0_rx_bus_dis,
+             lane_1_rx_bus_dis;
 
 wire [7:0]   lane_0_tx_dis_enc, lane_1_tx_dis_enc,
              lane_0_rx_dis_enc, lane_1_rx_dis_enc;
@@ -124,12 +126,15 @@ wire         scr_rst,
 
 wire         data_os;
 
+wire         new_sym, new_sym_pul;
+
 
 control_fsm ctrl_fsm
 (
   .fsm_clk                 ( fsm_clk                 ), 
   .reset_n                 ( rst                     ),
-  .os_in                   ( os_in                   ),
+  .os_in_l0                ( os_in_l0                ),
+  .os_in_l1                ( os_in_l1                ),
   .disconnect_sbrx         ( disconnect              ),
   .s_write_i               ( s_write_pul             ),
   .s_read_i                ( s_read_pul              ),
@@ -154,6 +159,7 @@ control_fsm ctrl_fsm
   .ts1_gen4_s              ( ts1_gen4_s              ),
   .ts2_gen4_s              ( ts2_gen4_s              ),
   .d_sel                   ( d_sel                   ),
+  .new_sym                 ( new_sym_pul             ),
   .gen_speed               ( gen_speed               ),
   .c_address               ( c_address               ),
   .c_read_write            ( c_read_write            ),
@@ -169,28 +175,35 @@ data_bus bus
   .fsm_clk                 ( fsm_clk                 ),
   .d_sel                   ( d_sel                   ),
   .lane_0_rx               ( lane_0_rx_bus_dis       ),
-  .os_in                   ( os_in                   ),
+  .lane_1_rx               ( lane_1_rx_bus_dis       ),
+  .os_in_l0                ( os_in_l0                ),
+  .os_in_l1                ( os_in_l1                ),
   .lane_0_tx               ( lane_0_tx_bus_dis       ),
+  .lane_1_tx               ( lane_1_tx_bus_dis       ),
   .os_sent                 ( os_sent                 ),
   .transport_layer_data_in ( transport_layer_data_in ),
   .transport_layer_data_out( transport_layer_data_out),
   .data_os                 ( data_os                 ),
-  .tx_lanes_on             ( tx_lanes_on             )
+  .tx_lanes_on             ( tx_lanes_on             ),
+  .lane_rx_on              ( rx_lanes_on             )
 );                                                   
 												     
 lane_distributer lane_dist                           
 (                                                    
-  .clk_a                   ( fsm_clk                 ),               
-  .clk_b                   ( enc_clk                 ),               
+  .clk                     ( fsm_clk                 ),             
   .rst                     ( rst                     ),                   
   .enable_t                ( tx_lanes_on             ),           
   .enable_r                ( enable_deskew           ),         
-  .data_in                 ( lane_0_tx_bus_dis       ), 
-  .lane_0_rx               ( lane_0_rx_dis_enc       ), 
-  .lane_1_rx               ( lane_1_rx_dis_enc       ), 
-  .lane_0_tx               ( lane_0_tx_dis_enc       ), 
-  .lane_1_tx               ( lane_1_tx_dis_enc       ), 
-  .data_out                ( lane_0_rx_bus_dis       ),
+  .data_os                 ( data_os                 ),         
+  .d_sel                   ( d_sel                   ),         
+  .lane_0_tx_in            ( lane_0_tx_bus_dis       ), 
+  .lane_1_tx_in            ( lane_1_tx_bus_dis       ), 
+  .lane_0_rx_in            ( lane_0_rx_dis_enc       ), 
+  .lane_1_rx_in            ( lane_1_rx_dis_enc       ), 
+  .lane_0_tx_out           ( lane_0_tx_dis_enc       ), 
+  .lane_1_tx_out           ( lane_1_tx_dis_enc       ), 
+  .lane_0_rx_out           ( lane_0_rx_bus_dis       ),
+  .lane_1_rx_out           ( lane_1_rx_bus_dis       ),
   .enable_enc              ( enable_enc              ),
   .rx_lanes_on             ( rx_lanes_on             )
 );
@@ -206,7 +219,16 @@ encoding_block enc_block
   .gen_speed               ( gen_speed               ),    
   .lane_0_tx_enc_old       ( lane_0_tx_enc_ser       ),
   .lane_1_tx_enc_old       ( lane_1_tx_enc_ser       ),
-  .enable_ser              ( enable_ser              )
+  .enable_ser              ( enable_ser              ),
+  .new_sym                 ( new_sym                 )
+);
+
+pul_gen new_symbol
+(
+.clk(fsm_clk), 
+.reset_n(rst),
+.lvl_sig(new_sym),
+.pulse_sig(new_sym_pul)
 );
 
 decoding_block dec_block
@@ -224,39 +246,19 @@ decoding_block dec_block
   .enable_deskew           ( enable_deskew           )
 );
 
-scrambler_descrambler #(.SEED('h1f_eedd)) scr_descr
-(
-  .clk                     ( ser_clk                 ), 
-  .rst                     ( rst                     ), 
-  .enable_scr              ( enable_scr              ), 
-  .data_incoming           ( data_incoming           ), 
-  .scr_rst                 ( scr_rst                 ),  
-  .descr_rst               ( descr_rst               ),
-  .lane_0_tx               ( lane_0_tx_ser_scr       ), 
-  .lane_1_tx               ( lane_1_tx_ser_scr       ), 
-  .lane_0_rx_scr           ( lane_0_rx_i             ),
-  .lane_1_rx_scr           ( lane_1_rx_i             ), 
-  .lane_0_tx_scr           ( lane_0_tx_o             ),
-  .lane_1_tx_scr           ( lane_1_tx_o             ),
-  .lane_0_rx               ( lane_0_rx_ser_scr       ), 
-  .lane_1_rx               ( lane_1_rx_ser_scr       ), 
-  .enable_deser            ( enable_deser            ), 
-  .enable_rs               ( enable_rs               ) 
-);
-
 lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
 (
   .clk                     ( ser_clk                 ), 
   .rst                     ( rst                     ),
   .enable_ser              ( enable_ser              ),
-  .enable_deser            ( enable_deser            ),
+  .enable_deser            ( data_incoming           ),
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),
-  .lane_0_rx_ser           ( lane_0_rx_ser_scr       ),
-  .lane_1_rx_ser           ( lane_1_rx_ser_scr       ),
-  .lane_0_tx_ser           ( lane_0_tx_ser_scr       ),
-  .lane_1_tx_ser           ( lane_1_tx_ser_scr       ),
+  .lane_0_rx_ser           ( lane_0_rx_i             ),
+  .lane_1_rx_ser           ( lane_1_rx_i             ),
+  .lane_0_tx_ser           ( lane_0_tx_o             ),
+  .lane_1_tx_ser           ( lane_1_tx_o             ),
   .scr_rst                 ( scr_rst                 ),
   .enable_scr              ( enable_scr              ),
   .lane_0_rx_parallel      ( lane_0_rx_enc_ser       ), 
@@ -290,16 +292,16 @@ transactions_gen_fsm trans_gen
 (
   .sb_clk                  ( sb_clk                  ),                           
   .rst                     ( rst                     ),                              
-  .sb_read                 ( sb_read                 ),             
-  // .control_unit_data       ( control_unit_data       ),   
+  .sb_read                 ( sb_read                 ),    
   .trans_sel               ( trans_sel_pul           ), 
   .trans_sent              ( trans_sent              ), 
+  .trans_state             ( trans_state             ), 
   .disconnect_sbtx         ( disconnect_sbtx         ),    
   .disconnected_s          ( disconnected_s          ),    
   .tdisconnect_tx_min      ( tdisconnect_tx_min      ),    
   .trans                   ( trans                   ),               
   .crc_en                  ( crc_en                  ),              
-  .sbtx_sel                ( sbtx_sel                )             
+  .sbtx_sel                ( sbtx_sel                )            
 );
 
 serializer #(.WIDTH(10)) sbtx_serializer
@@ -307,7 +309,8 @@ serializer #(.WIDTH(10)) sbtx_serializer
   .clk                     ( sb_clk                  ), 
   .rst                     ( rst                     ),
   .parallel_in             ( trans                   ),
-  .ser_out                 ( trans_ser               )
+  .ser_out                 ( trans_ser               ),
+  .trans_state             ( trans_state             )
 );
 
 crc_16 #(.SEED('hFFFF)) crc_gen
