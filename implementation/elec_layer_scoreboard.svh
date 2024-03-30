@@ -76,7 +76,7 @@
 				 	begin
 
 										//* detailed assertions
-						assert	(elec_tr_model.sbtx === elec_tr.sbtx) else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) sbtx !!!");						
+							assert	(elec_tr_model.sbtx === elec_tr.sbtx) else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) sbtx !!!");						
 							assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) transaction_type !!!");		
 							assert	(elec_tr_model.read_write === elec_tr.read_write)else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) read_write !!!");						
 							assert	(elec_tr_model.len === elec_tr.len)			else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) len !!!");							

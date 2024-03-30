@@ -499,8 +499,8 @@
 							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
 							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
 
-							//elec_tr.phase = v_if.phase; //! we will delete that comment after the lines from line 583 completed
-							elec_tr.phase = 3 ;
+							elec_tr.phase = v_if.phase; //! we will delete that comment after the lines from line 583 completed
+							//elec_tr.phase = 3 ;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -542,8 +542,8 @@
 						elec_tr.crc_received [15:8] = { << {SB_data_received[1:8]} };
 						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
 
-						//elec_tr.phase = v_if.phase;
-						elec_tr.phase = 3 ;
+						elec_tr.phase = v_if.phase;
+						//elec_tr.phase = 3 ;
 						elec_mon_scr.put(elec_tr);
 
 						repeat(40)
