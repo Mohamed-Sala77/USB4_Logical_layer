@@ -170,6 +170,7 @@ begin
       E_transaction.len = this.len;
       E_transaction.cmd_rsp_data = this.cmd_rsp_data;
       elec_ag_Tx.put(E_transaction);  
+      $display ("E_transaction in phase 3 sent to scorbourd = %p",E_transaction);
       E_transaction = new();  
   end
 endtask

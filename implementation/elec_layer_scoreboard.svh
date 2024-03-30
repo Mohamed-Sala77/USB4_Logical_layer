@@ -35,15 +35,19 @@
 			
 
 
-				elec_mod_scr.get(elec_tr_model);
-				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
-					
+				
 				elec_mon_scr.get(elec_tr);
-				//$display("[ELEC SCOREBOARD] ] : DUT Received Time: %0t  , Transaction Received: %p", $time, elec_tr);
+				$display("[ELEC SCOREBOARD] ] : DUT Received Time: %0t  , Transaction Received: %p", $time, elec_tr);
 				
 				event_trigger(); // to trigger the sbtx_high_received event
-
+				
 				//$display("[ELEC SCOREBOARD] DUT transaction: %p",elec_tr);
+
+
+				//*  this statment should be after event_trigger() to make sure that the event is triggered and the generator send the transaction to the model
+				elec_mod_scr.get(elec_tr_model);
+				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
+
 
 
 				if (elec_tr.transaction_type == AT_cmd || elec_tr.transaction_type == AT_rsp)
@@ -71,15 +75,25 @@
 				 	3:
 				 	begin
 
+										//* detailed assertions
+						assert	(elec_tr_model.sbtx === elec_tr.sbtx) else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) sbtx !!!");						
+							assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) transaction_type !!!");		
+							assert	(elec_tr_model.read_write === elec_tr.read_write)else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) read_write !!!");						
+							assert	(elec_tr_model.len === elec_tr.len)			else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) len !!!");							
+							assert	(elec_tr_model.crc_received === elec_tr.crc_received)else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) crc_received !!!");					
+							assert	(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)	else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) cmd_rsp_data !!!");				
+							assert	(elec_tr_model.address === elec_tr.address)						else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) address !!!");		
+								
+   
+   
+
 				 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 								&&
 				 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 		&&
 				 				(elec_tr_model.read_write === elec_tr.read_write)					&&
 				 				(elec_tr_model.len === elec_tr.len)									&&
 				 				(elec_tr_model.crc_received === elec_tr.crc_received)				&&
 				 				(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)				&&
-				 				(elec_tr_model.address === elec_tr.address)							&&
-				 				(elec_tr_model.address === elec_tr.address)							&&
-				 				(elec_tr_model.address === elec_tr.address)							
+				 				(elec_tr_model.address === elec_tr.address)												
 				 				) $display("[ELEC SCOREBOARD] CORRECT (PHASE 3) Transaction received ");
 				 		else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) Transaction received   !!!");
 				 	end

@@ -107,6 +107,7 @@
 
 				AT_cmd, AT_rsp : begin //AT_cmd, AT_rsp
 					transaction.phase = phase;
+					transaction.sbrx = 1;		// SBRX should be high "not to enter the disconnect state"
 					transaction.transaction_type = trans_type;
 					transaction.read_write = read_write;
 					transaction.address = address;
