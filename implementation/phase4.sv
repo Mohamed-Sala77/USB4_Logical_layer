@@ -35,7 +35,7 @@ parameter        SLOS1   = 4'b1000,
     
     task  os_g4();
     begin
-        //$display("we are in os_g4");
+        $display("we are in os_g4");
         next_order = n_TS1 ;          
         status  = wrong; 
         while (status != right)
@@ -47,7 +47,7 @@ parameter        SLOS1   = 4'b1000,
 
         end
     end
-    endtask  //os_g4
+    endtask  
 
     task  os_g2_3();
     begin
@@ -65,7 +65,7 @@ parameter        SLOS1   = 4'b1000,
             end
             else
                 begin
-                    elec_ag_Rx.get (E_transaction);         // for first one two know that we are in phase 4
+                    elec_ag_Rx.get (E_transaction);         // for first one to know that we are in phase 4
                 end
         end
     end
@@ -74,7 +74,7 @@ endtask
 
 task  gen4_OS();
         begin
-            //$display("we are in gen4_OS");
+            $display("we are in gen4_OS");
             if(E_transaction.phase==4) begin    // double check in phase in case of any actions 
                 if (next_order == n_TS1) 
                     send_packet(TS1_G4, n_TS2);
@@ -259,6 +259,7 @@ endtask
 
     task send_packet(input bit [3:0] packet, input next_ord next);
     begin
+        $display("we are in send_packet");
         j=0 ;
         repeat(2)begin
             if(j==0)        E_transaction.lane = lane_0;
@@ -303,7 +304,7 @@ endtask
         $display ("in phase4 C_transaction = %p",C_transaction);
         $display ("in phase4 E_transaction = %p",E_transaction);
         mem_ag.try_get(m_transaction); 
-        //m_transaction.gen = 4;   // ! this line should be deleted
+        m_transaction.gen = 4;   // ! this line should be deleted
         $display ("we are in gen %d",m_transaction.gen);
 endtask
     

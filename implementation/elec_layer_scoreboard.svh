@@ -104,22 +104,31 @@
 
 				 			SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3:  // GEN2/ GEN3 CHECKING
 				 			begin
-				 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 		&&
-				 						(elec_tr_model.lane === elec_tr.lane) 		&&
-				 						(elec_tr_model.o_sets === elec_tr.o_sets)
-				 						) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
-				 				else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) GEN4 Ordered Set received   !!!");
+								//* detailed assertions
+								assert (elec_tr_model.sbtx === elec_tr.sbtx) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) sbtx !!!");
+								assert (elec_tr_model.lane === elec_tr.lane) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) lane !!!");
+								assert (elec_tr_model.o_sets === elec_tr.o_sets) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) o_sets !!!");
+									
+									assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
+											(elec_tr_model.lane === elec_tr.lane) &&
+											(elec_tr_model.o_sets === elec_tr.o_sets)
+											) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
 				 			end
 
 				 			TS1_gen4, TS2_gen4, TS3, TS4:  //GEN4 CHECKING
 				 			begin
-				 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 		&&
-				 						(elec_tr_model.lane === elec_tr.lane) 		&&
-				 						(elec_tr_model.o_sets === elec_tr.o_sets)	&&
-				 						(elec_tr_model.order === elec_tr.order)
-				 						) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
-				 				else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) GEN4 Ordered Set received   !!!");
-				 			end
+											//* detailed assertions
+									assert (elec_tr_model.sbtx === elec_tr.sbtx) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) sbtx !!!");
+									assert (elec_tr_model.lane === elec_tr.lane) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) lane !!!");
+									assert (elec_tr_model.o_sets === elec_tr.o_sets) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) o_sets !!!");
+									assert (elec_tr_model.order === elec_tr.order) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) order !!!");
+									
+									assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
+											(elec_tr_model.lane === elec_tr.lane) &&
+											(elec_tr_model.o_sets === elec_tr.o_sets) &&
+											(elec_tr_model.order === elec_tr.order)
+											) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
+				 				end
 
 
 				 		endcase
