@@ -525,6 +525,7 @@
 	task phase_force (input int num);
 
 		transaction = new(); 
+		transaction.sbrx = 1;  // SBRX should be high "not to enter the disconnect state"
 		transaction.phase = num ; 
 		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
 		
