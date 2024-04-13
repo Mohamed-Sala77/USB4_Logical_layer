@@ -598,9 +598,9 @@ always @(posedge sb_clk) begin
 
 	payload_in <= payload_in_reg;
 
-	s_read <= s_read_reg ;
+	s_read <= s_read_reg && valid_reg;
 
-	s_write <= s_write_reg;
+	s_write <= s_write_reg && valid_reg;
 
 	s_address <= s_address_reg;
 

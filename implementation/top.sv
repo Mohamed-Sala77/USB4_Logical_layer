@@ -13,13 +13,13 @@ module top;
 
 	parameter Sys_clock_cycle = 1 * 10**6; parameter Rx_clock_cycle = 50;
 
-localparam [63:0] SB_freq = 1 * 10**6,
-freq_19_394 = 19.394 * 10 ** 9,	//19.394 GHz
-freq_38_788 = 38.788 * 10 ** 9,	//38.788 GHz
-freq_10 = 64'd10 * 10 ** 9,		  //10 GHz
-freq_20 = 64'd20 * 10 ** 9,		//20 GHz
-freq_40 = 40 * 10 ** 9,			//40 GHz
-freq_80 = 80 * 10 ** 9;			//80 GHz
+	parameter [63:0] SB_freq = 1 * 10**6;
+	parameter [63:0] freq_9_697 = 9.697 * 10 ** 9;		//9.697 GHz
+	parameter [63:0] freq_19_394 = 19.394 * 10 ** 9;	//19.394 GHz
+	parameter [63:0] freq_10 = 64'd10 * 10 ** 9;		//10 GHz
+	parameter [63:0] freq_20 = 64'd20 * 10 ** 9;		//20 GHz
+	parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
+	parameter [63:0] freq_80 = 80 * 10 ** 9;			//80 GHz
 
 	/*
 	parameter clock_10G = 100;
@@ -40,8 +40,7 @@ freq_80 = 80 * 10 ** 9;			//80 GHz
 
 	//Reset generation
 	task reset();
-		SystemReset = 0;
-		#(3*SB_clock);
+		repeat (3) @(posedge SB_clock) SystemReset = 0;
 		SystemReset = 1;
 		
 		
@@ -61,12 +60,12 @@ freq_80 = 80 * 10 ** 9;			//80 GHz
 									.sbtx(elec_if.sbtx),
 									.c_read_write(config_if.c_read), // needs to be changed by design team
 									.c_address(config_if.c_address),
-									.c_data_in(config_if.c_data_in),
+									.c_data_in(config_if.c_data_in), // needs to be changed by design team
 									.c_data_out(config_if.c_data_out),
 									.transport_layer_data_in(UL_if.transport_layer_data_in),
 									.lane_0_rx_i(elec_if.lane_0_rx),		
 									.lane_1_rx_i(elec_if.lane_1_rx),
-									//.control_unit_data(0),
+									// .control_unit_data(0),
 									.data_incoming(1),
 									.transport_layer_data_out(UL_if.transport_layer_data_out),
 									.sbrx(elec_if.sbrx),		
@@ -103,8 +102,6 @@ freq_80 = 80 * 10 ** 9;			//80 GHz
 
 	always #((10**15)/(2*freq_80)) local_clk = ~local_clk;
 
-	always #((10**15)/(2*freq_80)) gen4_fsm_clk = ~gen4_fsm_clk;
-	
 	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
 	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
@@ -113,22 +110,24 @@ freq_80 = 80 * 10 ** 9;			//80 GHz
 	
 	always #((10**15)/(2*freq_40)) gen4_lane_clk = ~gen4_lane_clk;
 
-	always #((10**15)/(2*freq_19_394)) gen2_fsm_clk = ~gen2_fsm_clk;
+	always #((10**15)/(2*freq_9_697)) gen2_fsm_clk = ~gen2_fsm_clk;
 	
-	always #((10**15)/(2*freq_38_788)) gen3_fsm_clk = ~gen3_fsm_clk;
+	always #((10**15)/(2*freq_19_394)) gen3_fsm_clk = ~gen3_fsm_clk;
 
+	always #((10**15)/(2*freq_40)) gen4_fsm_clk = ~gen4_fsm_clk;
 
 	//always #(Rx_clock_cycle/2) Rx_Clock = ~Rx_Clock;
 
 
 	// TEST 
 	initial begin 
-		 
-			Testenv t_env;
-			t_env = new(UL_if, elec_if, config_if);
-			reset();
-			t_env.build();
-			t_env.run();
+		Testenv t_env;
+		t_env = new(UL_if, elec_if, config_if);
+		reset();
+		t_env.build();
+
+
+		t_env.run();
 		
 	end
 

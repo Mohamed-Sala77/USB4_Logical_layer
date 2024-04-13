@@ -12,13 +12,12 @@
 
 		// Mailboxes
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
-		//mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
+		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
-		/*
 		//Events
 		event sbtx_high_recieved;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
-		*/
+
 
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
@@ -61,20 +60,18 @@
 		bit [419:0] TS234_DATA;
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_recieved, elec_AT_cmd_received);
 
 			//Interface Connections
 			this.v_if = v_if;
 
 			// Mailbox connections 
 			this.elec_mon_scr = elec_mon_scr; //between (monitor) and (Agent)
-			//this.os_received_mon_gen = os_received_mon_gen;
+			this.os_received_mon_gen = os_received_mon_gen;
 
-			/*
 			//Event Connections
 			this.sbtx_high_recieved = sbtx_high_recieved;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
-			*/
 
 			elec_tr = new();
 			elec_tr_lane1 = new();
@@ -364,7 +361,7 @@
 
 							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) ) && !sent_to_scr ) // sbtx high from DUT
 							begin
-								//-> sbtx_high_recieved;
+								-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1; 
 								elec_tr.phase = 3'b010;
@@ -384,7 +381,7 @@
 
 							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) ) && !sent_to_scr) // sbtx high from DUT
 							begin
-								//-> sbtx_high_recieved;
+								-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbrx_raised_time:%t", sbrx_raised_time);
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1;
@@ -407,6 +404,68 @@
 			
 
 		endtask : run
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 								///////////////////////////////////////////////////////////////////////////////////////////
@@ -499,12 +558,11 @@
 							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
 							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
 
-							elec_tr.phase = v_if.phase; //! we will delete that comment after the lines from line 583 completed
-							//elec_tr.phase = 3 ;
+							elec_tr.phase = v_if.phase;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
-							//-> elec_AT_cmd_received;
+							-> elec_AT_cmd_received;
 
 							elec_tr = new();
 						end
@@ -543,7 +601,6 @@
 						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
 
 						elec_tr.phase = v_if.phase;
-						//elec_tr.phase = 3 ;
 						elec_mon_scr.put(elec_tr);
 
 						repeat(40)
@@ -798,10 +855,9 @@
 			elec_tr_lane_x.o_sets = TS1_gen4;
 			elec_tr_lane_x.order = order;
 			elec_tr_lane_x.lane = lane;
-			elec_tr_lane_x.tr_os = ord_set;
 			
 			elec_mon_scr.put(elec_tr_lane_x);
-			//os_received_mon_gen.put(elec_tr_lane_x);
+			os_received_mon_gen.put(elec_tr_lane_x);
 			$display("[ELEC MONITOR] TS1 Gen 4 with order [%0d] RECEIVED CORRECTLY ON %0d", order, elec_tr_lane_x.lane.name());
 			
 		endtask : TS1_gen4_detected		
@@ -875,10 +931,8 @@
 			end
 
 			elec_tr_lane_x.lane = lane;
-			elec_tr_lane_x.tr_os = ord_set;
-
 			elec_mon_scr.put(elec_tr_lane_x);
-			//os_received_mon_gen.put(elec_tr_lane_x);
+			os_received_mon_gen.put(elec_tr_lane_x);
 			if (error_detected == 0)
 			begin
 				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  elec_tr_lane_x.lane.name());	
@@ -907,7 +961,7 @@
 			lane_x_gen23_received = {};
 
 			elec_mon_scr.put(elec_tr_lane_x);
-			//os_received_mon_gen.put(elec_tr_lane_x);
+			os_received_mon_gen.put(elec_tr_lane_x);
 			elec_tr_lane_x = new();
 
 		endtask	

@@ -126,8 +126,8 @@
 								$display("[ELEC DRIVER] Sending AT_cmd");
 								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data};
 								$display("data_symbol: %p", data_symbol);
-								
-								crc_calculation(STX_cmd, data_symbol, high_crc, low_crc);
+								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.len, elec_tr.read_write}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
+								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
 
 
@@ -143,7 +143,7 @@
 								// modified version for debugging			 
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(STX_cmd), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
-											 {start_bit, reverse_data({elec_tr.read_write,elec_tr.len}), stop_bit}, 		// data symbol // check order
+											 {start_bit, reverse_data({elec_tr.len,elec_tr.read_write}), stop_bit}, 		// data symbol // check order // ALIIIIIIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(ETX), stop_bit}};
 
@@ -164,16 +164,17 @@
 
 							AT_rsp: begin
 
-								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data};
+								data_symbol = {elec_tr.address, {elec_tr.len, elec_tr.read_write}, elec_tr.cmd_rsp_data[7:0], elec_tr.cmd_rsp_data[15:8], elec_tr.cmd_rsp_data[23:16]};
+								$display("&&&&&&&&&&&&AT RESP DATA SYMBOL %p",data_symbol);
 
 								crc_calculation(STX_rsp, data_symbol, high_crc, low_crc);
-
+								// ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII LINE 173
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(STX_rsp), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
-											 {start_bit, reverse_data({elec_tr.read_write,elec_tr.len}), stop_bit}, 		// data symbol
-											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[23:16]), stop_bit}, 				// data symbol
-											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[15:8]), stop_bit},				// data symbol 
-											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[7:0]), stop_bit}, 			//data symbol
+											 {start_bit, reverse_data({elec_tr.len,elec_tr.read_write}), stop_bit}, 		// data symbol  ALIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[7:0]), stop_bit}, 				// data symbol ALIIIIIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[15:8]), stop_bit},				// data symbol ALIIIIIIIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[23:16]), stop_bit}, 			//data symbol ALIIIIIIIIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(ETX), stop_bit}};
 
@@ -696,6 +697,70 @@
 			end
 			return data_reversed;
 		endfunction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  task CRC_generator_Ali(input [7:0] STX, input [39:0] data_symbol, input [2:0] size, output bit [7:0] high_crc_task, low_crc_task );
+    reg [15:0] crc;
+    reg [47:0] data;
+    integer i;
+    bit crc_last;
+    localparam POLY = 16'h8005;
+    // Initialize CRC
+    crc = 16'hFFFF;
+
+    //!!!!!!!!!!!!!!!! PLEASEE NOTE: data_symbol's cmd_rsp_data mafrood ne3ks el input bytes (lel function input bas msh el elec_reference kolo) 3ashan terg3 tet3ks we teb2a least to most significant tanii (24'h033305 badal 24'h053303)
+    $display("data_symbol %b",data_symbol);
+    data_symbol = data_symbol << 8*(6-size);
+    // Concatenate STX and data_symbol
+    data = {STX,data_symbol};
+    $display("data before: %b",data);
+	data = {<<8{{>>{data}}}};
+    $display("data after: %b",data);
+   
+    
+	for (i = 0; i < size*8; i = i + 1) begin
+    	crc_last = crc[15];
+    	for (int n = 15; n > 0; n = n - 1) begin
+     		if (POLY[n] == 1'b1) begin
+       		crc[n] = crc[n-1] ^ crc_last ^ data[i];
+      	end else begin
+        	crc[n] = crc[n-1];
+      		end
+    	end
+    	crc[0] = data[i] ^ crc_last;
+  	end
+	
+    
+    // Flip CRC
+    crc = {<<{crc}};
+
+    // XOR with 0000h
+    //crc_received = crc ^ 16'h0000;
+
+    low_crc_task = crc[7:0];
+    high_crc_task = crc[15:8];
+
+  endtask
+
+
+
+
+
 		
 	endclass : elec_layer_driver
 

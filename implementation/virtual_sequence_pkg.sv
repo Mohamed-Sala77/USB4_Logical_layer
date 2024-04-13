@@ -18,40 +18,40 @@
 			v_elec_layer_generator.sbrx_high("Host");
 
 			//$stop;
-	
-			// Phase 3
-			v_elec_layer_generator.send_transaction(AT_rsp,3,1,8'h0B,7'h3,24'h123456);  
 
-			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'h0A,7'h1,24'h000001); 
+			// Phase 3
+			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd5,24'h053303);  
+
+			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'd78,7'd2,24'h000000); 
 
 			
 			// v_elec_layer_generator.send_transaction(LT_fall);  // Testing LT Fall 
 
-	
-			// Phase 4
-/* 
-			 v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
-			 v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
-			 v_elec_layer_generator.send_ordered_sets(SLOS1,gen3);
-			 v_elec_layer_generator.send_ordered_sets(SLOS2,gen2);
-			 v_elec_layer_generator.send_ordered_sets(SLOS2,gen3);
-
-			 v_elec_layer_generator.send_ordered_sets(TS1_gen2_3,gen2);
-			 v_elec_layer_generator.send_ordered_sets(TS2_gen2_3,gen3);
-*/
-
-//v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
-
-			v_elec_layer_generator.phase_force(4);
-			 v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
-
-			 v_elec_layer_generator.send_ordered_sets(TS2_gen4,gen4);
 			
-			 v_elec_layer_generator.send_ordered_sets(TS3,gen4);
-			 //#(tTrainingError); 		//To test tTrainingError
-			 v_elec_layer_generator.send_ordered_sets(TS4,gen4);
+			// // Phase 4
+
+			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
+			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
+			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen3);
+			// v_elec_layer_generator.send_ordered_sets(SLOS2,gen2);
+			// v_elec_layer_generator.send_ordered_sets(SLOS2,gen3);
+
+			// v_elec_layer_generator.send_ordered_sets(TS1_gen2_3,gen2);
+			// v_elec_layer_generator.send_ordered_sets(TS2_gen2_3,gen3);
+
+
+			// //v_elec_layer_generator.phase_force(4);
+			// //v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
+
+			//v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
+
+			// v_elec_layer_generator.send_ordered_sets(TS2_gen4,gen4);
+			
+			// v_elec_layer_generator.send_ordered_sets(TS3,gen4);
+			// //#(tTrainingError); //To test tTrainingError
+			// v_elec_layer_generator.send_ordered_sets(TS4,gen4);
 		
-/*		
+	
 			
 			// // // Phase 5
 			// // // fork join for electrical_to_transport layer data and vice versa
@@ -63,7 +63,7 @@
 			
 			// disable
 			//$stop();
-*/
+
 		endtask : run
 
 

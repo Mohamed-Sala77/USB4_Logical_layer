@@ -497,7 +497,7 @@ always @(*) begin
 
 					3: begin 
 						ns = DATA_READ_RESPONSE_LENGTH;
-						trans_reg = {1'b1,7'h5,1'b0,1'b0};
+						trans_reg = {1'b1,1'b0,7'h5,1'b0};
 						crc_en_reg = 1;
 						sbtx_sel_reg=0;
 					end 
