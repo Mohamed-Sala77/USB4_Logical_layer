@@ -367,7 +367,7 @@ module data_bus_receive #(parameter SEED = 11'b00000000001)(
 								    end
 					            end
 				            end	
-			                else if(lane_0_rx_ser == temp_prbs_ts1[0])begin
+			                else if(lane_0_rx_ser == temp_prbs_ts1[10])begin
 					            temp_prbs_ts1 <= {temp_prbs_ts1[9:0],temp_prbs_ts1[10]^temp_prbs_ts1[8]};
 				                count_prbs_ts1 <= count_prbs_ts1 +1;
                                 if (count_prbs_ts1 == 447) begin
@@ -411,7 +411,7 @@ module data_bus_receive #(parameter SEED = 11'b00000000001)(
 								    end
 					            end
 				            end	
-			                else if(lane_1_rx_ser == temp_prbs_ts1_l1[0])begin
+			                else if(lane_1_rx_ser == temp_prbs_ts1_l1[10])begin
 					            temp_prbs_ts1_l1 <= {temp_prbs_ts1_l1[9:0],temp_prbs_ts1_l1[10]^temp_prbs_ts1_l1[8]};
 				                count_prbs_ts1_l1 <= count_prbs_ts1_l1 +1;
                                 if (count_prbs_ts1_l1 == 447) begin
