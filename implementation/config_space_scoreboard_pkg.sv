@@ -22,28 +22,33 @@
 
 			forever
 			begin
-				
-				//` we put here get operation first to make scrb block until the model " who know which pahse we in" put tht data 
+
+				/*
+				if (mb_model.try_get(transaction_model))
+					begin
+						$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
+					end
+				*/	
+
+				mb_mon.get(transaction_mon);
+				event_trigger();
+				$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
+
+
 				mb_model.get(transaction_model);
 				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
-				
-				mb_mon.get(transaction_mon);
-				$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
-				
-				
-				event_trigger();
 
 				
-				 assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
-				 assert(transaction_model.c_write === transaction_mon.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
-				 assert(transaction_model.c_address === transaction_mon.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
-				 assert(transaction_model.c_data_out === transaction_mon.c_data_out) else $error("[CONFIG SCOREBOARD] c_data_out doesn't match the expected value");
+				assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
+				assert(transaction_model.c_write === transaction_mon.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
+				assert(transaction_model.c_address === transaction_mon.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
+				assert(transaction_model.c_data_out === transaction_mon.c_data_out) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
 
-				// assert(	(transaction_model.c_read === transaction_mon.c_read) 		&&
-				// 		(transaction_model.c_write === transaction_mon.c_write) 	&&
-				// 		(transaction_model.c_address === transaction_mon.c_address)	&&
-				// 		(transaction_model.c_data_out === transaction_mon.c_data_out)
-				// 		) $display("[CONFIG SCOREBOARD] CORRECT transaction received ");
+				assert(	(transaction_model.c_read === transaction_mon.c_read) 		&&
+						(transaction_model.c_write === transaction_mon.c_write) 	&&
+						(transaction_model.c_address === transaction_mon.c_address)	&&
+						(transaction_model.c_data_out === transaction_mon.c_data_out)
+						) $display("[CONFIG SCOREBOARD] CORRECT transaction received ");
 
 
 
@@ -69,4 +74,3 @@
 
 	endclass : config_space_scoreboard
 
-  

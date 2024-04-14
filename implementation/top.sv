@@ -58,9 +58,10 @@ module top;
 									.rst(SystemReset),
 									.lane_disable(config_if.lane_disable),
 									.sbtx(elec_if.sbtx),
-									.c_read_write(config_if.c_read), // needs to be changed by design team
+									.c_read(config_if.c_read),
+									.c_write(config_if.c_write), 
 									.c_address(config_if.c_address),
-									.c_data_in(config_if.c_data_in), // needs to be changed by design team
+									.c_data_in(config_if.c_data_in),
 									.c_data_out(config_if.c_data_out),
 									.transport_layer_data_in(UL_if.transport_layer_data_in),
 									.lane_0_rx_i(elec_if.lane_0_rx),		
@@ -71,7 +72,7 @@ module top;
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
 									.lane_1_tx_o(elec_if.lane_1_tx),
-									.enable_scr(enable_rs_dummy)
+									.enable_rs(enable_rs_dummy)
 								);
 
 	//Clocks' Initialization

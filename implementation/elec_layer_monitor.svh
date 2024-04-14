@@ -6,18 +6,19 @@
 		elec_layer_tr elec_tr_lane0;
 		elec_layer_tr elec_tr_lane1;
 		
-
+		logic [19:0] expected, received;
 		// Interface
 		virtual electrical_layer_if v_if;
 
 		// Mailboxes
 		mailbox #(elec_layer_tr) elec_mon_scr; // connects monitor to the scoreboard
-		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
+		//mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
+		/*
 		//Events
 		event sbtx_high_recieved;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
-
+		*/
 
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
@@ -60,18 +61,20 @@
 		bit [419:0] TS234_DATA;
 
 		// NEW Function
-		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_recieved, elec_AT_cmd_received);
+		function new(input virtual electrical_layer_if v_if, mailbox #(elec_layer_tr) elec_mon_scr);
 
 			//Interface Connections
 			this.v_if = v_if;
 
 			// Mailbox connections 
 			this.elec_mon_scr = elec_mon_scr; //between (monitor) and (Agent)
-			this.os_received_mon_gen = os_received_mon_gen;
+			//this.os_received_mon_gen = os_received_mon_gen;
 
+			/*
 			//Event Connections
 			this.sbtx_high_recieved = sbtx_high_recieved;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
+			*/
 
 			elec_tr = new();
 			elec_tr_lane1 = new();
@@ -106,6 +109,7 @@
 						///////////////////////////////////////              SIDEBAND RECEIVER                /////////////////////////////////////////
 						///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+						//wait( v_if.SB_clock == 0);
 						@(negedge v_if.SB_clock);
 						#1 // needed to detect changes correctly
 
@@ -127,7 +131,7 @@
 							end
 		
 					end
-		
+					
 					begin 
 
 						// LANES RECEIVER CLOCK
@@ -331,6 +335,7 @@
 						endcase
 
 					end
+					
 				
 				
 				join_any
@@ -361,7 +366,7 @@
 
 							if (sbtx_high_flag && ($time >= (sbtx_raised_time + tConnectRx) ) && !sent_to_scr ) // sbtx high from DUT
 							begin
-								-> sbtx_high_recieved;
+								//-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1; 
 								elec_tr.phase = 3'b010;
@@ -381,7 +386,7 @@
 
 							if (v_if.sbtx && ($time >= (sbrx_raised_time + tConnectRx) ) && !sent_to_scr) // sbtx high from DUT
 							begin
-								-> sbtx_high_recieved;
+								//-> sbtx_high_recieved;
 								//$display("[ELEC MON] sbrx_raised_time:%t", sbrx_raised_time);
 								//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
 								elec_tr.sbtx = 1;
@@ -477,7 +482,12 @@
 
 		//This task is used to detect the transaction type, depending on the first 2 symbols (20 bits) received
 		task detect_transaction_type;
-
+			/*
+			expected = {start_bit,reverse_data(DLE),stop_bit,start_bit,reverse_data(STX_rsp),stop_bit};
+			received = {>>{SB_data_received}};
+			$display("Expected: %0b", expected);
+			$display("Received: %0b", received);
+			*/
 			case ({>>{SB_data_received}}) //(SB_data_received[0:19]) 
 				{start_bit,reverse_data(DLE),stop_bit,start_bit,reverse_data(STX_cmd),stop_bit}: // AT command received
 				begin
@@ -562,7 +572,7 @@
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
-							-> elec_AT_cmd_received;
+							//-> elec_AT_cmd_received;
 
 							elec_tr = new();
 						end
@@ -627,41 +637,41 @@
 
 			case ({ << {lane_x_gen23_received}})
 
-							SLOS1_64_1: begin
+				SLOS1_64_1: begin
 
-								$display("[ELEC MONITOR] SLOS 11111 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
+					$display("[ELEC MONITOR] SLOS 11111 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
 
-							end
+				end
 
-							SLOS2_64_1: begin
+				SLOS2_64_1: begin
 
-								$display("[ELEC MONITOR] SLOS 2 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
+					$display("[ELEC MONITOR] SLOS 2 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
 
-							end
+				end
 
-							SLOS1_128_1: begin
+				SLOS1_128_1: begin
 
-								$display("[ELEC MONITOR] SLOS 1 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
+					$display("[ELEC MONITOR] SLOS 1 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
 
-							end
+				end
 
-							SLOS2_128_1: begin
+				SLOS2_128_1: begin
 
-								$display("[ELEC MONITOR] SLOS 2 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
+					$display("[ELEC MONITOR] SLOS 2 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
 
-							end
+				end
 
 
-							default:
-							begin
-								void'(lane_x_gen23_received.pop_front());
-							end
+				default:
+				begin
+					void'(lane_x_gen23_received.pop_front());
+				end
 
-						endcase
+			endcase
 
 		endtask
 
@@ -685,28 +695,28 @@
 
 			case ({ << {lane_x_gen23_received}})
 
-							{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}: 
-							begin
+				{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}: 
+				begin
 
-								$display("[ELEC MONITOR] TS1 gen 2/3 RECEIVED CORRECTLY  ON [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
+					$display("[ELEC MONITOR] TS1 gen 2/3 RECEIVED CORRECTLY  ON [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
 
-							end
+				end
 
-							{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}: 
-							begin
+				{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}: 
+				begin
 
-								$display("[ELEC MONITOR] TS2 gen 2/3 RECEIVED CORRECTLY  ON  [%p]",lane);
-								gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS2_gen2_3,ord_set,lane);
+					$display("[ELEC MONITOR] TS2 gen 2/3 RECEIVED CORRECTLY  ON  [%p]",lane);
+					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS2_gen2_3,ord_set,lane);
 
-							end
+				end
 
-							default:
-							begin
-								void'(lane_x_gen23_received.pop_front());		
-							end
+				default:
+				begin
+					void'(lane_x_gen23_received.pop_front());		
+				end
 
-						endcase
+			endcase
 		endtask
 
 
@@ -834,10 +844,10 @@
 			end
 
 			if (TS_found == 0) // If the order of TS1 was not found
-				begin
-					$error("[ELEC MONITOR] WRONG TS1 RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name );
-					elec_tr_lane_x = new();
-				end
+			begin
+				$error("[ELEC MONITOR] WRONG TS1 RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name );
+				elec_tr_lane_x = new();
+			end
 
 		endtask : TS1_gen4_order_detection
 
@@ -855,9 +865,10 @@
 			elec_tr_lane_x.o_sets = TS1_gen4;
 			elec_tr_lane_x.order = order;
 			elec_tr_lane_x.lane = lane;
+			elec_tr_lane_x.tr_os = ord_set;
 			
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			$display("[ELEC MONITOR] TS1 Gen 4 with order [%0d] RECEIVED CORRECTLY ON %0d", order, elec_tr_lane_x.lane.name());
 			
 		endtask : TS1_gen4_detected		
@@ -894,10 +905,10 @@
 			end
 
 			if (TS_found == 0) // If the order of TS2/3/4 was not found
-				begin
-					$error("[ELEC MONITOR] WRONG TS PRTS RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name ); //elec_tr_lane_x.o_sets should be added
-					elec_tr_lane_x = new();
-				end
+			begin
+				$error("[ELEC MONITOR] WRONG TS PRTS RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name ); //elec_tr_lane_x.o_sets should be added
+				elec_tr_lane_x = new();
+			end
 
 		endtask : TS_234_gen4_order_detection	
 
@@ -931,8 +942,10 @@
 			end
 
 			elec_tr_lane_x.lane = lane;
+			elec_tr_lane_x.tr_os = ord_set;
+
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			if (error_detected == 0)
 			begin
 				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  elec_tr_lane_x.lane.name());	
@@ -961,7 +974,7 @@
 			lane_x_gen23_received = {};
 
 			elec_mon_scr.put(elec_tr_lane_x);
-			os_received_mon_gen.put(elec_tr_lane_x);
+			//os_received_mon_gen.put(elec_tr_lane_x);
 			elec_tr_lane_x = new();
 
 		endtask	
@@ -1001,9 +1014,9 @@
 				@(negedge v_if.gen4_lane_clk);
 			end
 			else 
-				begin
-					@(negedge v_if.SB_clock);
-				end
+			begin
+				@(negedge v_if.SB_clock);
+			end
 		endtask
 
 

@@ -4,15 +4,19 @@
 		mailbox #(config_transaction) mb_mon;
 		virtual config_space_if config_vif;
 
+		/*
 		//Events
 		event config_cap_req_received; // indicates capability read request from monitor
 		event config_gen_req_received; // indicates generation read request from monitor
+		*/
 
-		function new (mailbox #(config_transaction) mb_mon, event config_cap_req_received, config_gen_req_received);
+		function new (mailbox #(config_transaction) mb_mon);
 
 			this.mb_mon = mb_mon;
+			/*
 			this.config_cap_req_received = config_cap_req_received;
 			this.config_gen_req_received = config_gen_req_received;
+			*/
 			transaction_mon = new();
 
 		endfunction : new
@@ -41,7 +45,7 @@
 					end
 				
 
-			
+				/* //Now placed in the scoreboard
 				if (transaction_mon.c_read)
 					begin
 						if (transaction_mon.c_address == 'd18 ) // CAPABILITY READ REQUEST
@@ -49,7 +53,7 @@
 								-> config_cap_req_received;
 							end
 					end
-
+				*/
 
 				/*	
 				if (transaction_mon.c_read)

@@ -74,8 +74,7 @@
 				//////////////////////////////////////////////////
 				elec_tr = new();
 				elec_gen_drv.get(elec_tr);
-				//$display("KARIMMMMMM");
-				v_if.generation_speed = elec_tr.gen_speed; // comunicate gen speed to the monitor
+				v_if.generation_speed = elec_tr.gen_speed; // communicate gen speed to the monitor
 				v_if.phase = elec_tr.phase;
 
 				//////////////////////////////////////////////////

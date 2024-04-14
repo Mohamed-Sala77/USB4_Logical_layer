@@ -13,9 +13,10 @@
 		//Events
 		event sbtx_high_received;
 		event elec_AT_cmd_received;
+		event elec_AT_rsp_received;
 
 		//NEW Function
-		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_received, elec_AT_cmd_received);
+		function new(mailbox #(elec_layer_tr) elec_mon_scr, mailbox #(elec_layer_tr) elec_mod_scr, mailbox #(elec_layer_tr) os_received_mon_gen, event sbtx_high_received, elec_AT_cmd_received, elec_AT_rsp_received);
 
 			// Mailbox connections
 			this.elec_mon_scr = elec_mon_scr;				// connections between scoreboard and UL Agent's Monitor
@@ -24,6 +25,7 @@
 
 			this.sbtx_high_received = sbtx_high_received; 		//connected between scoreboard and sequence
 			this.elec_AT_cmd_received = elec_AT_cmd_received;	//connected between scoreboard and sequence
+			this.elec_AT_rsp_received = elec_AT_rsp_received;	//connected between scoreboard and sequence
 			elec_tr_model = new();
 
 		endfunction : new
@@ -33,21 +35,25 @@
 				
 				elec_tr = new();
 			
+				/*
+				if(elec_mod_scr.try_get(elec_tr_model))
+					begin
+						$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
+					end
+				*/
 
-
-				
 				elec_mon_scr.get(elec_tr);
-				$display("[ELEC SCOREBOARD] ] : DUT Received Time: %0t  , Transaction Received: %p", $time, elec_tr);
-				
+				$display("[ELEC SCOREBOARD] Time: %0t   Transaction Received: %p", $time, elec_tr);
 				event_trigger(); // to trigger the sbtx_high_received event
-				
-				//$display("[ELEC SCOREBOARD] DUT transaction: %p",elec_tr);
 
 
-				//*  this statment should be after event_trigger() to make sure that the event is triggered and the generator send the transaction to the model
 				elec_mod_scr.get(elec_tr_model);
 				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
+					
+			
+				
 
+				//$display("[ELEC SCOREBOARD] DUT transaction: %p",elec_tr);
 
 
 				if (elec_tr.transaction_type == AT_cmd || elec_tr.transaction_type == AT_rsp)
@@ -65,37 +71,36 @@
 						$display("Transaction type:[%0b]\n",elec_tr.transaction_type.name());
 				end
 
-				 case(elec_tr.phase)
-				 	2:
-				 	begin
-				 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 2) SIDEBAND behavior ");
-				 		else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 2) SIDEBAND behavior!!!");
+				case(elec_tr.phase)
+					2:
+					begin
+						assert(	(elec_tr_model.sbtx === elec_tr.sbtx)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 2) SIDEBAND behavior ");
+						else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 2) SIDEBAND behavior!!!");
 					end
 
-				 	3:
+					3:
 				 	begin
 
-										//* detailed assertions
-							assert	(elec_tr_model.sbtx === elec_tr.sbtx) else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) sbtx !!!");						
-							assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) transaction_type !!!");		
-							assert	(elec_tr_model.read_write === elec_tr.read_write)else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) read_write !!!");						
-							assert	(elec_tr_model.len === elec_tr.len)			else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) len !!!");							
-							assert	(elec_tr_model.crc_received === elec_tr.crc_received)else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) crc_received !!!");					
-							assert	(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)	else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) cmd_rsp_data !!!");				
-							assert	(elec_tr_model.address === elec_tr.address)						else 	$error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) address !!!");		
-								
-   
-   
-
-				 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 								&&
-				 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 		&&
-				 				(elec_tr_model.read_write === elec_tr.read_write)					&&
-				 				(elec_tr_model.len === elec_tr.len)									&&
-				 				(elec_tr_model.crc_received === elec_tr.crc_received)				&&
-				 				(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)				&&
+				 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
+				 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
+				 				(elec_tr_model.read_write === elec_tr.read_write)				&&
+				 				(elec_tr_model.len === elec_tr.len)								&&
+				 				(elec_tr_model.crc_received === elec_tr.crc_received)			&&
+				 				(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			&&
 				 				(elec_tr_model.address === elec_tr.address)												
 				 				) $display("[ELEC SCOREBOARD] CORRECT (PHASE 3) Transaction received ");
 				 		else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) Transaction received   !!!");
+
+						// Detailed Assertions
+						assert	(elec_tr_model.sbtx === elec_tr.sbtx)							else 	$error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");						
+						assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT transaction_type !!!");		
+						assert	(elec_tr_model.read_write === elec_tr.read_write)				else 	$error("[ELEC SCOREBOARD] INCORRECT read_write !!!");						
+						assert	(elec_tr_model.len === elec_tr.len)								else 	$error("[ELEC SCOREBOARD] INCORRECT len !!!");							
+						assert	(elec_tr_model.crc_received === elec_tr.crc_received)			else 	$error("[ELEC SCOREBOARD] INCORRECT crc_received !!!");					
+						assert	(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			else 	$error("[ELEC SCOREBOARD] INCORRECT cmd_rsp_data !!!");				
+						assert	(elec_tr_model.address === elec_tr.address)						else 	$error("[ELEC SCOREBOARD] INCORRECT address !!!");		
+   
+				 		
 				 	end
 
 				 	4:
@@ -104,44 +109,48 @@
 
 				 			SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3:  // GEN2/ GEN3 CHECKING
 				 			begin
-								//* detailed assertions
-								assert (elec_tr_model.sbtx === elec_tr.sbtx) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) sbtx !!!");
-								assert (elec_tr_model.lane === elec_tr.lane) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) lane !!!");
-								assert (elec_tr_model.o_sets === elec_tr.o_sets) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) o_sets !!!");
+
+				 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
+										(elec_tr_model.lane === elec_tr.lane) &&
+										(elec_tr_model.o_sets === elec_tr.o_sets)
+										) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
+
+								// Detailed assertions
+								assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
+								assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
+								assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");
 									
-									assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
-											(elec_tr_model.lane === elec_tr.lane) &&
-											(elec_tr_model.o_sets === elec_tr.o_sets)
-											) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
+								
 				 			end
 
 				 			TS1_gen4, TS2_gen4, TS3, TS4:  //GEN4 CHECKING
 				 			begin
-											//* detailed assertions
-									assert (elec_tr_model.sbtx === elec_tr.sbtx) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) sbtx !!!");
-									assert (elec_tr_model.lane === elec_tr.lane) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) lane !!!");
-									assert (elec_tr_model.o_sets === elec_tr.o_sets) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) o_sets !!!");
-									assert (elec_tr_model.order === elec_tr.order) else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 4) order !!!");
-									
-									assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
-											(elec_tr_model.lane === elec_tr.lane) &&
-											(elec_tr_model.o_sets === elec_tr.o_sets) &&
-											(elec_tr_model.order === elec_tr.order)
-											) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
-				 				end
 
+				 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
+										(elec_tr_model.lane === elec_tr.lane) &&
+										(elec_tr_model.o_sets === elec_tr.o_sets) &&
+										(elec_tr_model.order === elec_tr.order)
+										) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
 
-				 		endcase
-						
+								// Detailed assertions
+								assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
+								assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
+								assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");
+								assert (elec_tr_model.order === elec_tr.order) 		else $error("[ELEC SCOREBOARD] INCORRECT order !!!");
+								
+								
+			 				end
+
+				 		endcase	
 				 	end
 
-				 	5:
-				 	begin
-				 		assert(	(elec_tr_model.transport_to_electrical === elec_tr.transport_to_electrical)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 5)  behavior ");
-				 	end
+					5:
+					begin
+						assert(	(elec_tr_model.transport_to_electrical === elec_tr.transport_to_electrical)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 5)  behavior ");
+					end
 
 
-				 endcase
+				endcase
 				
 				
 			end
@@ -160,6 +169,11 @@
 			if (elec_tr.transaction_type == AT_cmd)
 			begin
 				-> elec_AT_cmd_received;
+			end
+
+			if (elec_tr.transaction_type == AT_rsp)
+			begin
+				-> elec_AT_rsp_received;
 			end
 
 			if (elec_tr.tr_os == ord_set)

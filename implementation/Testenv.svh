@@ -30,6 +30,7 @@
 		event elec_gen_drv_done;
 		event sbtx_high_received; // to identify phase 2 completion (sbtx high received)
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
+		event elec_AT_rsp_received; // to make the sequence wait for the AT response to be received
 		
 		event UL_gen_drv_done;
 
@@ -100,14 +101,14 @@
 			agent_config.build();
 
 			//Sequences
-			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_received, elec_AT_cmd_received);
+			elec_gen = new( elec_gen_mod, elec_gen_drv, os_received_mon_gen, elec_gen_drv_done, sbtx_high_received, elec_AT_cmd_received, elec_AT_rsp_received);
 			config_gen = new (mb_stim_drv, config_stim_model, config_gen_drv_done, config_req_received);
 			UL_gen = new(UL_gen_mod, UL_gen_drv, UL_gen_drv_done);
 			
 
 			// Scoreboards
 			UL_sb = new(UL_mon_scr, UL_mod_scr);
-			elec_sb = new(elec_mon_scr, elec_mod_scr, os_received_mon_gen, sbtx_high_received, elec_AT_cmd_received);
+			elec_sb = new(elec_mon_scr, elec_mod_scr, os_received_mon_gen, sbtx_high_received, elec_AT_cmd_received, elec_AT_rsp_received);
 			sb_config = new(config_model_scr, config_mon_scr, config_req_received);
 
 			// Virtual Sequence connections

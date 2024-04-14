@@ -40,16 +40,16 @@
 			// v_elec_layer_generator.send_ordered_sets(TS2_gen2_3,gen3);
 
 
-			// //v_elec_layer_generator.phase_force(4);
-			// //v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
+			//v_elec_layer_generator.phase_force(4);
+			v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
 
 			//v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
 
-			// v_elec_layer_generator.send_ordered_sets(TS2_gen4,gen4);
+			v_elec_layer_generator.send_ordered_sets(TS2_gen4,gen4);
 			
-			// v_elec_layer_generator.send_ordered_sets(TS3,gen4);
-			// //#(tTrainingError); //To test tTrainingError
-			// v_elec_layer_generator.send_ordered_sets(TS4,gen4);
+			v_elec_layer_generator.send_ordered_sets(TS3,gen4);
+			//#(tTrainingError); //To test tTrainingError
+			v_elec_layer_generator.send_ordered_sets(TS4,gen4);
 		
 	
 			

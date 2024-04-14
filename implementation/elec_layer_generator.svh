@@ -8,8 +8,9 @@
 
 		// Event Signals
 		event elec_gen_drv_done;
-		event sbtx_high_recieved;
+		event sbtx_high_received;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
+		event elec_AT_rsp_received; // to make the sequence wait for the AT response to be received
 
 
 		//Transaction
@@ -21,7 +22,7 @@
 		mailbox #(elec_layer_tr) elec_gen_drv; // connects Stimulus generator to the driver inside the agent
 		mailbox #(elec_layer_tr) os_received_mon_gen; // connects monitor to the stimulus generator to indicated received ordered sets
 
-		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_recieved, elec_AT_cmd_received);
+		function new( mailbox #(elec_layer_tr) elec_gen_mod, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) os_received_mon_gen, event elec_gen_drv_done, sbtx_high_received, elec_AT_cmd_received, elec_AT_rsp_received);
 
 			// Mailbox connections between generator and agent
 			this.elec_gen_mod = elec_gen_mod;
@@ -31,8 +32,9 @@
 
 			// Event Signals Connections
 			this.elec_gen_drv_done = elec_gen_drv_done;
-			this.sbtx_high_recieved = sbtx_high_recieved;
+			this.sbtx_high_received = sbtx_high_received;
 			this.elec_AT_cmd_received = elec_AT_cmd_received;
+			this.elec_AT_rsp_received = elec_AT_rsp_received;
 			
 
 		endfunction : new
@@ -52,13 +54,13 @@
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
 				$display("[ELEC GENERATOR] Waiting for SBTX high");
-				@(sbtx_high_recieved);
+				@(sbtx_high_received);
 
 				transaction.sbrx = 1'b1;
 				transaction.electrical_to_transport = 0;
 				transaction.phase = 3'b010; // phase 2
 				elec_gen_drv.put(transaction); // Sending transaction to the Driver
-				//elec_gen_mod.put(transaction); // Sending transaction to the Reference model (model doesn't need it)
+				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a HOST router");
 
 				@(elec_gen_drv_done);
@@ -75,7 +77,7 @@
 				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a DEVICE router");
 				@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
-				@(sbtx_high_recieved); // wait for the monitor to receive SBTX high for tConnectTx
+				@(sbtx_high_received); // wait for the monitor to receive SBTX high for tConnectTx
 				
 			end
 
@@ -108,8 +110,8 @@
 
 				AT_cmd, AT_rsp : begin //AT_cmd, AT_rsp
 					transaction.phase = phase;
-					transaction.transaction_type = trans_type;
 					transaction.sbrx = 1; // for the model only
+					transaction.transaction_type = trans_type;
 					transaction.read_write = read_write;
 					transaction.address = address;
 					transaction.len = len;
@@ -117,15 +119,22 @@
 
 					transaction.tr_os = tr; 
 					if (trans_type == AT_rsp)
-						begin
-							@(elec_AT_cmd_received); //  wait for an AT command to respond to it
-						end
+					begin
+						@(elec_AT_cmd_received); //  wait for an AT command to respond to it
+					end
 						
 					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
 					@(elec_gen_drv_done);
+					/*
+					if (trans_type == AT_cmd)
+					begin
+						@(elec_AT_rsp_received); //  wait for an AT response to be received
+					end
+					*/
+
 				end
 
 
@@ -217,7 +226,7 @@
 				case (OS)
 				
 					SLOS1, SLOS2: begin
-						while ( (counter_lane_0 < 2) || (counter_lane_1 < 2) )  // should be (counter != 2)
+						while ( (counter_lane_0 < 2) || (counter_lane_1 < 2) )  // should be (counter < 2)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -275,7 +284,7 @@
 						else if (generation == gen2)
 							limit = 32;
 
-						while ((counter_lane_0 < 2) || (counter_lane_1 < 2)) // should be (counter != limit)
+						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -319,7 +328,7 @@
 						else if (generation == "gen2")
 							limit = 16;
 
-						while ((counter_lane_0 < 2) || (counter_lane_1 < 2)) // should be (counter != limit)
+						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
 						begin 
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -353,12 +362,12 @@
 
 
 							//Checking that the training duration is less than tTrainingError (500us)
-							if (counter_lane_0 == 2) //should be == limit
+							if (counter_lane_0 == limit) //should be == limit
 							begin
 								assert($time <= (lane_0_tTrainingError_time + tTrainingError) );
 							end
 
-							if (counter_lane_1 == 2) //should be == limit
+							if (counter_lane_1 == limit) //should be == limit
 							begin
 								assert($time <= (lane_1_tTrainingError_time + tTrainingError) );
 							end
@@ -369,7 +378,7 @@
 
 					TS1_gen4, TS2_gen4, TS3: 
 					begin
-						while ((counter_lane_0 < 1) || (counter_lane_1 < 1))  // should be 16
+						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  // should be 16
 							begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -404,13 +413,13 @@
 							//Storing the time when first TS1 gen4 was sent to calculate tTrainingError
 							if (OS == TS1_gen4)
 							begin
-								if (counter_lane_0 == 1)
+								if (counter_lane_0 == 1) //First TS1
 								begin
 									lane_0_tTrainingError_time = $time;
 									lane_0_tGen4TS1  = $time;
 								end
 
-								if (counter_lane_1 == 1)
+								if (counter_lane_1 == 1) //First TS1
 								begin
 									lane_1_tTrainingError_time = $time;
 									lane_1_tGen4TS1  = $time;
@@ -460,7 +469,7 @@
 
 					TS4: 
 					begin
-						while ((counter_lane_0 < 1) || (counter_lane_1 < 1))  //should be 16
+						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  //should be 16
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 	
 							os_received_mon_gen.get(tr_mon);
@@ -493,12 +502,12 @@
 							end
 
 							//Checking that the training duration is less than tTrainingError (500us)
-							if (counter_lane_0 == 1) //should be == 16
+							if (counter_lane_0 == 16) //should be == 16 (or 15????????????)
 							begin
 								assert($time <= (lane_0_tTrainingError_time + tTrainingError) );
 							end
 
-							if (counter_lane_1 == 1) //should be == 16
+							if (counter_lane_1 == 16) //should be == 16 (or 15????????????)
 							begin
 								assert($time <= (lane_1_tTrainingError_time + tTrainingError) );
 							end
@@ -526,7 +535,6 @@
 	task phase_force (input int num);
 
 		transaction = new(); 
-		transaction.sbrx = 1; // for the model only
 		transaction.phase = num ; 
 		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
 		
