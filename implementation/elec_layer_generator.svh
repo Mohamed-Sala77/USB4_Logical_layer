@@ -128,12 +128,12 @@
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
 					@(elec_gen_drv_done);
-					/*
+					
 					if (trans_type == AT_cmd)
 					begin
 						@(elec_AT_rsp_received); //  wait for an AT response to be received
 					end
-					*/
+
 
 				end
 
