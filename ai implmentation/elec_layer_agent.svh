@@ -12,6 +12,7 @@ uvm
     mailbox #(elec_layer_tr) elec_drv_gen;
     mailbox #(elec_layer_tr) elec_mod_gen;Salamalai 
 
+
     // Declare the events
     //event driver_start;
 
