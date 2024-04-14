@@ -60,7 +60,7 @@
 				transaction.electrical_to_transport = 0;
 				transaction.phase = 3'b010; // phase 2
 				elec_gen_drv.put(transaction); // Sending transaction to the Driver
-				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+				//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 				$display("[ELEC GENERATOR] SENDING phase 2 SBRX HIGH while the DUT is a HOST router");
 
 				@(elec_gen_drv_done);
@@ -536,6 +536,7 @@
 
 		transaction = new(); 
 		transaction.phase = num ; 
+		transaction.sbrx = 1; 
 		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
 		
 	endtask //phase_force

@@ -29,14 +29,16 @@
 						$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
 					end
 				*/	
+					//* getting first from model since model will block in case we aren't in phase 1 
+				mb_model.get(transaction_model);
+				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
+
 
 				mb_mon.get(transaction_mon);
 				event_trigger();
 				$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
 
 
-				mb_model.get(transaction_model);
-				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
 
 				
 				assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");

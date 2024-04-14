@@ -568,7 +568,8 @@
 							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
 							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
 
-							elec_tr.phase = v_if.phase;
+							// elec_tr.phase = v_if.phase;  //*مؤقتاً*//
+							elec_tr.phase=3;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};

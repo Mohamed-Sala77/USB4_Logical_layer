@@ -43,7 +43,7 @@
 				*/
 
 				elec_mon_scr.get(elec_tr);
-				$display("[ELEC SCOREBOARD] Time: %0t   Transaction Received: %p", $time, elec_tr);
+				$display("[ELEC SCOREBOARD] Time: %0t   DUT Transaction Received: %p", $time, elec_tr);
 				event_trigger(); // to trigger the sbtx_high_received event
 
 
