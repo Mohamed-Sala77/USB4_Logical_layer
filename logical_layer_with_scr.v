@@ -10,7 +10,7 @@
 
 `default_nettype none
 
-module logical_layer
+module logical_layer_with_scr
 (
   input  wire        local_clk, 
   input  wire        sb_clk, 
