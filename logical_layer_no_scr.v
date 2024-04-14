@@ -10,7 +10,7 @@
 
 `default_nettype none
 
-module logical_layer
+module logical_layer_no_scr
 (
   input  wire        local_clk, 
   input  wire        sb_clk, 
@@ -26,7 +26,8 @@ module logical_layer
   output wire        sbtx, 
   output wire        lane_0_tx_o, 
   output wire        lane_1_tx_o,  
-  output wire        c_read_write, 
+  output wire        c_read, 
+  output wire        c_write,  
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
   output wire        enable_scr
@@ -48,8 +49,6 @@ wire         os_sent;
 wire         tx_lanes_on;
 wire         rx_lanes_on;
 wire         enable_ser;
-wire         enable_deser;
-wire         enable_scr;
 wire         enable_enc;
 wire         enable_dec;
 wire         enable_deskew;
@@ -163,7 +162,8 @@ control_fsm ctrl_fsm
   .new_sym                 ( new_sym_pul             ),
   .gen_speed               ( gen_speed               ),
   .c_address               ( c_address               ),
-  .c_read_write            ( c_read_write            ),
+  .c_read                  ( c_read                  ),
+  .c_write                 ( c_write                 ),
   .s_data_o                ( s_data_o                ),
   .s_address_o             ( s_address_o             ),
   .s_read_o                ( s_read_o                ),
@@ -256,10 +256,10 @@ lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),
-  .lane_0_rx_ser           ( lane_0_rx_i             ),
-  .lane_1_rx_ser           ( lane_1_rx_i             ),
-  .lane_0_tx_ser           ( lane_0_tx_o             ),
-  .lane_1_tx_ser           ( lane_1_tx_o             ),
+  .lane_0_rx_ser           ( lane_0_rx_ser_scr       ),
+  .lane_1_rx_ser           ( lane_1_rx_ser_scr       ),
+  .lane_0_tx_ser           ( lane_0_tx_ser_scr       ),
+  .lane_1_tx_ser           ( lane_1_tx_ser_scr       ),
   .scr_rst                 ( scr_rst                 ),
   .enable_scr              ( enable_scr              ),
   .lane_0_rx_parallel      ( lane_0_rx_enc_ser       ), 
