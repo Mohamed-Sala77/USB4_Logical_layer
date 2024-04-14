@@ -267,8 +267,8 @@ module data_bus_transmit #(parameter SEED = 11'b00000000001)(
 			    end	
                 else begin
 			        if (count_prbs != 0) begin     
-                        temp_pipo0 <= {temp_pipo0[6:0], temp_prbs_gen4[0]};
-                        temp_pipo1 <= {temp_pipo1[6:0], temp_prbs_gen4_lane1[0]};
+                        temp_pipo0 <= {temp_pipo0[6:0], temp_prbs_gen4[10]};
+                        temp_pipo1 <= {temp_pipo1[6:0], temp_prbs_gen4_lane1[10]};
 			            temp_prbs_gen4 <= {temp_prbs_gen4[9:0],temp_prbs_gen4[10]^temp_prbs_gen4[8]};
 			            temp_prbs_gen4_lane1 <= {temp_prbs_gen4_lane1[9:0],temp_prbs_gen4_lane1[10]^temp_prbs_gen4_lane1[8]};
 			            count_prbs <= count_prbs -1;
