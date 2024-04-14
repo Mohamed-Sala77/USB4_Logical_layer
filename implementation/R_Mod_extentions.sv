@@ -6,6 +6,7 @@ class extentions ;
     mailbox #(int_packet) int_ag ;
     elec_layer_tr               E_transaction ;
     
+    
 
   function new(mailbox #(int_packet) int_ag ,  mailbox  #(elec_layer_tr) elec_ag_Tx ); 
     this.int_ag = int_ag;
