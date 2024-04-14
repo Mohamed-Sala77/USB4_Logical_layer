@@ -596,7 +596,7 @@ always @(posedge sb_clk) begin
 
 	trans_error <= trans_error_reg;
 
-	payload_in <= payload_in_reg;
+	payload_in <= (ns == DLE2)? payload_in_reg : payload_in;
 
 	s_read <= s_read_reg && valid_reg;
 
