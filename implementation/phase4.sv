@@ -284,8 +284,8 @@ endtask
             if(j==0)        E_transaction.lane = lane_0;
              else             E_transaction.lane = lane_1;
 
-        case (m_transaction.gen_config)
-            2: begin
+        case (m_transaction.gen_speed)
+            gen2: begin
                 case (packet)
                     SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);             // send SLOS2 packet 2 times
@@ -293,7 +293,7 @@ endtask
                     TS2_G2: send_G2_TS2_G2(packet); // send TS2_G2 packet 16 times
                 endcase
             end
-            3: begin
+            gen3: begin
                 case (packet)
                     SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);              // send SLOS2 packet 2 times
@@ -301,7 +301,7 @@ endtask
                     TS2_G2: send_G3_TS2_G2(packet);  // send TS2_G2 packet 8 times
                 endcase
             end
-            4: begin
+            gen4: begin
                 case (packet)
                     TS1_G4: send_TS1_G4(packet);          // send TS1_G4 packet 16 times 
                     TS2_G4: send_TS2_G4(packet);         // send TS2_G4 packet 16 times
@@ -318,11 +318,12 @@ endtask
 
     task  get_transactions();
          elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
-        //$display("et E_transaction ");
+             //$display("et E_transaction ");
          config_ag_Rx.try_get(C_transaction);
-        $display ("in phase4 C_transaction = %p",C_transaction);
-        $display ("in phase4 E_transaction = %p",E_transaction);
-        mem_ag.try_get(m_transaction); 
+         $display ("in phase4 C_transaction = %p",C_transaction);
+         $display ("in phase4 E_transaction = %p",E_transaction);
+         mem_ag.try_get(m_transaction); 
+         m_transaction.gen_speed = E_transaction.gen_speed ;
 
         $display ("m_transaction %p ",m_transaction);
 
@@ -360,12 +361,11 @@ endtask
 
                 else if (E_transaction.phase==4 )   // we are in phase 4 
                         begin
-                    if ( (m_transaction.gen4 == 1) && (m_transaction.gen_config == 4))       // we are gen 4 send in order (TS1->TS2 ->TS3-> TS4 )
+                    if ( (m_transaction.gen4 == 1) )       // we are gen 4 send in order (TS1->TS2 ->TS3-> TS4 )
                            os_g4() ; 
 
                           
-                          else if(( m_transaction.gen2 == 1) && (m_transaction.gen_config == 2 ) 
-                                        ||  ( m_transaction.gen3 == 1) && (m_transaction.gen_config == 3 )) // we are gen 2 or 3 send in order (SLOS1->SLOS2 ->TS1-> TS2 )
+                          else if(( m_transaction.gen2 == 1) ||  ( m_transaction.gen3 == 1) ) // we are gen 2 or 3 send in order (SLOS1->SLOS2 ->TS1-> TS2 )
                           os_g2_3() ; 
                           
                           
