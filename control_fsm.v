@@ -442,6 +442,12 @@ always @ (posedge fsm_clk or negedge reset_n)
             os_rec_cnt_l1 <= 0;
           end
 		  
+        CLD_CLK_SWITCH : 
+          begin  
+			cable_gen <= cable_gen;
+			opp_adapter_gen <= opp_adapter_gen;
+          end
+		  
         TRAINING_GEN4_TS1 : 
           begin
             fsm_training <= 1;
