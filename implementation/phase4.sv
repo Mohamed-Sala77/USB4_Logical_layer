@@ -2,7 +2,7 @@
 class phase4 extends primary_steps ;
 mailbox #(mem)    mem_ag ;      // internal memory agent
 mem        m_transaction;   // memory transaction
-elec_layer_tr   temp_elec_tr;  // temporary electrical transaction
+elec_layer_tr   temp_elec_tr1, temp_elec_tr2 , temp_elec_tr3 ;  // temporary electrical transaction
 bit check_equlity ;             // check if the received two transaction are the same   
 
 
@@ -29,6 +29,7 @@ parameter        SLOS1   = 4'b1000,
       this.config_ag_Rx= config_ag_Rx;
 
       m_transaction = new();
+      temp_elec_tr3 = new();
 
     endfunction
 
@@ -58,14 +59,26 @@ parameter        SLOS1   = 4'b1000,
         begin           //` ---------the generator should send the same order set 2 times //
             if (next_order != n_SLOS1) 
             begin
-                elec_ag_Rx.get (temp_elec_tr);          // first get
-                elec_ag_Rx.get (temp_elec_tr);          // second get
-                check_equlity = (E_transaction.o_sets == temp_elec_tr.o_sets) ? 1 : 0 ;     //! here we should do the check cond. 
-                gen2_3_OS();
+                elec_ag_Rx.get (temp_elec_tr1);          // first get
+                elec_ag_Rx.get (temp_elec_tr2);          // second get
+                check_equlity = ((temp_elec_tr3.o_sets == temp_elec_tr1.o_sets) && (temp_elec_tr3.o_sets == temp_elec_tr2.o_sets)) ? 1 : 0 ;     //! here we should do the check cond. 
+                if (check_equlity) gen2_3_OS();
+
+                else if ((temp_elec_tr1.o_sets == SLOS1 ) && (temp_elec_tr2.o_sets == SLOS1))
+                    begin
+                        send_packet(SLOS2, n_TS1);
+                    end
+                else if ((temp_elec_tr1.o_sets == SLOS2 ) && (temp_elec_tr2.o_sets == SLOS2) && (temp_elec_tr3.o_sets == TS2_G2 ))
+                    begin
+                        send_packet(SLOS2, n_TS1);
+                    end
+
+                else $error ( "the received order sets are not like we wait we recieve %p not %p" , temp_elec_tr1.o_sets , temp_elec_tr3.o_sets);
             end
             else
                 begin
                     elec_ag_Rx.get (E_transaction);         // for first one to know that we are in phase 4
+                gen2_3_OS();
                 end
         end
     end
@@ -132,6 +145,7 @@ endtask
         repeat(2) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
@@ -145,6 +159,7 @@ endtask
         repeat(2) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
@@ -158,6 +173,7 @@ endtask
         repeat(32) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
@@ -171,6 +187,7 @@ endtask
         repeat(16) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
@@ -184,6 +201,7 @@ endtask
         repeat(16) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
@@ -197,6 +215,7 @@ endtask
         repeat(8) begin
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
+            $cast(temp_elec_tr3.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
             E_transaction = new();
             i++;
