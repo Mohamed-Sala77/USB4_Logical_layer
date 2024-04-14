@@ -31,6 +31,8 @@ class phase3 extends primary_steps;
         // task to get transactions from the mailboxes
         task  get_transactions();
             elec_ag_Rx.get(E_transaction);
+            mem_ag.peek(m_transaction);
+            $display("m_transaction = %p",m_transaction);
             config_ag_Rx.try_get(C_transaction);
             $display ("in phase3 E_transaction = %p",E_transaction);
             //$display ("in phase3 C_transaction = %p",C_transaction);
@@ -51,17 +53,20 @@ class phase3 extends primary_steps;
         //i_transaction.mem_gen = 1;       //  sb work as a genrator
         int_ag.put(i_transaction) ;         // socend put in the mailbox 
         i_transaction = new();
+
+        if(E_transaction.transaction_type!=AT_rsp)  extention.get_values ();
+
         endtask
  
  
         // task to handle command
         task  handle_command();
-            if ((E_transaction.transaction_type=='b010 ) && (E_transaction.read_write==0) )     // we have a command  . out responce from sideband
+            if ((E_transaction.transaction_type==AT_cmd ) && (E_transaction.read_write==0) )     // we have a command  . out responce from sideband
             begin
                 ////$display ("in handle_command");
                     i_transaction.sb_en    = 1;
                     i_transaction.tran_en = 1;                  
-                    i_transaction.At_sel   = 1;         // out response 
+                    i_transaction.At_sel   = 0;         // out response 
                     i_transaction.sb_add   = E_transaction.address ;     //address to read from sideband
                     i_transaction.read_write = 0;       //read from sideband
                     i_transaction.gen_res = 1;          //  genrate response
@@ -82,23 +87,22 @@ class phase3 extends primary_steps;
 
         // task to handle response
         task  handle_response();
-            if ((E_transaction.transaction_type=='b011 ) && (E_transaction.read_write==1))   // we have a response
+            if ((E_transaction.transaction_type==AT_rsp ) && (E_transaction.read_write==0))   // we have a response
             begin
                 i_transaction.gen_res = 0;          //  not genrate response
-                
-                if ((E_transaction.cmd_rsp_data[5]==1)  && (E_transaction.cmd_rsp_data[10]==0) && (E_transaction.gen_speed == 1) )
-                    m_transaction.gen = 3;
-                else if ((E_transaction.cmd_rsp_data[5]==0)  && (E_transaction.cmd_rsp_data[10]==1) && (E_transaction.gen_speed == 2))
-                    m_transaction.gen = 4;
-                else if ((E_transaction.cmd_rsp_data[10]==0) && (E_transaction.cmd_rsp_data[5]==0)  && (E_transaction.gen_speed == 0))
-                    m_transaction.gen = 2;
-                else 
-                    m_transaction.gen = 0;          //* error in the response
-            end 
-
-            //$display ("we are gen  %0d",m_transaction.gen);
-            mem_ag.put(m_transaction);
-            m_transaction = new();
+                fork
+                if ((E_transaction.cmd_rsp_data[13]==1)  ) //&& (E_transaction.gen_speed == gen3) 
+                    m_transaction.gen3 = 1;
+                 if ((E_transaction.cmd_rsp_data[18]==1) ) // && (E_transaction.gen_speed == gen4))
+                    m_transaction.gen4 = 1;
+                 if ((E_transaction.cmd_rsp_data[13]==0) && (E_transaction.cmd_rsp_data[18]==0))  //&& (E_transaction.gen_speed == gen2))
+                    m_transaction.gen2 = 1;
+                join
+                    $display ("supported gens : gen2( %0d) gen3( %0d)  gen4( %0d)  ",m_transaction.gen2 , m_transaction.gen3 , m_transaction.gen4);
+                    $display ("put m_transaction = %p",m_transaction);
+                    mem_ag.put(m_transaction);
+                    m_transaction = new();
+                end 
         endtask
 
 
@@ -110,7 +114,7 @@ class phase3 extends primary_steps;
             begin
                 i_transaction.sb_en    = 1;
                 i_transaction.tran_en = 1;                  
-                i_transaction.At_sel   = 0;         // out command
+                i_transaction.At_sel   = 1;         // out command
                 i_transaction.sb_add   = E_transaction.address ;     //address to read from sideband
                 i_transaction.read_write = 0;       //read from sideband
                 i_transaction.gen_res=0;           // generate 
@@ -121,8 +125,10 @@ class phase3 extends primary_steps;
             end
 
             int_ag.put(i_transaction) ;         // first put in the mailbox 
+            $display ("send_command done . i_transaction = %p",i_transaction);
             i_transaction = new();
-            ////$display ("send_command done . i_transaction = %p",i_transaction);
+
+            extention.get_values ();
         end
         endtask //send_command
 
@@ -160,10 +166,11 @@ class phase3 extends primary_steps;
                 else 
                     begin
                 
-                    send_command ();
-                    handle_phase_and_error();
+                    if( (E_transaction.transaction_type==AT_rsp)  ||  (E_transaction.transaction_type==AT_cmd)) handle_phase_and_error();
+
+                    else send_command ();
                 
-               extention.get_values ();
+               
 
                 end
 

@@ -25,7 +25,7 @@ class ref_model extends primary_steps;
         mem_ag = new();
 
         phase_1   = new(config_ag_Rx, elec_ag_Rx , elec_ag_Tx , config_ag_Tx , mem_ag , int_ag);
-        phase_2   = new (elec_ag_Tx , config_ag_Rx , elec_ag_Rx , mem_ag  );
+        phase_2   = new (elec_ag_Tx , config_ag_Rx , elec_ag_Rx   );
         phase_3   = new (elec_ag_Tx , elec_ag_Rx , mem_ag , int_ag , config_ag_Rx);
         phase_4   = new(elec_ag_Rx , elec_ag_Tx , mem_ag , config_ag_Rx);
         phase_5   = new(config_ag_Rx, elec_ag_Rx, elec_ag_Tx , trans_ag_Rx , trans_ag_Tx);

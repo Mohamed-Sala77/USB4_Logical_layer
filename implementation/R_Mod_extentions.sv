@@ -1,4 +1,3 @@
-
 class extentions ;
 
     mailbox  #(elec_layer_tr) elec_ag_Tx ;
@@ -16,32 +15,32 @@ class extentions ;
     this.sel='b1;              //to put default commend
   endfunction
 
-    /////***defind constant parts of code***/////
+    /////*defind constant parts of code*/////
       const var DLE=8'hfe, 
                 STX=7'h02,                                   //we will concatinate it with last bit represent (command_response)
                 ETX=8'h40,
                 DATA_Symbols=16'h030c;                        //reviewing(rig 12) =>incase send commend to read the parameters of another router 
 
-       //**some parameters**//
+       //some parameters//
        parameter SB_width=24,reg_size=16;     //sb reg size in bits
       
        //defind interface with tran_type block.
        logic [SB_width-1:0] SB_read;
 
-    /////***defind properties of trans type block***///// 
+    /////*defind properties of trans type block*///// 
        //defind interface with FSM controller
        bit               sel;  //sel=1 in case (command) and sel=0 in case response.
        //defind interface with serializer
        logic  [6:0][7:0] R_trans_2_serializar;  //response frame
        logic  [3:0][7:0] C_trans_2_serializar;  //command frame
-    /////***defind properties of deserializer block***///// 
+    /////*defind properties of deserializer block*///// 
        bit            read_write;
        logic   [7:0]  address;
        logic   [6:0]  len;
        logic   [15:0] crc;
        logic   [SB_width-1:0] cmd_rsp_data;
 
-      /////***defind function new***/////
+      /////*defind function new*/////
   /*function void DefaultValue();
 
   //this.SB_add='b1100;        // first location to read default
@@ -109,7 +108,7 @@ begin
       for(int k=0;k<$size(C_trans_2_serializar);k++)
        begin
         b_yte=C_trans_2_serializar[k];
-        //**operation**/
+        //operation/
        for(int i=0;i<8;i++)
          begin
            O_rig_15=rigister[15];
@@ -136,7 +135,7 @@ begin
       for(int k=0;k<$size(R_trans_2_serializar);k++)
        begin
         b_yte=R_trans_2_serializar[k];
-        //**operation**/
+        //operation/
        for(int i=0;i<8;i++)
          begin
            O_rig_15=rigister[15];
@@ -164,14 +163,20 @@ begin
     this.read_write=1'b0;
 
          
-          //**connect with score_board**//
+          //connect with score_board//
+	  if(this.sel)
+	  E_transaction.transaction_type=AT_cmd;
+	  else
+	  E_transaction.transaction_type=AT_rsp;
+	  
+	    E_transaction.phase='d3;
       E_transaction.crc_received = this.crc;
       E_transaction.read_write = this.read_write;
       E_transaction.address = this.address;
       E_transaction.len = this.len;
       E_transaction.cmd_rsp_data = this.cmd_rsp_data;
       elec_ag_Tx.put(E_transaction);  
-      $display ("E_transaction in phase 3 sent to scorbourd = %p",E_transaction);
+      $display ("E_transaction in phase 3 sent to scoreboard = %p",E_transaction);
       E_transaction = new();  
   end
 endtask
@@ -180,7 +185,6 @@ task  get_values ();
     //DefaultValue();
     i_transaction = new();
 
-    //! need double check from walid 
 
     int_ag.get(i_transaction);
    if (i_transaction.gen_res==0)      //  genrate command only for phase 3 
@@ -190,11 +194,11 @@ task  get_values ();
         generate_AT();
       end
 
-      else if (i_transaction.gen_res==1)      //  genrate command then response
+      else if (i_transaction.gen_res==1)      //  genrate  response
         begin
-      // for generate command 
-          trans_type(.sel(i_transaction.At_sel),.tran_en(i_transaction.tran_en));
-          generate_AT();
+      // // for generate command 
+      //     trans_type(.sel(i_transaction.At_sel),.tran_en(i_transaction.tran_en));
+      //     generate_AT();
   
           // for generate response 
             int_ag.get(i_transaction);
@@ -207,6 +211,3 @@ endtask
 
 
 endclass:extentions
-
-
-

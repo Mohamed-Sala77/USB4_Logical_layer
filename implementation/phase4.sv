@@ -52,7 +52,7 @@ parameter        SLOS1   = 4'b1000,
 
     task  os_g2_3();
     begin
-        //$display("we are in os_g2_3");
+        $display("we are in os_g2_3");
         next_order = n_SLOS1 ;         
         status  = wrong; 
         while (status != right)
@@ -284,7 +284,7 @@ endtask
             if(j==0)        E_transaction.lane = lane_0;
              else             E_transaction.lane = lane_1;
 
-        case (m_transaction.gen)
+        case (m_transaction.gen_config)
             2: begin
                 case (packet)
                     SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
@@ -323,8 +323,9 @@ endtask
         $display ("in phase4 C_transaction = %p",C_transaction);
         $display ("in phase4 E_transaction = %p",E_transaction);
         mem_ag.try_get(m_transaction); 
-        m_transaction.gen = 4;   // ! this line should be deleted
-        $display ("we are in gen %d",m_transaction.gen);
+
+        $display ("m_transaction %p ",m_transaction);
+
 endtask
     
     
@@ -359,12 +360,12 @@ endtask
 
                 else if (E_transaction.phase==4 )   // we are in phase 4 
                         begin
-                            
-                    if ( m_transaction.gen == 4)       // we are gen 4 send in order (TS1->TS2 ->TS3-> TS4 )
+                    if ( (m_transaction.gen4 == 1) && (m_transaction.gen_config == 4))       // we are gen 4 send in order (TS1->TS2 ->TS3-> TS4 )
                            os_g4() ; 
 
                           
-                          else if( m_transaction.gen == 2  ||  m_transaction.gen == 3)  // we are gen 2 or 3 send in order (SLOS1->SLOS2 ->TS1-> TS2 )
+                          else if(( m_transaction.gen2 == 1) && (m_transaction.gen_config == 2 ) 
+                                        ||  ( m_transaction.gen3 == 1) && (m_transaction.gen_config == 3 )) // we are gen 2 or 3 send in order (SLOS1->SLOS2 ->TS1-> TS2 )
                           os_g2_3() ; 
                           
                           
