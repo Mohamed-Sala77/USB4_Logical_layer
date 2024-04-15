@@ -42,6 +42,7 @@ parameter        SLOS1   = 4'b1000,
         while (status != right)
         begin
             elec_ag_Rx.get (E_transaction);
+            $display ("E_transaction in os_g4%p ",E_transaction);
             gen4_OS();
             
 
@@ -318,7 +319,6 @@ endtask
 
     task  get_transactions();
          elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
-             //$display("et E_transaction ");
          config_ag_Rx.try_get(C_transaction);
          $display ("in phase4 C_transaction = %p",C_transaction);
          $display ("in phase4 E_transaction = %p",E_transaction);
