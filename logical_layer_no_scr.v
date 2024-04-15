@@ -98,9 +98,6 @@ wire [7:0]   lane_0_tx_dis_enc, lane_1_tx_dis_enc,
 
 wire [131:0] lane_0_tx_enc_ser, lane_1_tx_enc_ser,
              lane_0_rx_enc_ser, lane_1_rx_enc_ser;
-			
-wire         lane_0_tx_ser_scr, lane_1_tx_ser_scr,
-             lane_0_rx_ser_scr, lane_1_rx_ser_scr;
 
 wire [23:0]  sb_read;
 
@@ -256,10 +253,10 @@ lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),
-  .lane_0_rx_ser           ( lane_0_rx_ser_scr       ),
-  .lane_1_rx_ser           ( lane_1_rx_ser_scr       ),
-  .lane_0_tx_ser           ( lane_0_tx_ser_scr       ),
-  .lane_1_tx_ser           ( lane_1_tx_ser_scr       ),
+  .lane_0_rx_ser           ( lane_0_rx_i             ),
+  .lane_1_rx_ser           ( lane_1_rx_i             ),
+  .lane_0_tx_ser           ( lane_0_tx_o             ),
+  .lane_1_tx_ser           ( lane_1_tx_o             ),
   .scr_rst                 ( scr_rst                 ),
   .enable_scr              ( enable_scr              ),
   .lane_0_rx_parallel      ( lane_0_rx_enc_ser       ), 
