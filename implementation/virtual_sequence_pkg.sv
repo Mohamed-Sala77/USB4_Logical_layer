@@ -32,6 +32,7 @@
 			
 			// // Phase 4
 
+			//v_elec_layer_generator.phase_force(4,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen3);
@@ -42,7 +43,7 @@
 			// v_elec_layer_generator.send_ordered_sets(TS2_gen2_3,gen3);
 
 
-			v_elec_layer_generator.phase_force(4);
+			v_elec_layer_generator.phase_force(4,gen4);
 			v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
 
 			//v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);

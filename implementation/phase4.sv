@@ -144,6 +144,7 @@ endtask
     begin
         i=0 ;
         repeat(2) begin
+            $display("we are in send_SLOS1 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -158,6 +159,7 @@ endtask
     begin
         i=0 ;
         repeat(2) begin
+            $display("we are in send_SLOS2 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -172,6 +174,8 @@ endtask
     begin
         i=0 ;
         repeat(32) begin
+            $display("we are in send_G2_TS1_G2 (%d) time",i);
+
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -186,6 +190,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
+            $display("we are in send_G2_TS2_G2 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -200,6 +205,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
+            $display("we are in send_G3_TS1_G2 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -214,6 +220,7 @@ endtask
     begin
         i=0 ;
         repeat(8) begin
+            $display("we are in send_G3_TS2_G2 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -228,6 +235,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
+            $display("we are in send_TS1_G4 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -241,6 +249,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
+            $display("we are in send_TS2_G4 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -254,6 +263,7 @@ endtask
     begin   
         i=0 ;
         repeat(16) begin
+            $display("we are in send_TS3_G4 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -267,6 +277,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
+            $display("we are in send_TS4_G4 (%d) time",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -285,8 +296,10 @@ endtask
             if(j==0)        E_transaction.lane = lane_0;
              else             E_transaction.lane = lane_1;
 
+                $display ("m_transaction %p ",m_transaction);
         case (m_transaction.gen_speed)
             gen2: begin
+                $display("we are in gen2");
                 case (packet)
                     SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);             // send SLOS2 packet 2 times
@@ -295,6 +308,7 @@ endtask
                 endcase
             end
             gen3: begin
+                $display("we are in gen3");
                 case (packet)
                     SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);              // send SLOS2 packet 2 times
@@ -303,6 +317,7 @@ endtask
                 endcase
             end
             gen4: begin
+                $display("we are in gen4");
                 case (packet)
                     TS1_G4: send_TS1_G4(packet);          // send TS1_G4 packet 16 times 
                     TS2_G4: send_TS2_G4(packet);         // send TS2_G4 packet 16 times
@@ -325,7 +340,6 @@ endtask
          mem_ag.try_get(m_transaction); 
          m_transaction.gen_speed = E_transaction.gen_speed ;
 
-        $display ("m_transaction %p ",m_transaction);
 
 endtask
     
