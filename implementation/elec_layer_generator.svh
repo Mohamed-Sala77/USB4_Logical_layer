@@ -532,11 +532,12 @@
 
 	endtask : send_ordered_sets
 
-	task phase_force (input int num);
+	task phase_force (input int num, input GEN speed = gen4);
 
 		transaction = new(); 
 		transaction.phase = num ; 
 		transaction.sbrx = 1; 
+		transaction.gen_speed = speed;
 		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
 		
 	endtask //phase_force

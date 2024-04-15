@@ -244,7 +244,6 @@ module data_bus_transmit #(parameter SEED = 11'b00000000001)(
 				end	
 			end
 		end	
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		else if (d_sel == 4'h4) begin //send gen4 ts1
             if (prbs_en_ts1 == 1'b1) begin	
@@ -261,7 +260,8 @@ module data_bus_transmit #(parameter SEED = 11'b00000000001)(
 			        else begin
 	      		        lane_0_tx <= temp_pipo0;
 	      		        lane_1_tx <= temp_pipo1;
-                        count_pipo_28 <= count_pipo_28 - 1;	
+						tx_lanes_on <= 1'b1;
+                        count_pipo_28 <= count_pipo_28 - 1;						
 			        end
 				os_sent <= 1'b0;	
 			    end	
