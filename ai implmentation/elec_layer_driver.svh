@@ -245,14 +245,16 @@ endtask: PRSC11
     //declare the transactions
     elec_layer_tr transaction;    // Transaction to be recieved from the generator
     //declare the mailboxes
-    mailbox #(elec_layer_tr) elec_drv_gen;  // Mailbox to receive the transaction from the generator
+    mailbox #(elec_layer_tr) elec_drv_gen,elec_drv_sboard;  // Mailbox to receive the transaction from the generator
     //declare varsual interface
       virtual electrical_layer_if ELEC_vif;
     // Constructor
-  function new(event  elec_gen_driver_done,mailbox #(elec_layer_tr) elec_drv_gen,virtual electrical_layer_if vif);
+  function new(event  elec_gen_driver_done,mailbox #(elec_layer_tr) elec_drv_gen,elec_drv_sboard,virtual electrical_layer_if vif);
     this.elec_gen_driver_done=elec_gen_driver_done;
+    this.elec_drv_sboard=elec_drv_sboard;
     this.elec_drv_gen=elec_drv_gen;
     this.ELEC_vif=ELEC_vif;
+
   endfunction 
  
     /////////********** Declare the task as extern**********/////////
@@ -668,6 +670,8 @@ endtask: send_data_2_DUT
      begin
       // Wait for the transaction from the generator
       elec_drv_gen.get(transaction);
+      elec_drv_sboard.put(transaction);
+      //$display("[ELEC DRIVER] the value of transaction is %p",transaction); //test
       case(transaction.phase)
       3'b010:begin  //indecate the phase 2 of the transaction
          @(negedge ELEC_vif.SB_clock);
@@ -685,7 +689,7 @@ case(transaction.transaction_type)
                              transaction.transaction_type
                             );
 
-                            
+              //add explain on gen speed               
   end
   LT_fall:  begin
     send_LT_fall_2_DUT();
@@ -744,15 +748,15 @@ endcase
       end
 
   endtask 
-
-endpackage : electrical_layer_driver_pkg
-
-
+  
+endpackage:electrical_layer_driver_pkg
 
 
 
 
-/*// Testbench
+
+
+/* Testbench
 module CRC_Test;
 
   bit [7:0] STX = 8'h05;

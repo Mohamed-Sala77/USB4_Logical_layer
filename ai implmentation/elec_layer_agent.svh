@@ -1,24 +1,24 @@
+////////////////////////****agent package****//////////////////////////////
 package electrical_layer_agent_pkg;
     import electrical_layer_transaction_pkg::*; // Import the elec_layer_tr class 
     import electrical_layer_monitor_pkg::*;     // Import the electrical_layer_generator class
     import electrical_layer_driver_pkg::*;      // Import the elec_driver class
 class electrical_layer_agent;
-uvm
+
     // Virtual interface
     virtual electrical_layer_if vif; 
 
     // Declare the mailboxes
     mailbox #(elec_layer_tr) elec_mon_scr;
     mailbox #(elec_layer_tr) elec_drv_gen;
-    mailbox #(elec_layer_tr) elec_mod_gen;Salamalai 
-
+    mailbox #(elec_layer_tr) elec_mod_gen;
 
     // Declare the events
     //event driver_start;
 
     // Declare the components
     electrical_layer_driver drv;     //---------add the name of the driver 
-    electrical_layer_generator mon;    //---------add the name of the MONITOR   
+    electrical_layer_monitor mon;    //---------add the name of the MONITOR   
     //generatelectrical_layer_generatoror gen;  //---------add the name of the generator 
 
     // Constructor
@@ -52,5 +52,3 @@ endclass
 
 
 endpackage
-
-

@@ -1,4 +1,5 @@
-/////////////////////****scoreboard package****//////////////////////////////
+//////////////////////****scoreboard package****//////////////////////////////
+
 package electrical_layer_scoreboard_pkg;
 import electrical_layer_transaction_pkg::*;
 class elec_scoreboard;
@@ -32,4 +33,41 @@ class elec_scoreboard;
         end
     endtask
 endclass
-endpackage:electrical_layer_scoreboard_pkg
+endpackage:electrical_layer_scoreboard_pkg 
+
+
+
+
+
+
+/*class parent;
+function void f1;
+$display("hello");
+endfunction
+virtual function void f2;
+$display("hello");
+endfunction
+endclass
+
+class child extends parent;
+function void f1;
+$display("hi");
+endfunction
+function void f2;
+$display("hi");
+endfunction
+endclass  
+
+module x;
+parent p=new;
+child c=new;
+
+initial 
+begin
+p.f1;
+p.f2;
+p=c;
+p.f1;
+p.f2;
+end 
+endmodule*/
