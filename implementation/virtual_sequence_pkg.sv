@@ -20,11 +20,9 @@
 			//$stop;
 
 			// Phase 3
-			v_elec_layer_generator.phase_force(3);
+			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd3,24'h053303);  
 
-			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd5,24'h053303);  
-
-			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'd78,7'd2,24'h000000); 
+			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'd78,7'd3,24'h000000); 
 
 			
 			// v_elec_layer_generator.send_transaction(LT_fall);  // Testing LT Fall 
@@ -32,7 +30,6 @@
 			
 			// // Phase 4
 
-			//v_elec_layer_generator.phase_force(4,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen2);
 			// v_elec_layer_generator.send_ordered_sets(SLOS1,gen3);
@@ -43,7 +40,7 @@
 			// v_elec_layer_generator.send_ordered_sets(TS2_gen2_3,gen3);
 
 
-			v_elec_layer_generator.phase_force(4,gen4);
+			v_elec_layer_generator.phase_force(4, gen4);
 			v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);
 
 			//v_elec_layer_generator.send_ordered_sets(TS1_gen4,gen4);

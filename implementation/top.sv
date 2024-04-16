@@ -52,7 +52,7 @@ module top;
 	config_space_if config_if(SystemClock, gen4_fsm_clk);
 
 	//DUT instatiation
-	logical_layer logical_layer (
+	logical_layer_no_scr logical_layer (
 									.local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -67,12 +67,12 @@ module top;
 									.lane_0_rx_i(elec_if.lane_0_rx),		
 									.lane_1_rx_i(elec_if.lane_1_rx),
 									// .control_unit_data(0),
-									.data_incoming(1),
+									.data_incoming(elec_if.data_incoming),
 									.transport_layer_data_out(UL_if.transport_layer_data_out),
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
 									.lane_1_tx_o(elec_if.lane_1_tx),
-									.enable_rs(enable_rs_dummy)
+									.enable_scr(enable_rs_dummy)
 								);
 
 	//Clocks' Initialization
@@ -83,7 +83,7 @@ module top;
 		local_clk = 0;
 		gen2_lane_clk = 0;
 		gen3_lane_clk = 0;
-		gen4_lane_clk = 0;
+		gen4_lane_clk = 1;
 		gen2_fsm_clk = 0;
 		gen3_fsm_clk = 0;
 		gen4_fsm_clk = 0;

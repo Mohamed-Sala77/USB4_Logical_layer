@@ -1,6 +1,5 @@
 	class upper_layer_generator;
 
-		// int counter = 0;
 
 		// Event Signals
 		event UL_gen_drv_done;
@@ -44,18 +43,9 @@
 
 			UL_gen_mod.put(UL_tr); // Sending transaction to the Reference Model
 			UL_gen_drv.put(UL_tr); // Sending transaction to the Driver
-			// counter = counter + 1;
+
 			@UL_gen_drv_done; // waiting for event triggering from driver
 			
-
-			//////////////////////////////////////////////////
-			//////NUMBER OF Iterations TO BE PERFORMED ///////
-			//////////////////////////////////////////////////
-
-			// if(counter == 20) begin
-				
-			// 	$stop();
-			// end
 
 
 		endtask : send_transport_data

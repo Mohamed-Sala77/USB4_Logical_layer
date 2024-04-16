@@ -30,10 +30,12 @@ module serializer #(parameter WIDTH = 10)
             case (trans_state)
 			  DISCONNECTED_S: begin
 			    ser_out <= 0;
+				count <= 0;
 			  end
 			  
 			  IDLE_S: begin      
 			    ser_out <= 1;
+				count <= 0;
 			  end
 			  
 			  START: begin

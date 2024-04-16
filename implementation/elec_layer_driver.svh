@@ -125,7 +125,7 @@
 								$display("[ELEC DRIVER] Sending AT_cmd");
 								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data};
 								$display("data_symbol: %p", data_symbol);
-								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.len, elec_tr.read_write}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
+								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
 								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
 
@@ -142,7 +142,7 @@
 								// modified version for debugging			 
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(STX_cmd), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
-											 {start_bit, reverse_data({elec_tr.len,elec_tr.read_write}), stop_bit}, 		// data symbol // check order // ALIIIIIIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data({elec_tr.read_write, elec_tr.len}), stop_bit}, 		// data symbol // check order // ALIIIIIIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(ETX), stop_bit}};
 
@@ -163,14 +163,14 @@
 
 							AT_rsp: begin
 
-								data_symbol = {elec_tr.address, {elec_tr.len, elec_tr.read_write}, elec_tr.cmd_rsp_data[7:0], elec_tr.cmd_rsp_data[15:8], elec_tr.cmd_rsp_data[23:16]};
+								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data[7:0], elec_tr.cmd_rsp_data[15:8], elec_tr.cmd_rsp_data[23:16]};
 								$display("&&&&&&&&&&&&AT RESP DATA SYMBOL %p",data_symbol);
 
 								crc_calculation(STX_rsp, data_symbol, high_crc, low_crc);
 								// ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII LINE 173
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(STX_rsp), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
-											 {start_bit, reverse_data({elec_tr.len,elec_tr.read_write}), stop_bit}, 		// data symbol  ALIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data({elec_tr.read_write, elec_tr.len}), stop_bit}, 		// data symbol  ALIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[7:0]), stop_bit}, 				// data symbol ALIIIIIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[15:8]), stop_bit},				// data symbol ALIIIIIIIIIIIIIIIIIIIIIIIIII
 											 {start_bit, reverse_data(elec_tr.cmd_rsp_data[23:16]), stop_bit}, 			//data symbol ALIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -325,43 +325,49 @@
 								counter = 8'h0F;
 
 								//PSUEDO RANDOM SEQUENCES
-								PRBS11 (420, PRBS11_lane0_seed, PRBS11_lane0);
+								//PRBS11 (420, PRBS11_lane0_seed, PRBS11_lane0);
 								//$display("[ELEC DRIVER]: PRBS11 for lane_0: [%0P]",PRBS11_lane0);
 
-								PRBS11 (420, PRBS11_lane1_seed, PRBS11_lane1);
+								//PRBS11 (420, PRBS11_lane1_seed, PRBS11_lane1);
 								//$display("[ELEC DRIVER]: PRBS11 for lane_1: [%0P]",PRBS11_lane1);
 
 								//TS = {CURSOR, indication, ~(indication), counter, PRS};
 								TS = {CURSOR, indication, ~(indication), counter};
-
+								//$display("-----------------------------------------TS FIRST BYTE: %h",TS[7:0]);
 								$display("[ELEC DRIVER] TS1_gen4 is being SENT for BOTH LANES");
+								
+								/*
+								// To send Most Signification Bytes with Least Significant Bit first
+								TS = {<<8{ {<< {TS} } } };
+								*/
 
 								foreach (TS[i])
-									begin
-										@(negedge v_if.gen4_lane_clk);
-										//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-										v_if.lane_0_rx = TS[i];		
-										v_if.lane_1_rx = TS[i];		
-									end
+								begin
+									@(negedge v_if.gen4_lane_clk);
+									v_if.data_incoming = 1'b1;
+									$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
+									v_if.lane_0_rx = TS[i];		
+									v_if.lane_1_rx = TS[i];		
+								end
 
 
 								fork
 									begin
-										foreach (PRBS11_lane0[i])
-											begin
-												@(negedge v_if.gen4_lane_clk);
-												//$display("[DRIVER] PRBS11_lane0 bits sent[%0b]",PRBS11_lane0[i]);
-												v_if.lane_0_rx = PRBS11_lane0[i];			
-											end
+										foreach (TS_Symbols.TS1_lane_0[i,j])
+										begin
+											@(negedge v_if.gen4_lane_clk);
+											//$display("[DRIVER] PRBS11_lane0 bits sent[%0b]",PRBS11_lane0[i]);
+											v_if.lane_0_rx = TS_Symbols.TS1_lane_0[0][j];			
+										end
 									end
 
 									begin
-										foreach (PRBS11_lane1[i])
-											begin
-												@(negedge v_if.gen4_lane_clk);
-												//$display("[DRIVER] PRBS11_lane1 bits sent[%0b]",PRBS11_lane1[i]);	
-												v_if.lane_1_rx = PRBS11_lane1[i];		
-											end
+										foreach (TS_Symbols.TS1_lane_1[i,j])
+										begin
+											@(negedge v_if.gen4_lane_clk);
+											//$display("[DRIVER] PRBS11_lane1 bits sent[%0b]",PRBS11_lane1[i]);	
+											v_if.lane_1_rx = TS_Symbols.TS1_lane_1[0][j];		
+										end
 									end
 									
 								join
@@ -391,16 +397,21 @@
 								//TS = {CURSOR, indication, ~(indication), counter, PRS};
 								TS = {CURSOR, indication, ~(indication), counter};
 
+								/*
+								// To send Most Signification Bytes with Least Significant Bit first
+								TS = {<<8{ {<< {TS} } } };
+								*/
+
 								$display("[ELEC DRIVER] TS2_gen4 is being SENT for BOTH LANES ");
 
 
 								foreach (TS[i])
-									begin
-										@(negedge v_if.gen4_lane_clk);
-										//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-										v_if.lane_0_rx = TS[i];		
-										v_if.lane_1_rx = TS[i];		
-									end
+								begin
+									@(negedge v_if.gen4_lane_clk);
+									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
+									v_if.lane_0_rx = TS[i];		
+									v_if.lane_1_rx = TS[i];		
+								end
 
 								fork
 									begin
@@ -446,15 +457,20 @@
 								//TS = {CURSOR, indication, ~(indication), counter, PRS};
 								TS = {CURSOR, indication, ~(indication), counter};
 
+								/*
+								// To send Most Signification Bytes with Least Significant Bit first
+								TS = {<<8{ {<< {TS} } } }; 
+								*/
+
 								$display("[ELEC DRIVER] TS3 is being SENT for BOTH LANES");
 
 								foreach (TS[i])
-									begin
-										@(negedge v_if.gen4_lane_clk);
-										//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-										v_if.lane_0_rx = TS[i];		
-										v_if.lane_1_rx = TS[i];		
-									end
+								begin
+									@(negedge v_if.gen4_lane_clk);
+									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
+									v_if.lane_0_rx = TS[i];		
+									v_if.lane_1_rx = TS[i];		
+								end
 
 								fork
 									begin
@@ -510,17 +526,21 @@
 								
 								TS = {CURSOR, indication_4, counter_4, ~(counter_4)}; 
 
+								/*
+								// To send Most Signification Bytes with Least Significant Bit first
+								TS = {<<8{ {<< {TS} } } }; 
+								*/
 
 								$display("[ELEC DRIVER] TS4 is being SENT for BOTH LANES");
 
 
 								foreach (TS[i])
-									begin
-										@(negedge v_if.gen4_lane_clk);
-										//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-										v_if.lane_0_rx = TS[i];		
-										v_if.lane_1_rx = TS[i];		
-									end
+								begin
+									@(negedge v_if.gen4_lane_clk);
+									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
+									v_if.lane_0_rx = TS[i];		
+									v_if.lane_1_rx = TS[i];		
+								end
 
 
 								fork

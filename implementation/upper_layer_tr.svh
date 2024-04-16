@@ -1,6 +1,6 @@
 		class upper_layer_tr;
 		//Components
-		rand var [7:0] T_Data;
+		rand var [127:0] T_Data;
 		rand var [2:0] phase; // specifies current initialization phase 
 		rand GEN gen_speed;
 		//constraints

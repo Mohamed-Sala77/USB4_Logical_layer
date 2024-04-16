@@ -132,6 +132,7 @@
 					if (trans_type == AT_cmd)
 					begin
 						@(elec_AT_rsp_received); //  wait for an AT response to be received
+						//$display("Time: %0t AT rsp received",$time);
 					end
 
 

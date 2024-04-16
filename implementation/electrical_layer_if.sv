@@ -10,6 +10,7 @@ interface electrical_layer_if(input clk,
 	logic sbrx;
 	logic lane_0_rx;
 	logic lane_1_rx;
+	bit data_incoming;
 
 	// elec layer Output signals
 	logic sbtx;

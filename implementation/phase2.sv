@@ -30,7 +30,7 @@ endtask
         
 
         elec_ag_Tx.put(E_transaction);
-        $display ("E_transaction in phase 2 sent to scorbourd = %p",E_transaction);
+        $display ("E_transaction in phase 2 sent to scoreboard = %p",E_transaction);
         E_transaction = new();
 
       end

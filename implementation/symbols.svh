@@ -186,8 +186,8 @@
 
 		task calculate_TS;
 
-			int index = 0;
-			int indextrit = 0; 
+			int index = 28; 
+			int indextrit = 28;
 			
 			PRBS11(TS16_SIZE, PRBS11_lane0_seed, TS1_lane_0_16);
 			PRBS11(TS16_SIZE, PRBS11_lane1_seed, TS1_lane_1_16);

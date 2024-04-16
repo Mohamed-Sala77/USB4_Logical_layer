@@ -144,7 +144,7 @@ endtask
     begin
         i=0 ;
         repeat(2) begin
-            $display("we are in send_SLOS1 (%d) time",i);
+            $display("we are in send_SLOS1 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -159,7 +159,7 @@ endtask
     begin
         i=0 ;
         repeat(2) begin
-            $display("we are in send_SLOS2 (%d) time",i);
+            $display("we are in send_SLOS2 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -174,7 +174,7 @@ endtask
     begin
         i=0 ;
         repeat(32) begin
-            $display("we are in send_G2_TS1_G2 (%d) time",i);
+            $display("we are in send_G2_TS1_G2 (%0d) times",i);
 
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
@@ -190,7 +190,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
-            $display("we are in send_G2_TS2_G2 (%d) time",i);
+            $display("we are in send_G2_TS2_G2 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -205,7 +205,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
-            $display("we are in send_G3_TS1_G2 (%d) time",i);
+            $display("we are in send_G3_TS1_G2 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -220,7 +220,7 @@ endtask
     begin
         i=0 ;
         repeat(8) begin
-            $display("we are in send_G3_TS2_G2 (%d) time",i);
+            $display("we are in send_G3_TS2_G2 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
@@ -235,7 +235,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
-            $display("we are in send_TS1_G4 (%d) time",i);
+            $display("we are in send_TS1_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -249,7 +249,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
-            $display("we are in send_TS2_G4 (%d) time",i);
+            $display("we are in send_TS2_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -263,7 +263,7 @@ endtask
     begin   
         i=0 ;
         repeat(16) begin
-            $display("we are in send_TS3_G4 (%d) time",i);
+            $display("we are in send_TS3_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);
@@ -277,7 +277,7 @@ endtask
     begin
         i=0 ;
         repeat(16) begin
-            $display("we are in send_TS4_G4 (%d) time",i);
+            $display("we are in send_TS4_G4 (%0d) timess",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             elec_ag_Tx.put(E_transaction);

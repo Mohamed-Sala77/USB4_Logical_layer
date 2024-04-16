@@ -58,8 +58,14 @@ module lanes_deserializer #(parameter WIDTH = 132) (
 		end	
 		
 		else begin
-			temp0 <= {lane_0_rx_ser, temp0[WIDTH-1:1]};
-			temp1 <= {lane_1_rx_ser, temp1[WIDTH-1:1]};
+			if (gen_speed == GEN4) begin
+			    temp0 <= {temp0[6:0], lane_0_rx_ser};
+			    temp1 <= {temp1[6:0], lane_1_rx_ser};
+			end else begin
+			    temp0 <= {lane_0_rx_ser, temp0[WIDTH-1:1]};
+			    temp1 <= {lane_1_rx_ser, temp1[WIDTH-1:1]};
+			end
+			
 			if (count == count_max-1)
 			  count <= 0;
 			  
@@ -69,8 +75,8 @@ module lanes_deserializer #(parameter WIDTH = 132) (
 				enable_dec <= started;
 				case (gen_speed)
 			    GEN4 : begin
-				         lane_0_rx_parallel <= {124'h0, temp0[WIDTH-1 : WIDTH-8]};
-				         lane_1_rx_parallel <= {124'h0, temp1[WIDTH-1 : WIDTH-8]};
+				         lane_0_rx_parallel <= {124'h0, temp0[7 : 0]};
+				         lane_1_rx_parallel <= {124'h0, temp1[7 : 0]};
 					   end
 					   
 			    GEN3 : begin

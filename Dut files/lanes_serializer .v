@@ -57,10 +57,17 @@ module lanes_serializer #(parameter WIDTH = 132)
 			enable_scr <= 0;
         end
         else begin
-            lane_0_tx_ser <= temp[0];
-            lane_1_tx_ser <= temp1[0];
-            temp  <= (done)? lane_0_tx_parallel : {1'b0, temp[WIDTH-1:1]};
-            temp1 <= (done)? lane_1_tx_parallel : {1'b0, temp1[WIDTH-1:1]};
+            if (gen_speed == GEN4) begin
+			    lane_0_tx_ser <= temp[7];
+                lane_1_tx_ser <= temp1[7];
+                temp  <= (done)? lane_0_tx_parallel : {temp[6:0], 1'b0};
+                temp1 <= (done)? lane_1_tx_parallel : {temp1[6:0], 1'b0};
+            end else begin
+			    lane_0_tx_ser <= temp[0];
+                lane_1_tx_ser <= temp1[0];
+                temp  <= (done)? lane_0_tx_parallel : {1'b0, temp[WIDTH-1:1]};
+                temp1 <= (done)? lane_1_tx_parallel : {1'b0, temp1[WIDTH-1:1]};
+			end
 			count <= (done)? 1'b0 : count+1;
 			scr_rst <= done;
 			enable_scr <= 1;

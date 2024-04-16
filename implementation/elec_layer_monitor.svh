@@ -6,7 +6,6 @@
 		elec_layer_tr elec_tr_lane0;
 		elec_layer_tr elec_tr_lane1;
 		
-		logic [19:0] expected, received;
 		// Interface
 		virtual electrical_layer_if v_if;
 
@@ -19,6 +18,7 @@
 		event sbtx_high_recieved;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
 		*/
+
 
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
@@ -56,6 +56,7 @@
 		// Symbols received and stored to be used in comparisons
 		logic [7:0] LSE_received, CLSE_received;
 		logic [7:0] ETX_received;
+		logic [19:0] DLE_ETX_received;
 
 
 		bit [419:0] TS234_DATA;
@@ -568,8 +569,9 @@
 							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
 							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
 
-							// elec_tr.phase = v_if.phase;  //*مؤقتاً*//
-							elec_tr.phase=3;
+							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
+							elec_tr.phase = 3;
+
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -595,6 +597,7 @@
 						elec_tr.len = { << {SB_data_received[31:37]} };
 						elec_tr.read_write = { << {SB_data_received[38]} };
 
+
 						repeat (40)
 						begin
 							void'(SB_data_received.pop_front()); // check weather front or back is needed
@@ -610,6 +613,20 @@
 						elec_tr.cmd_rsp_data[23:0] = {Rsp_Data[8:1],Rsp_Data[18:11],Rsp_Data[28:21]};
 						elec_tr.crc_received [15:8] = { << {SB_data_received[1:8]} };
 						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
+
+						repeat (20)
+						begin
+							void'(SB_data_received.pop_front()); // check weather front or back is needed
+						end
+
+						DLE_ETX_received = { >> {SB_data_received }};
+						//DLE_ETX_received = { << {SB_data_received [1:8]}};
+
+						if(DLE_ETX_received != { {start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(ETX), stop_bit} } ) // STATIC TYPE CASTINGG
+					 	begin
+					 		$error("[ELEC MONITOR] Wrong AT Response Received");
+					 		$display("EXPECTED DLE + ETX : %b, received DLE + ETX: %b",{ {start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(ETX), stop_bit} } ,DLE_ETX_received);
+					 	end
 
 						elec_tr.phase = v_if.phase;
 						elec_mon_scr.put(elec_tr);
@@ -640,7 +657,7 @@
 
 				SLOS1_64_1: begin
 
-					$display("[ELEC MONITOR] SLOS 11111 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
+					$display("[ELEC MONITOR] SLOS 1 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
 					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
 
 				end
@@ -733,10 +750,12 @@
 			casex ( { >> {lane_x_gen4_received[ $size(lane_x_gen4_received) - 28 :  $size(lane_x_gen4_received) - 1 ]} } ) // should be >>  that order (28      1)
 				{CURSOR, 4'h2, ~(4'h2), 8'h0F}: // TS1 GEN4 DETECTED HEADER
 				begin
-					$display("[ELEC MONITOR]*******TS1 GEN4 DETECTED ON %0d **********", lane.name());
+					$display("%0t [ELEC MONITOR]*******TS1 GEN4 DETECTED ON %0d **********", $time, lane.name());
+					
 					elec_tr_lane_x.o_sets = TS1_gen4;
-
+	
 					lane_x_gen4_received = {};
+
 				end
 
 				{CURSOR, 4'h4, ~(4'h4), 8'h0F}: // TS2 GEN4 DETECTED HEADER
@@ -846,7 +865,9 @@
 
 			if (TS_found == 0) // If the order of TS1 was not found
 			begin
-				$error("[ELEC MONITOR] WRONG TS1 RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name );
+				$error("[ELEC MONITOR] WRONG TS1 RECEIVED ON %0d !!", lane.name);
+				$display("Expected: %b" ,TS1[0]);
+				$display("Received: %b ", TS_received);
 				elec_tr_lane_x = new();
 			end
 
@@ -885,7 +906,7 @@
 			input bit [419:0] TS234 [15:0];
 			input LANE lane;
 
-			bit TS_found; // To indicate that the order was found
+			bit TS_found = 0; // To indicate that the order was found
 
 			int i = 0;
 			
@@ -907,7 +928,8 @@
 
 			if (TS_found == 0) // If the order of TS2/3/4 was not found
 			begin
-				$error("[ELEC MONITOR] WRONG TS PRTS RECEIVED ON LANE [%0d] !!", elec_tr_lane_x.lane.name ); //elec_tr_lane_x.o_sets should be added
+				$error("[ELEC MONITOR] WRONG TS PRTS RECEIVED ON %0d !!", lane.name); //elec_tr_lane_x.o_sets should be added
+
 				elec_tr_lane_x = new();
 			end
 
@@ -949,7 +971,7 @@
 			//os_received_mon_gen.put(elec_tr_lane_x);
 			if (error_detected == 0)
 			begin
-				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  elec_tr_lane_x.lane.name());	
+				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  lane.name());	
 			end
 
 		endtask : TS234_gen4_detected	

@@ -74,6 +74,7 @@ reg disconnect_reg;
 
 
 
+
 //systemverilog command for good visibility of the code state when debugging (synth.)
 
 typedef enum logic [2:0] {
@@ -453,14 +454,41 @@ always @(*) begin
 
 						if (max_data_counts < 69) begin
 							storing_symbols[2+max_data_counts]=sbrx [8:1];
-							if (max_data_counts > read_write[7:1] + 1) begin
-								crc_det_en=0;
-							end else begin
-								crc_det_en=1;
-							end  		
-						end else begin storing_symbols[72]=0;
-							crc_det_en=0;
+							case (storing_symbols[1])
+
+								STX_COMMAND_SYMBOL: begin 
+
+									if (max_data_counts == 4) begin
+										crc_det_en=0;
+									end else begin
+										crc_det_en=1;
+									end  
+
+								end
+								STX_RESPONSE_SYMBOL: begin 
+
+									if (max_data_counts == 7) begin
+										crc_det_en=0;
+									end else begin
+										crc_det_en=1;
+									end  
+
+								end
+
+								default: begin 
+
+									storing_symbols[72]=0;
+									crc_det_en=0;
+
+								end
+
+							endcase
 						end
+
+
+						
+
+
 
 					end
 
@@ -535,7 +563,7 @@ always @(*) begin
 
 	s_address_reg = storing_symbols [2];
 
-	payload_in_reg =  {storing_symbols[4],storing_symbols[5],storing_symbols[6]};
+	payload_in_reg =  {storing_symbols[6],storing_symbols[5],storing_symbols[4]};
 
 	if (storing_symbols[1] == STX_RESPONSE_SYMBOL) begin
 		s_write_reg=0;
@@ -547,7 +575,6 @@ always @(*) begin
 		s_write_reg=0;
 		s_read_reg=1;
 	end
-
 
 end
 
@@ -596,7 +623,7 @@ always @(posedge sb_clk) begin
 
 	trans_error <= trans_error_reg;
 
-	payload_in <= payload_in_reg;
+	payload_in <= (ns == DLE2)? payload_in_reg : payload_in;
 
 	s_read <= s_read_reg && valid_reg;
 

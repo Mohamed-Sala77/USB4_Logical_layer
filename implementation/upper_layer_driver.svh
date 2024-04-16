@@ -42,11 +42,37 @@
 				//////////////PIN LEVEL ASSIGNMENT ///////////////
 				//////////////////////////////////////////////////
 
+
+
+				// case (UL_tr.gen_speed)
+
+				// 	gen2:
+				// 	begin
+				// 		Send_gen2_encoded();
+				// 	end
+
+				// 	gen3:
+				// 	begin
+				// 		Send_gen3_encoded();
+				// 	end
+
+				// 	gen4:
+				// 	begin
+				// 		Send_gen4_encoded();
+				// 	end
+
+
+				// endcase
+				
+
+				
 				wait_negedge(UL_tr.gen_speed); 
 				begin
 					v_if.transport_layer_data_in = UL_tr.T_Data;
 					-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
 				end
+				
+
 
 			end
 			
@@ -66,6 +92,79 @@
 			begin
 				@(negedge v_if.gen4_fsm_clk);
 			end
+		endtask
+
+
+		
+
+		task Send_gen2_encoded(); // 128/132 encoding
+
+			wait_negedge(UL_tr.gen_speed);
+			v_if.transport_layer_data_in = {4'b0101,UL_tr.T_Data[3:0]};
+			UL_tr.T_Data = UL_tr.T_Data >> 4;
+			repeat(7)
+			begin
+				wait_negedge(UL_tr.gen_speed);	
+			end
+
+			for (int i = 0 ; i<16; i++)
+				begin
+					wait_negedge(UL_tr.gen_speed);
+					v_if.transport_layer_data_in = UL_tr.T_Data[7:0];
+					UL_tr.T_Data = UL_tr.T_Data >> 8;
+
+					repeat(7)
+					begin
+						wait_negedge(UL_tr.gen_speed);	
+					end
+				end
+		endtask
+
+		task Send_gen3_encoded(); // 64/66 encoding
+
+			wait_negedge(UL_tr.gen_speed);
+			v_if.transport_layer_data_in = {2'b01,UL_tr.T_Data[5:0]};
+			UL_tr.T_Data = UL_tr.T_Data >> 6;
+			repeat(7)
+			begin
+				wait_negedge(UL_tr.gen_speed);	
+			end
+
+			for (int i = 0 ; i<16; i++)
+				begin
+					wait_negedge(UL_tr.gen_speed);
+					v_if.transport_layer_data_in = UL_tr.T_Data[7:0];
+					UL_tr.T_Data = UL_tr.T_Data >> 8;
+
+					repeat(7)
+					begin
+						wait_negedge(UL_tr.gen_speed);	
+					end
+				end
+		endtask
+
+		task Send_gen4_encoded(); // 8/11 encoding
+
+			
+			wait_negedge(UL_tr.gen_speed);
+			v_if.transport_layer_data_in = {4'b0101,UL_tr.T_Data[3:0]};
+			UL_tr.T_Data = UL_tr.T_Data >> 4;
+			repeat(7)
+			begin
+				wait_negedge(UL_tr.gen_speed);	
+			end
+
+			for (int i = 0 ; i<16; i++)
+				begin
+					wait_negedge(UL_tr.gen_speed);
+					v_if.transport_layer_data_in = UL_tr.T_Data[7:0];
+					UL_tr.T_Data = UL_tr.T_Data >> 8;
+
+					repeat(7)
+					begin
+						wait_negedge(UL_tr.gen_speed);	
+					end
+				end
 		endtask
 
 		
