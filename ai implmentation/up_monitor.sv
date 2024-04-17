@@ -16,12 +16,22 @@ class up_monitor;
         ///////// Main Task \\\\\\\\\\
         task run();
             forever begin
-                @(posedge vif.clk);
+                wait_for_negedge(vif.gen_speed);
                 if (vif.data_valid_out == 1) begin   //! we should tell design team to add that 
                         tr = new; 
                         tr.T_Data = vif.transport_layer_data_in; 
                         mb_mon_scr.put(tr); 
                 end
         end
+        endtask
+
+                // Task to wait for the negative edge of a specific clock
+        task wait_for_negedge( input GEN gen_speed );
+        case (gen_speed)
+        gen2: @(negedge gen2_fsm_clk );
+        gen3: @(negedge  gen3_fsm_clk);
+        gen4: @(negedge  gen4_fsm_clk);
+        
+        endcase
         endtask
 endclass

@@ -25,9 +25,6 @@ class up_driver;
     // Main task that runs forever
     task run();
         forever begin
-            // Create a new transaction
-            tr = new; 
-
             // Get the transaction from the mailbox
             DriverGeneratorMailbox.get(tr);
 
@@ -39,6 +36,9 @@ class up_driver;
                 vif.transportLayerDataOut = tr.transactionData;
                 -> driveDone;
             end
+
+//! we should add here more if we add more var in monitor (phase , gen_speed)
+
         end
     endtask
 endclass
