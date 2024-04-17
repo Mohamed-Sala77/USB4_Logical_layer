@@ -57,28 +57,6 @@ class phase1 extends primary_steps;
     end
   endtask
 
-
-  
-  /*// task to assign sb data
-  task  assign_sb_data();
-    begin
-      if (E_transaction.phase == 1) begin
-        i_transaction.sb_data_in = C_transaction.c_data_in;
-        i_transaction.sb_add = E_transaction.address;
-        i_transaction.sb_en = 1;
-        i_transaction.read_write = 1;           //write cable data in sideband
-        end
-        i_transaction.mem_gen = 0;       //  sb work as a memory
-        int_ag.put(i_transaction) ;
-        ////$display ("i_transaction = %p",i_transaction);
-
-        ////$display ("done assign sb data ");
-    end
-  endtask*/   //* walid don't need that 
-
-
-
-
   // task to check USB4 data
   task  check_usb4_data ();
     begin
