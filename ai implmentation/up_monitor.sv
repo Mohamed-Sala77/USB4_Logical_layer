@@ -28,9 +28,9 @@ class up_monitor;
                 // Task to wait for the negative edge of a specific clock
         task wait_for_negedge( input GEN gen_speed );
         case (gen_speed)
-        gen2: @(negedge gen2_fsm_clk );
-        gen3: @(negedge  gen3_fsm_clk);
-        gen4: @(negedge  gen4_fsm_clk);
+        gen2: @(negedge  vif.gen2_fsm_clk );
+        gen3: @(negedge  vif.gen3_fsm_clk);
+        gen4: @(negedge  vif.gen4_fsm_clk);
         
         endcase
         endtask
