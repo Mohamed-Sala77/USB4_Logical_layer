@@ -122,6 +122,7 @@ wire         scr_rst,
              descr_rst;
 
 wire         data_os;
+wire         data_os_bus;
 
 wire         new_sym, new_sym_pul;
 
@@ -181,7 +182,7 @@ data_bus bus
   .os_sent                 ( os_sent                 ),
   .transport_layer_data_in ( transport_layer_data_in ),
   .transport_layer_data_out( transport_layer_data_out),
-  .data_os                 ( data_os                 ),
+  .data_os                 ( data_os_bus             ),
   .tx_lanes_on             ( tx_lanes_on             ),
   .lane_rx_on              ( rx_lanes_on             )
 );                                                   
@@ -192,7 +193,8 @@ lane_distributer lane_dist
   .rst                     ( rst                     ),                   
   .enable_t                ( tx_lanes_on             ),           
   .enable_r                ( enable_deskew           ),         
-  .data_os                 ( data_os                 ),         
+  .data_os_i               ( data_os                 ),         
+  .data_os_o               ( data_os_bus             ),         
   .d_sel                   ( d_sel                   ),         
   .lane_0_tx_in            ( lane_0_tx_bus_dis       ), 
   .lane_1_tx_in            ( lane_1_tx_bus_dis       ), 
