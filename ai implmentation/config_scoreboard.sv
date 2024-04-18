@@ -6,13 +6,13 @@ class config_scoreboard;
     config_transaction ref_trans;
     config_transaction mon_trans;
 
-    event scoreboard_done;
+    event next_stimulus;
 
     // Constructor
-    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox , event scoreboard_done);
+    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox , event next_stimulus);
         this.ref_mbox = ref_mbox;
         this.mon_mbox = mon_mbox;
-        this.scoreboard_done = scoreboard_done;
+        this.next_stimulus = next_stimulus;
     endfunction
 
     // Task to compare transactions
@@ -41,7 +41,7 @@ class config_scoreboard;
     // Function to check for specific condition and trigger event
     task check_condition();
         if ((mon_trans.c_address == 'd18) && (mon_trans.c_read))
-            ->scoreboard_done;
+            ->next_stimulus;
     endtask
 
     // Function to compare transactions and assert
