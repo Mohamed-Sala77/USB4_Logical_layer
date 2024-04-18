@@ -24,11 +24,9 @@ class config_monitor;
             wait_for_negedge(cfg_if.gen_speed);     //* in our design we work with gen4 only here
 
             // Update the transaction object with the current values from the interface
-            cfg_trans.lane_disable = cfg_if.lane_disable;
-            cfg_trans.c_data_in = cfg_if.c_data_in;
-            cfg_trans.c_read = cfg_if.c_read;
-            cfg_trans.c_write = cfg_if.c_write;
-            cfg_trans.c_address = cfg_if.c_address;
+            cfg_trans.c_read        = cfg_if.c_read;
+            cfg_trans.c_write       = cfg_if.c_write;
+            cfg_trans.c_address  = cfg_if.c_address;
             cfg_trans.c_data_out = cfg_if.c_data_out;
 
             // If a read or write operation is in progress, send the transaction to the mailbox
