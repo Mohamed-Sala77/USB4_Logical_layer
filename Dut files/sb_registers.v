@@ -77,7 +77,7 @@ assign REG18 = mem[93];
 			end	
         end
         else begin 
-	        sb_read <= 24'b0;
+	        sb_read <= sb_read;
         end	
     end
 endmodule

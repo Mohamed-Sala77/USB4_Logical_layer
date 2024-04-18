@@ -15,7 +15,7 @@ module lane_distributer
   input  wire       rst, 
   input  wire       enable_t, //enable for transmitting side
   input  wire       enable_r, //enable for receiving side
-  input  wire       data_os, 
+  input  wire       data_os_i, 
   input  wire [3:0] d_sel, 
   input  wire [7:0] lane_0_tx_in, //data input from data bus
   input  wire [7:0] lane_1_tx_in, //data input from data bus
@@ -26,7 +26,8 @@ module lane_distributer
   output reg  [7:0] lane_0_rx_out, //data output to data bus
   output reg  [7:0] lane_1_rx_out, //data output to data bus
   output reg        enable_enc, //enable encoder next stage
-  output reg        rx_lanes_on //enable data bus rx side
+  output reg        rx_lanes_on, //enable data bus rx side
+  output reg        data_os_o 
 );
  
 reg flag1, flag2;
@@ -39,6 +40,7 @@ always@(posedge clk or negedge rst)
 	if (!rst) 
       begin
 		flag1 <= 0;
+		data_os_o <= 0;
 		lane_0_rx_out <= 'h0;
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 0;
@@ -47,14 +49,16 @@ always@(posedge clk or negedge rst)
 	else if (!enable_r) 
       begin
 		flag1 <= 0;
+		data_os_o <= 0;
 		lane_0_rx_out <= 'h0;
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 0;
 		counter1 <= 'h0;
 	  end
-	else if (data_os == 0) //ordered sets received
+	else if (data_os_i == 0) //ordered sets received
       begin
 		flag1 <= 0;
+		data_os_o <= 0;
 		lane_0_rx_out <= lane_0_rx_in;
 		lane_1_rx_out <= lane_1_rx_in;
 		rx_lanes_on <= 1;
@@ -63,6 +67,7 @@ always@(posedge clk or negedge rst)
 	else //transport layer data received
 	  begin
 		flag1 <= (counter1 == 'h3)? !flag1 : flag1;
+		data_os_o <= 1;
 		lane_0_rx_out <= (flag1)? lane_1_rx_in : lane_0_rx_in; //data output to data bus
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 1;

@@ -114,20 +114,41 @@ reg	sbtx_sel_reg;
 //pulse that enables the state machine and hold selection value
 reg [2:0] trans_sel_reg;
 
+
+//delay for sending trans for training sync
+reg trans_sent_1;
+reg trans_sent_2;
+reg trans_sent_3;
+
 always @ (posedge sb_clk or negedge rst) begin
 
 	if (!rst) begin
+
 		trans_sel_reg <= 0;
+		trans_sent_1 <= 0;
+		trans_sent_2 <= 0;
+		trans_sent_3 <= 0;
 		trans_sent <= 0;
+
 	end else if (trans_sel != 0) begin
 		trans_sel_reg <= trans_sel;
-		trans_sent <= 0;
+		trans_sent_1 <= 0;
+		trans_sent_2 <= trans_sent_1;
+		trans_sent_3 <= trans_sent_2;
+		trans_sent <= trans_sent_3;
+
 	end else if ((cs==CLSE || cs==ETX) && (ser_clk_cycles==9)) begin
 		trans_sel_reg <= 0;
-		trans_sent <= 1;
+		trans_sent_1 <= 1;
+		trans_sent_2 <= trans_sent_1;
+		trans_sent_3 <= trans_sent_2;
+		trans_sent <= trans_sent_3;
 	end else begin
 		trans_sel_reg <= trans_sel_reg;
-		trans_sent <= 0;
+		trans_sent_1 <= 0;
+		trans_sent_2 <= trans_sent_1;
+		trans_sent_3 <= trans_sent_2;
+		trans_sent <= trans_sent_3;
 	end
 	
 end
@@ -579,7 +600,7 @@ always @(*) begin
 			
 			if (ser_clk_cycles == 9) begin
 				case (trans_sel_reg)
-					
+
 					2: begin 
 						ns = ETX;
 						trans_reg = {1'b1,8'h40,1'b0};

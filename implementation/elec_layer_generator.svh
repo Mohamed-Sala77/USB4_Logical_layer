@@ -132,7 +132,6 @@
 					if (trans_type == AT_cmd)
 					begin
 						@(elec_AT_rsp_received); //  wait for an AT response to be received
-						//$display("Time: %0t AT rsp received",$time);
 					end
 
 
@@ -206,7 +205,7 @@
 				TS1_gen4, TS2_gen4, TS3, TS4: 
 				begin
 					
-					elec_gen_drv.put(transaction); // Sending transaction to the Driver
+					//elec_gen_drv.put(transaction); // Sending transaction to the Driver (17-4-2024)!!!!!!!!! no longer needed as we wait for the DUT to send the ordered set first then we begin sending the ordered set
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 					$display("[ELEC GENERATOR] SENDING [%0p]",OS);
 					@(elec_gen_drv_done);	// To wait for the driver to finish driving the data
@@ -382,33 +381,39 @@
 						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  // should be 16
 							begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
+							if((counter_lane_0 == 1) && (counter_lane_1 == 1)) // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII (15-4-2024)
+								begin
+									transaction.o_sets = OS;
+									elec_gen_drv.put(transaction);
+								end
 							os_received_mon_gen.get(tr_mon);
 							if (tr_mon.o_sets == OS)
 							begin
 								if (tr_mon.lane == lane_0)
-									begin
-										counter_lane_0 = counter_lane_0 + 1;
-										$display("[ELEC GENERATOR] Received [%0p] [%0d] times on lane 0. ",tr_mon.o_sets, counter_lane_0);	
-									end
+								begin
+									counter_lane_0 = counter_lane_0 + 1;
+									$display("[ELEC GENERATOR] Received [%0p] [%0d] times on lane 0. ",tr_mon.o_sets, counter_lane_0);
+									
+								end
 								else if (tr_mon.lane == lane_1)
-									begin
-										counter_lane_1 = counter_lane_1 + 1;
-										$display("[ELEC GENERATOR] Received [%0p] [%0d] times on lane 1. ",tr_mon.o_sets, counter_lane_1);	
-									end
+								begin
+									counter_lane_1 = counter_lane_1 + 1;
+									$display("[ELEC GENERATOR] Received [%0p] [%0d] times on lane 1. ",tr_mon.o_sets, counter_lane_1);	
+								end
 								
 							end
 
 							else 
 							begin
 								if (tr_mon.lane == lane_0)
-									begin
-										counter_lane_0 = 0;
-									end
+								begin
+									counter_lane_0 = 0;
+								end
 
 								else if (tr_mon.lane == lane_1)
-									begin
-										counter_lane_1 = 0;
-									end
+								begin
+									counter_lane_1 = 0;
+								end
 							end
 
 							//Storing the time when first TS1 gen4 was sent to calculate tTrainingError
@@ -472,7 +477,12 @@
 					begin
 						while ((counter_lane_0 < 16) || (counter_lane_1 < 16))  //should be 16
 						begin // 1000 -> should be changed (timing parameters)
-							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 	
+							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
+							if((counter_lane_0 == 1) && (counter_lane_1 == 1)) // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII (15-4-2024)
+								begin
+									transaction.o_sets = OS;
+									elec_gen_drv.put(transaction);
+								end	
 							os_received_mon_gen.get(tr_mon);
 							if (tr_mon.o_sets == OS)
 							begin
@@ -533,16 +543,20 @@
 
 	endtask : send_ordered_sets
 
-	task phase_force (input int num, input GEN speed = gen4);
+	
+ 	task phase_force (input int num, input GEN speed = gen4);
 
 		transaction = new(); 
 		transaction.phase = num ; 
 		transaction.sbrx = 1; 
 		transaction.gen_speed = speed;
-		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+		if (num != 4)
+			elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+
+		elec_gen_drv.put(transaction);
 		
 	endtask //phase_force
 
- 
+	
 
 	endclass : elec_layer_generator

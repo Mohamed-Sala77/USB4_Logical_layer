@@ -195,7 +195,7 @@
 			PRTS7(TS16_SIZE/2, PRTS7_lane1_seed, TS_234_lane_1_16);
 		
 
-			for (int i = 0 ; i < 15; i++ )
+			for (int i = 0 ; i < 16; i++ )
 			begin
 				TS1_lane_0 [i] = { >> {TS1_lane_0_16 [index:index+419]} };
 				TS1_lane_1 [i] = { >> {TS1_lane_1_16 [index:index+419]} };

@@ -19,7 +19,8 @@
 		bit [2:0] lane_bonding_target;
 		
 		//TS symbols for Gen 4
-		bit [27:0] TS;			//TS symbol to be sent //bit [447:0] TS;			
+		bit [27:0] TS;//TS symbol to be sent //bit [447:0] TS;
+		bit [31:0] TS_234;					
 		bit [419:0] PRS;		//Pseudo Random Sequence
 
 		// PSEUDO RANDOM ORDERED SETS
@@ -75,6 +76,8 @@
 				elec_tr = new();
 				elec_gen_drv.get(elec_tr);
 				v_if.generation_speed = elec_tr.gen_speed; // communicate gen speed to the monitor
+				
+
 				v_if.phase = elec_tr.phase;
 
 				//////////////////////////////////////////////////
@@ -98,11 +101,11 @@
 
 								$display("[ELEC DRIVER] LT_Fall lane 0 Data  to be sent: [%0p]",data_sent);
 								foreach (data_sent[i,j])
-									begin
-										@(negedge v_if.SB_clock);
-										//$display("[DRIVER] LT fall data sent[%0d]",data_sent[i][j]);
-										v_if.sbrx = data_sent[i][j];
-									end
+								begin
+									@(negedge v_if.SB_clock);
+									//$display("[DRIVER] LT fall data sent[%0d]",data_sent[i][j]);
+									v_if.sbrx = data_sent[i][j];
+								end
 
 								
 								// To disable Lane 1
@@ -110,10 +113,10 @@
 								//$display("[DRIVER] LT Data sent: [%0p]",data_sent);
 								$display("[ELEC DRIVER] LT_Fall lane 1 Data  to be sent: [%0p]",data_sent);
 							 	foreach (data_sent[i,j])
-							 		begin
-							 			@(negedge v_if.SB_clock);
-							 			v_if.sbrx = data_sent[i][j];
-							 		end
+						 		begin
+						 			@(negedge v_if.SB_clock);
+						 			v_if.sbrx = data_sent[i][j];
+						 		end
 
 							 	-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -149,12 +152,12 @@
 								$display("[ELEC DRIVER] Time: %0t   AT_cmd Data to be sent: [%0p]", $time, data_sent);
 								//$display("[DRIVER] AT_cmd length to be sent: [%0p]",{ reverse_data({elec_tr.read_write,elec_tr.len})});
 								foreach (data_sent[i,j])
-									begin
-										@(negedge v_if.SB_clock);
-								//		$display("[DRIVER] AT_cmd data sent[%0d]",data_sent[i][j]);
-										v_if.sbrx = data_sent[i][j];
-									end
-
+								begin
+									@(negedge v_if.SB_clock);
+							//		$display("[DRIVER] AT_cmd data sent[%0d]",data_sent[i][j]);
+									v_if.sbrx = data_sent[i][j];
+								end
+								//v_if.generation_speed = gen4; // ALIIIIIIIIIIIIIIIII (TO keep up with DUT (DUT to be changed))
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
 
@@ -179,10 +182,10 @@
 
 								$display("[ELEC DRIVER] Time: %0t, AT_Rsp Data to be sent: [%0p]",$time, data_sent);
 								foreach (data_sent[i,j])
-									begin
-										@(negedge v_if.SB_clock);
-										v_if.sbrx = data_sent[i][j];
-									end
+								begin
+									@(negedge v_if.SB_clock);
+									v_if.sbrx = data_sent[i][j];
+								end
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -280,12 +283,12 @@
 								$display("[ELEC DRIVER] TS1_GEN2_3 is being SENT for BOTH LANES ");
 
 								foreach (TS1_GEN_2_3_lane0[i])
-									begin
-										wait_negedge (elec_tr.gen_speed);
-										v_if.lane_0_rx = TS1_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
-										v_if.lane_1_rx = TS1_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];	
-										//$display("Element [%0d] in TS1_GEN_2_3_lane0: %0b", i, TS1_GEN_2_3_lane0[i]);	
-									end
+								begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.lane_0_rx = TS1_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
+									v_if.lane_1_rx = TS1_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];	
+									//$display("Element [%0d] in TS1_GEN_2_3_lane0: %0b", i, TS1_GEN_2_3_lane0[i]);	
+								end
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -307,11 +310,11 @@
 								$display("[ELEC DRIVER] TS2_GEN2_3 is being SENT for BOTH LANES");
 
 								foreach (TS2_GEN_2_3_lane0[i])
-									begin
-										wait_negedge (elec_tr.gen_speed);
-										v_if.lane_0_rx = TS2_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
-										v_if.lane_1_rx = TS2_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];		
-									end
+								begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.lane_0_rx = TS2_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
+									v_if.lane_1_rx = TS2_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];		
+								end
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -345,7 +348,7 @@
 								begin
 									@(negedge v_if.gen4_lane_clk);
 									v_if.data_incoming = 1'b1;
-									$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
+									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
 									v_if.lane_0_rx = TS[i];		
 									v_if.lane_1_rx = TS[i];		
 								end
@@ -353,7 +356,7 @@
 
 								fork
 									begin
-										foreach (TS_Symbols.TS1_lane_0[i,j])
+										foreach (TS_Symbols.TS1_lane_0[0][j])
 										begin
 											@(negedge v_if.gen4_lane_clk);
 											//$display("[DRIVER] PRBS11_lane0 bits sent[%0b]",PRBS11_lane0[i]);
@@ -369,6 +372,7 @@
 											v_if.lane_1_rx = TS_Symbols.TS1_lane_1[0][j];		
 										end
 									end
+									//v_if.data_incoming = 1'b0;
 									
 								join
 								
@@ -384,7 +388,8 @@
 
 								indication = 4'h4; //Assuming the receiver finished PAM3 TxFFE negotiation
 								counter = 8'h0F;
-
+								$display("TS2 HEADER SENTT");
+								//$stop();
 								///////////////////////////////////
 								//PRS = **************************************;
 								///////////////////////////////////
@@ -395,7 +400,7 @@
 								//$display("[ELEC DRIVER]: PRTS7: [%0P]",PRTS7_lane1);
 
 								//TS = {CURSOR, indication, ~(indication), counter, PRS};
-								TS = {CURSOR, indication, ~(indication), counter};
+								TS_234 = {CURSOR, indication, ~(indication), counter,4'b0000};
 
 								/*
 								// To send Most Signification Bytes with Least Significant Bit first
@@ -405,33 +410,35 @@
 								$display("[ELEC DRIVER] TS2_gen4 is being SENT for BOTH LANES ");
 
 
-								foreach (TS[i])
+								foreach (TS_234[i])
 								begin
 									@(negedge v_if.gen4_lane_clk);
-									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-									v_if.lane_0_rx = TS[i];		
-									v_if.lane_1_rx = TS[i];		
+									//$display("[DRIVER] TS2 Header bits sent:[%0b]",TS_234[i]);
+									//v_if.data_incoming = 1'b1;
+									v_if.lane_0_rx = TS_234[i];		
+									v_if.lane_1_rx = TS_234[i];		
 								end
 
-								fork
-									begin
-										foreach (PRTS7_lane0[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);		
-											v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
-											//$display("TS2_GEN4 SENT BIT: %B",PRTS7_lane0[i][1 - j]);
-										end
-									end
+								// PAYLOAD IS REMOVED (DESIGN LIMITATION)
+								// fork
+								// 	begin
+								// 		foreach (PRTS7_lane0[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);		
+								// 			v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
+								// 			//$display("TS2_GEN4 SENT BIT: %B",PRTS7_lane0[i][1 - j]);
+								// 		end
+								// 	end
 
-									begin
-										foreach (PRTS7_lane1[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);
-											v_if.lane_1_rx = PRTS7_lane1[i][1 - j];	
-											//$display("[ELEC DRIVER] TS2_GEN4 lane 1SENT BIT: %0B",PRTS7_lane1[i][1 - j]);	
-										end
-									end
-								join
+								// 	begin
+								// 		foreach (PRTS7_lane1[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);
+								// 			v_if.lane_1_rx = PRTS7_lane1[i][1 - j];	
+								// 			//$display("[ELEC DRIVER] TS2_GEN4 lane 1SENT BIT: %0B",PRTS7_lane1[i][1 - j]);	
+								// 		end
+								// 	end
+								// join
 								
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -455,7 +462,7 @@
 								//$display("[ELEC DRIVER]: PRTS7 lane1: [%0P]",PRTS7_lane1);
 
 								//TS = {CURSOR, indication, ~(indication), counter, PRS};
-								TS = {CURSOR, indication, ~(indication), counter};
+								TS_234 = {CURSOR, indication, ~(indication), counter,4'b0000};
 
 								/*
 								// To send Most Signification Bytes with Least Significant Bit first
@@ -464,32 +471,32 @@
 
 								$display("[ELEC DRIVER] TS3 is being SENT for BOTH LANES");
 
-								foreach (TS[i])
+								foreach (TS_234[i])
 								begin
 									@(negedge v_if.gen4_lane_clk);
 									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-									v_if.lane_0_rx = TS[i];		
-									v_if.lane_1_rx = TS[i];		
+									v_if.lane_0_rx = TS_234[i];		
+									v_if.lane_1_rx = TS_234[i];		
 								end
 
-								fork
-									begin
-										foreach (PRTS7_lane0[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);		
-											v_if.lane_0_rx = PRTS7_lane0[i][1 - j];	
-											//$display("[ELEC DRIVER] TS3_GEN4 lane 1SENT BIT: %0B",PRTS7_lane1[i][1 - j]);		
-										end
-									end
+								// fork
+								// 	begin
+								// 		foreach (PRTS7_lane0[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);		
+								// 			v_if.lane_0_rx = PRTS7_lane0[i][1 - j];	
+								// 			//$display("[ELEC DRIVER] TS3_GEN4 lane 1SENT BIT: %0B",PRTS7_lane1[i][1 - j]);		
+								// 		end
+								// 	end
 
-									begin
-										foreach (PRTS7_lane1[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);
-											v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
-										end
-									end
-								join
+								// 	begin
+								// 		foreach (PRTS7_lane1[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);
+								// 			v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
+								// 		end
+								// 	end
+								// join
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -502,7 +509,7 @@
 								indication_4 = 8'hF0;
 
 								///////////////////////////////////
-								counter_4 = 4'h0;
+								counter_4 = 4'hF;
 								///////////////////////////////////
 
 
@@ -524,7 +531,7 @@
 								// and the size of the indication field is different	
 								//TS = {CURSOR, indication_4, counter, ~(counter), PRS}; 
 								
-								TS = {CURSOR, indication_4, counter_4, ~(counter_4)}; 
+								TS_234 = {CURSOR, indication_4, counter_4, ~(counter_4),4'b0000}; 
 
 								/*
 								// To send Most Signification Bytes with Least Significant Bit first
@@ -534,32 +541,32 @@
 								$display("[ELEC DRIVER] TS4 is being SENT for BOTH LANES");
 
 
-								foreach (TS[i])
+								foreach (TS_234[i])
 								begin
 									@(negedge v_if.gen4_lane_clk);
 									//$display("[DRIVER] Header bits sent:[%0b]",TS[i]);
-									v_if.lane_0_rx = TS[i];		
-									v_if.lane_1_rx = TS[i];		
+									v_if.lane_0_rx = TS_234[i];		
+									v_if.lane_1_rx = TS_234[i];		
 								end
 
 
-								fork
-									begin
-										foreach (PRTS7_lane0[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);		
-											v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
-										end
-									end
+								// fork
+								// 	begin
+								// 		foreach (PRTS7_lane0[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);		
+								// 			v_if.lane_0_rx = PRTS7_lane0[i][1 - j];		
+								// 		end
+								// 	end
 
-									begin
-										foreach (PRTS7_lane1[i,j])
-										begin
-											@(negedge v_if.gen4_lane_clk);
-											v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
-										end
-									end
-								join
+								// 	begin
+								// 		foreach (PRTS7_lane1[i,j])
+								// 		begin
+								// 			@(negedge v_if.gen4_lane_clk);
+								// 			v_if.lane_1_rx = PRTS7_lane1[i][1 - j];		
+								// 		end
+								// 	end
+								// join
 								
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);

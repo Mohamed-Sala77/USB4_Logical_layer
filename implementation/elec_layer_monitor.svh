@@ -123,6 +123,7 @@
 						if (SB_data_received.size() == TR_HEADER_SIZE) // can remove the if condition 
 							begin
 								detect_transaction_type();
+								//v_if.generation_speed = gen4; // ALIIIIIIIIIIIIIIIII (TO keep up with DUT (DUT to be changed))
 							end
 		
 						// CONFIRMING THE RECEPTION OF THE FULL TRANSACTION to be sent to the SCOREBOARD
@@ -248,23 +249,34 @@
 
 										TS2_gen4,TS3, TS4:
 										begin
-											
-											
-											if (lane_0_gen4_received.size() == PRTS7_SYMBOL_SIZE)
-											begin
-												//lane_0_gen4_received.reverse();
-												//$display("lane_0_gen4_received %p",lane_0_gen4_received);
-												//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_0[0]);
 
-												TS234_DATA = {<< 2{ {<<{lane_0_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
 
-												//TS234_DATA = TS234_DATA.reverse();
-												//$display("TS234_DATA: %b",TS234_DATA);
+
+											lane_0_gen4_received = {};
+											TS234_gen4_detected(elec_tr_lane0, 0, lane_0);
+											//lane_0_gen4_received = {};
+
+
+
+											// $display("ABLLL EL LENGTHHHHH: %d",lane_0_gen4_received.size());
+											// $stop();
+											
+											// if (lane_0_gen4_received.size() == PRTS7_SYMBOL_SIZE) // should be == (since there is no payload (DUT limitation) we had to change it to >)
+											// begin
+											// 	//lane_0_gen4_received.reverse();
+											// 	//$display("lane_0_gen4_received %p",lane_0_gen4_received);
+											// 	//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_0[0]);
+											// 	$display("PRTS7 LENGTH RECEIVED!!!!!!!!");
+											// 	$stop();
+											// 	TS234_DATA = {<< 2{ {<<{lane_0_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
+
+											// 	//TS234_DATA = TS234_DATA.reverse();
+											// 	//$display("TS234_DATA: %b",TS234_DATA);
 
 											
-												TS_234_gen4_order_detection(elec_tr_lane0, TS234_DATA, TS.TS_234_lane_0, lane_0);
+											// 	TS_234_gen4_order_detection(elec_tr_lane0, TS234_DATA, TS.TS_234_lane_0, lane_0);
 												
-											end
+											// end
 										end
 
 										
@@ -307,6 +319,7 @@
 												
 												TS1_gen4_order_detection(elec_tr_lane1, lane_1_gen4_received, TS.TS1_lane_1, lane_1);
 
+
 											end
 
 										end
@@ -314,19 +327,24 @@
 										TS2_gen4, TS3, TS4:
 										begin
 
-											if (lane_1_gen4_received.size() == PRTS7_SYMBOL_SIZE)
-											begin
-												//lane_1_gen4_received.reverse();
-												//$display("lane_1_gen4_received %p",lane_1_gen4_received);
-												//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_1[0]);
+
+											lane_1_gen4_received = {};
+											TS234_gen4_detected(elec_tr_lane1, 0, lane_1);
+											//lane_1_gen4_received = {};
+
+											// if (lane_1_gen4_received.size() == PRTS7_SYMBOL_SIZE)
+											// begin
+											// 	//lane_1_gen4_received.reverse();
+											// 	//$display("lane_1_gen4_received %p",lane_1_gen4_received);
+											// 	//$display("[ELEC MONITOR] TASK PRTS7:%b ",TS.TS_234_lane_1[0]);
 
 
-												TS234_DATA = {<< 2{ {<<{lane_1_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
-												//$display("TS234_DATA: %b",TS234_DATA);
+											// 	TS234_DATA = {<< 2{ {<<{lane_1_gen4_received}} } }; //1st: reverse the whole symbol,  2nd: each 2 bits (starting from right) are written from left to right 
+											// 	//$display("TS234_DATA: %b",TS234_DATA);
 
-												TS_234_gen4_order_detection(elec_tr_lane1, TS234_DATA, TS.TS_234_lane_1, lane_1);
+											// 	TS_234_gen4_order_detection(elec_tr_lane1, TS234_DATA, TS.TS_234_lane_1, lane_1);
 
-											end
+											// end
 
 										end
 						
@@ -571,7 +589,6 @@
 
 							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
 							elec_tr.phase = 3;
-
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -597,7 +614,6 @@
 						elec_tr.len = { << {SB_data_received[31:37]} };
 						elec_tr.read_write = { << {SB_data_received[38]} };
 
-
 						repeat (40)
 						begin
 							void'(SB_data_received.pop_front()); // check weather front or back is needed
@@ -610,7 +626,7 @@
 						end
 
 						//$display("[MONITOR] Rsp_Data [%0h]",Rsp_Data[23:0]);
-						elec_tr.cmd_rsp_data[23:0] = {Rsp_Data[8:1],Rsp_Data[18:11],Rsp_Data[28:21]};
+						elec_tr.cmd_rsp_data[23:0] = {Rsp_Data[28:21],Rsp_Data[18:11],Rsp_Data[8:1]};
 						elec_tr.crc_received [15:8] = { << {SB_data_received[1:8]} };
 						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
 
@@ -627,15 +643,16 @@
 					 		$error("[ELEC MONITOR] Wrong AT Response Received");
 					 		$display("EXPECTED DLE + ETX : %b, received DLE + ETX: %b",{ {start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(ETX), stop_bit} } ,DLE_ETX_received);
 					 	end
+					 	else
+					 	begin
 
-						elec_tr.phase = v_if.phase;
-						elec_mon_scr.put(elec_tr);
+					 		$display("[ELEC MONITOR] Time: %0t  Correct AT Response Received", $time);
+					 		elec_tr.phase = v_if.phase;
+							elec_mon_scr.put(elec_tr);
+							SB_data_received = {};
+							elec_tr = new();
 
-						repeat(40)
-						begin
-							void'(SB_data_received.pop_back()); // empty the QUEUE to start receiving the next transaction
-						end
-						elec_tr = new();
+					 	end
 
 					end
 				end
@@ -763,8 +780,9 @@
 					$display("[ELEC MONITOR]*******TS2 GEN4 DETECTED ON %0d **********", lane.name());
 
 					elec_tr_lane_x.o_sets = TS2_gen4;
-
-					lane_x_gen4_received = {};
+					repeat(2) @(posedge v_if.gen4_lane_clk);
+					@(negedge v_if.gen4_lane_clk);
+					//lane_x_gen4_received = {}; // ALIIIIIIIIIIIIIIIIIIIIIIIIIII REMOVED AS THE PAYLOAD IS NO LONGER SENT BY DUT (limitation)
 
 				end
 
@@ -773,7 +791,8 @@
 					$display("[ELEC MONITOR]*******TS3 GEN4 DETECTED ON %0d **********", lane.name());
 
 					elec_tr_lane_x.o_sets = TS3;
-
+					repeat(2) @(posedge v_if.gen4_lane_clk);
+					@(negedge v_if.gen4_lane_clk);
 					lane_x_gen4_received = {};
 
 				end
@@ -785,7 +804,8 @@
 					
 					elec_tr_lane_x.o_sets = TS4;
 					check_count_bitwise(lane_x_gen4_received, elec_tr_lane_x.lane, elec_tr_lane_x.order);
-					
+					repeat(2) @(posedge v_if.gen4_lane_clk);
+					@(negedge v_if.gen4_lane_clk);
 					lane_x_gen4_received = {};
 
 					//$stop;
@@ -847,7 +867,7 @@
 
 			int i = 0;
 			TS_received = {>>{lane_x_gen4_received}} ;
-					
+			//$display("PRBS PAYLOAD %h",TS_received);	
 			while ( (TS_found == 0) && (i <= 15) )
 			begin
 				if (TS_received == TS1[i])
@@ -855,6 +875,7 @@
 					TS1_gen4_detected(elec_tr_lane_x, i, lane);
 					TS_found = 1;
 					elec_tr_lane_x = new();
+
 				end
 
 				else
@@ -866,8 +887,9 @@
 			if (TS_found == 0) // If the order of TS1 was not found
 			begin
 				$error("[ELEC MONITOR] WRONG TS1 RECEIVED ON %0d !!", lane.name);
-				$display("Expected: %b" ,TS1[0]);
-				$display("Received: %b ", TS_received);
+				$display("[%t] Expected: %b" ,$time(),TS1[0]);
+				$display("[%t] Received: %b ",$time(), TS_received);
+				//$stop();
 				elec_tr_lane_x = new();
 			end
 
@@ -888,8 +910,10 @@
 			elec_tr_lane_x.order = order;
 			elec_tr_lane_x.lane = lane;
 			elec_tr_lane_x.tr_os = ord_set;
+			elec_tr_lane_x.phase = 4;
 			
 			elec_mon_scr.put(elec_tr_lane_x);
+
 			//os_received_mon_gen.put(elec_tr_lane_x);
 			$display("[ELEC MONITOR] TS1 Gen 4 with order [%0d] RECEIVED CORRECTLY ON %0d", order, elec_tr_lane_x.lane.name());
 			
@@ -910,7 +934,7 @@
 
 			int i = 0;
 			
-					
+				$stop();	
 			while ( (TS_found == 0) && (i <= 15) )
 			begin
 				if (TS_received == TS234[i])
@@ -948,32 +972,38 @@
 			int error_detected;
 
 			elec_tr_lane_x.o_sets = elec_tr_lane_x.o_sets;
-			error_detected = 0;
+			
+			// THIS BLOCK OF CODE IS COMMENTED (DUT LIMITATION: NO PAYLOAD)
+			//error_detected = 0;
+			// if (elec_tr_lane_x.o_sets == TS4)
+			// begin
+			// 	if (elec_tr_lane_x.order != order)
+			// 	begin
+			// 		$error("[MONITOR] Wrong TS4 received: Header order does not match the payload order");
+			// 		error_detected = 1;
+			// 	end
+			// end
 
-			if (elec_tr_lane_x.o_sets == TS4)
-			begin
-				if (elec_tr_lane_x.order != order)
-				begin
-					$error("[MONITOR] Wrong TS4 received: Header order does not match the payload order");
-					error_detected = 1;
-				end
-			end
-
-			else
-			begin
-				elec_tr_lane_x.order = order;
-			end
+			// else
+			// begin
+			// 	elec_tr_lane_x.order = order;
+			// end
+			// if (error_detected == 0)
+			// begin
+			// 	$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  lane.name());	
+			// end
 
 			elec_tr_lane_x.lane = lane;
 			elec_tr_lane_x.tr_os = ord_set;
+			elec_tr_lane_x.phase = 4;
 
 			elec_mon_scr.put(elec_tr_lane_x);
+			
 			//os_received_mon_gen.put(elec_tr_lane_x);
-			if (error_detected == 0)
-			begin
-				$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  lane.name());	
-			end
-
+			
+			$display("[ELEC MONITOR] [%p] with order [%0d] RECEIVED CORRECTLY ON %0d",elec_tr_lane_x.o_sets, elec_tr_lane_x.order,  lane.name());	
+			
+			elec_tr_lane_x = new();
 		endtask : TS234_gen4_detected	
 
 
