@@ -2,7 +2,7 @@
 class phase4 extends primary_steps ;
 mailbox #(mem)    mem_ag ;      // internal memory agent
 mem        m_transaction;   // memory transaction
-elec_layer_tr   temp_elec_tr1, temp_elec_tr2 , temp_elec_tr3 ;  // temporary electrical transaction
+elec_layer_tr   temp_elec_tr1, temp_elec_tr2 , temp_elec_tr3 , temp_elec_lane ;  // temporary electrical transaction
 bit check_equlity ;             // check if the received two transaction are the same   
 
 
@@ -148,8 +148,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+             put_transactions ();
             i++;
         end
     end
@@ -163,8 +162,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -179,8 +177,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -194,8 +191,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -209,8 +205,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -224,8 +219,7 @@ endtask
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
             $cast(temp_elec_tr3.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -238,8 +232,7 @@ endtask
             $display("we are in send_TS1_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -252,8 +245,7 @@ endtask
             $display("we are in send_TS2_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -266,8 +258,7 @@ endtask
             $display("we are in send_TS3_G4 (%0d) times",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -280,8 +271,7 @@ endtask
             $display("we are in send_TS4_G4 (%0d) timess",i);
             E_transaction.order = i;
             $cast (E_transaction.o_sets , packet);
-            elec_ag_Tx.put(E_transaction);
-            E_transaction = new();
+            put_transactions ();
             i++;
         end
     end
@@ -291,12 +281,9 @@ endtask
     task send_packet(input bit [3:0] packet, input next_ord next);
     begin
         $display("we are in send_packet");
-        j=0 ;
-        repeat(2)begin
-            if(j==0)        E_transaction.lane = lane_0;
-             else             E_transaction.lane = lane_1;
+        $display ("m_transaction %p ",m_transaction);
+        E_transaction.sbtx = 1;
 
-                $display ("m_transaction %p ",m_transaction);
         case (m_transaction.gen_speed)
             gen2: begin
                 $display("we are in gen2");
@@ -326,22 +313,39 @@ endtask
                 endcase
             end
         endcase
-        j++;
-    end
+    
         next_order = next;
     end
     endtask
 
     task  get_transactions();
-         elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
+
+         //elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
          config_ag_Rx.try_get(C_transaction);
          $display ("in phase4 C_transaction = %p",C_transaction);
          $display ("in phase4 E_transaction = %p",E_transaction);
          mem_ag.try_get(m_transaction); 
-         m_transaction.gen_speed = E_transaction.gen_speed ;
+         m_transaction.gen_speed = gen4; // we are in gen 4 //!delete;
 
 
-endtask
+    endtask
+
+    task put_transactions ();;
+
+        E_transaction.lane= lane_0 ;
+
+        // here we use ""shallow copy""" , not to share the same memory for both transactions
+        temp_elec_lane = new E_transaction ;        // this temp transaction for not make all handels point to same object for E_transaction 
+        elec_ag_Tx.put(E_transaction);      //* send in lane 0
+        //$display ("in phase 4 lane_0 E_transaction = %p",E_transaction);
+        E_transaction = new();
+
+        temp_elec_lane.lane= lane_1 ;
+        elec_ag_Tx.put(temp_elec_lane); //* send in lane 1
+        //$display ("in phase 4 lane_1 E_transaction = %p",temp_elec_lane);
+        temp_elec_lane = new();
+
+    endtask 
     
     
     task run_phase4 () ;
