@@ -47,7 +47,7 @@
 				event_trigger(); // to trigger the sbtx_high_received event
 
 
-				//elec_mod_scr.get(elec_tr_model);
+				elec_mod_scr.get(elec_tr_model);
 				$display("[ELEC SCOREBOARD]: MODEL TRANSACTION: %p",elec_tr_model);
 					
 			
