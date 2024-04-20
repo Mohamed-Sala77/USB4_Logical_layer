@@ -242,20 +242,22 @@ endtask: PRSC11
 
     //declare the events
      event elec_gen_driver_done;  // Event to indicate that the driver has finished sending the transaction
+
     //declare the transactions
     elec_layer_tr transaction;    // Transaction to be recieved from the generator
+
     //declare the mailboxes
-    mailbox #(elec_layer_tr) elec_drv_gen,elec_drv_sboard;  // Mailbox to receive the transaction from the generator
+    mailbox #(elec_layer_tr) elec_drv_gen;  // Mailbox to receive the transaction from the generator
+
     //declare varsual interface
       virtual electrical_layer_if ELEC_vif;
+
     // Constructor
-  function new(event  elec_gen_driver_done,mailbox #(elec_layer_tr) elec_drv_gen,elec_drv_sboard,virtual electrical_layer_if vif);
+  function new(event  elec_gen_driver_done,mailbox #(elec_layer_tr) elec_drv_gen,virtual electrical_layer_if ELEC_vif);
     this.elec_gen_driver_done=elec_gen_driver_done;
-    this.elec_drv_sboard=elec_drv_sboard;
     this.elec_drv_gen=elec_drv_gen;
     this.ELEC_vif=ELEC_vif;
-
-  endfunction 
+  endfunction:new 
  
     /////////********** Declare the task as extern**********/////////
     //**tasks to send trasactions to the DUT**//
@@ -670,7 +672,6 @@ endtask: send_data_2_DUT
      begin
       // Wait for the transaction from the generator
       elec_drv_gen.get(transaction);
-      elec_drv_sboard.put(transaction);
       //$display("[ELEC DRIVER] the value of transaction is %p",transaction); //test
       case(transaction.phase)
       3'b010:begin  //indecate the phase 2 of the transaction

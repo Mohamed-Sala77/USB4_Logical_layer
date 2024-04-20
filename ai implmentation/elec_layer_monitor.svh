@@ -26,6 +26,7 @@ package electrical_layer_monitor_pkg;
 	  event correct_OS;  // Event to indicate that the monitor recieved correct ordered set
 	  event ready_to_recieved_data;  // Event to indicate that the monitor is ready to recieve data
       event sbtx_response;          // Event to indicate that the monitor recieved sbtx response
+	  //event data_income;            
     //declare the transactions
     elec_layer_tr mon_2_Sboard_trans;    // Transaction to be recieved from the generator
 	env_cfg_class env_cfg_mem;     // Transaction to be recieved from the scoreboard
@@ -36,14 +37,14 @@ package electrical_layer_monitor_pkg;
     //declare varsual interface
     virtual electrical_layer_if ELEC_vif;
     // Constructor
-  function new(mailbox #(env_cfg_class) elec_sboard_2_monitor,mailbox #(elec_layer_tr) elec_mon_2_Sboard
-              ,virtual electrical_layer_if ELEC_vif,event sbtx_transition_high ,correct_OS,sbtx_response);
-    this.elec_sboard_2_monitor=elec_sboard_2_monitor;
+  function new(mailbox #(elec_layer_tr) elec_mon_2_Sboard,virtual electrical_layer_if ELEC_vif
+               ,event sbtx_transition_high ,correct_OS,sbtx_response,env_cfg_class env_cfg_mem );
     this.elec_mon_2_Sboard=elec_mon_2_Sboard;
     this.ELEC_vif=ELEC_vif;
     this.sbtx_transition_high=sbtx_transition_high;
 	this.correct_OS=correct_OS;
 	this.sbtx_response=sbtx_response;
+	this.env_cfg_mem =env_cfg_mem;    //check it
   endfunction 
 
 
@@ -691,7 +692,8 @@ endtask:recieved_TS1_gen4
 		  begin
           ->sbtx_transition_high;  //to indicate to the sequance the sbtx is high "check on sboard"
 		  @(sbtx_response)  //wait for the response from the sequance
-		  mon_2_Sboard_trans.sbtx <=1'b1;
+		  mon_2_Sboard_trans.phase=3'd0;
+		  mon_2_Sboard_trans.sbtx =1'b1;
 		  elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 		  end
           end
@@ -700,13 +702,14 @@ endtask:recieved_TS1_gen4
           begin  //thread to monitor (transaction and disconnect)
 		  forever
 		   begin
-          elec_sboard_2_monitor.get(env_cfg_mem);
-          case (env_cfg_mem.phase)
-          3'd2: //wait AT transaction with size=8 symbols
-          begin
-            @(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
-            //case
-			while(1)begin
+           wait(env_cfg_mem.data_income == 1)
+		   env_cfg_mem.data_income=0;
+			case (env_cfg_mem.phase)
+			3'd2: //wait AT transaction with size=8 symbols
+			begin
+				@(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
+				//case
+				while(1)begin
 				@(negedge ELEC_vif.SB_clock);
 				recieved_transaction_data_symb.push_back(ELEC_vif.sbtx);  //check the corectness of the data.......
 
@@ -727,10 +730,13 @@ endtask:recieved_TS1_gen4
             case (env_cfg_mem.transaction_type)
               LT_fall: begin   //wait for LT fall reaction on the dut
                 @(!ELEC_vif.sbtx)
-				if(!ELEC_vif.lane_0_tx && !ELEC_vif.lane_1_tx && !ELEC_vif.enable_rs)
-				$display("LT fall is correct");
+				if(!ELEC_vif.lane_0_tx && !ELEC_vif.lane_1_tx && !ELEC_vif.enable_rs)begin
+				$display("[ELEC MONITOR] LT fall is correct");
+				mon_2_Sboard_trans.sbtx='b0;
+				elec_mon_2_Sboard.put(mon_2_Sboard_trans); 
+				end
 				else
-				$error("LT fall is not correct");
+				$error("[ELEC MONITOR] LT fall is not correct");
               end
               AT_cmd: begin //wait AT response
                 

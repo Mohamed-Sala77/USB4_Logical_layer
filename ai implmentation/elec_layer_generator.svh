@@ -16,19 +16,19 @@ package electrical_layer_generator_pkg;
     elec_layer_tr tr_mon;
 
     // Declare mailboxes of type elec_layer_tr
-    mailbox #(elec_layer_tr) elec_gen_drv;
-    mailbox #(elec_layer_tr) elec_gen_mod;
-    //mailbox #(elec_layer_tr) elec_gen_2_monitor;  // Mailbox to receive the transaction from the generator
+    mailbox #(elec_layer_tr) elec_gen_drv,
+                             elec_gen_mod,
+                             elec_gen_2_scoreboard; 
 
     // Constructor
-    function new(event sbrx_transition_high, event elec_gen_driver_done, event sbtx_transition_high, event correct_OS, mailbox #(elec_layer_tr) elec_gen_drv, mailbox #(elec_layer_tr) elec_gen_mod ,elec_gen_2_monitor);
+    function new(event sbrx_transition_high, event elec_gen_driver_done, event sbtx_transition_high, event correct_OS, mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
       this.sbrx_transition_high = sbrx_transition_high;
       this.elec_gen_driver_done = elec_gen_driver_done;
       this.sbtx_transition_high = sbtx_transition_high;
       this.correct_OS = correct_OS; // Assign the correct_OS event
       this.elec_gen_drv = elec_gen_drv;
       this.elec_gen_mod = elec_gen_mod;
-     // this.elec_gen_2_monitor = elec_gen_2_monitor; // Assign the elec_gen_2_monitor mailbox
+      this.elec_gen_2_scoreboard = elec_gen_2_scoreboard; // Assign the elec_gen_2_scoreboard mailbox
     endfunction
 
     // Declare the task as extern
@@ -53,7 +53,7 @@ package electrical_layer_generator_pkg;
     transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
     elec_gen_drv.put(transaction);          // Put the transaction on the elec_gen_drv mailbox
     elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
-  //elec_gen_2_monitor.put(transaction);    // Put the transaction on the elec_gen_2_monitor mailbox
+    elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
     $display("[ELEC GENERATOR] : SENT sbrx is high SUCCESSFULLY");
@@ -85,7 +85,7 @@ package electrical_layer_generator_pkg;
 
       elec_gen_drv.put(transaction);       // Sending transaction to the Driver
       elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
-     //elec_gen_2_monitor.put(transaction); // Put the transaction on the elec_gen_2_monitor mailbox
+      elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC DRIVER] driver received");
     endtask
@@ -105,7 +105,7 @@ package electrical_layer_generator_pkg;
 	    	transaction.phase ='d4;
         elec_gen_drv.put(transaction);        // Sending transaction to the Driver
         elec_gen_mod.put(transaction);        // Sending transaction to the Reference model
-        // elec_gen_2_monitor.put(transaction); // Put the transaction on the elec_gen_2_monitor mailbox
+         elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
         $display("[ELEC GENERATOR] SENDING [%0p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%0p] SENT SUCCESSFULLY ", OS);
@@ -123,7 +123,7 @@ package electrical_layer_generator_pkg;
       transaction.electrical_to_transport = data;
       elec_gen_drv.put(transaction);           // Sending transaction to the Driver
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-      //elec_gen_2_monitor.put(transaction);     // Put the transaction on the elec_gen_2_monitor mailbox
+       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] data sent");
       endtask: send_data
@@ -135,7 +135,7 @@ package electrical_layer_generator_pkg;
       transaction.phase = 3'd6;                //not real phase but for env only
       elec_gen_drv.put(transaction);           // Sending transaction to the Driver
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-      //elec_gen_2_monitor.put(transaction);     // Put the transaction on the elec_gen_2_monitor mailbox
+      elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] Disconnect order sent to driver");
       endtask: Disconnect
