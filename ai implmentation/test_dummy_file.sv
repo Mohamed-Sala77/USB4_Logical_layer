@@ -1,11 +1,13 @@
-/*task check_AT_transaction(input [9:0] q[$]);
+task check_AT_transaction(input [9:0] q[$]);
 parameter  DLE = 8'hFE;	//Data Link Escape (DLE) Symbol – indicates the beginning of a Transaction. 
 parameter  ETX = 8'h40;
 parameter  STX_cmd = 8'b00000101;
 
-if(q[1]=={1'b1,DLE,1'b0} && q[$-1]=={1'b1,DLE,1'b0}
-         && q[1]=={1'b1,STX_cmd,1'b0} &&q[$]=={1'b1,ETX,1'b0});  //check the data later 
+if(q[0]=={1'b1,DLE,1'b0} && q[$-1]=={1'b1,DLE,1'b0}
+         && q[1]=={1'b1,STX_cmd,1'b0} &&q[$]=={<<{1'b1,ETX,1'b0}}) //check the data later 
 		 $display("AT transaction is correct");
+         $display("the size of the queue is %d",q.size());
+         $display("the first element is %b",{<<{1'b1,ETX,1'b0}});
 		
 endtask
 
@@ -29,7 +31,8 @@ parameter [7:0] STX_cmd = 8'b00000101;
         // Call the function to check the AT transaction
         check_AT_transaction(test_queue);
     end
-endmodule*/
+endmodule
+
 /*
 module dummy_tb;
 bit PRBS11_OUT[$];

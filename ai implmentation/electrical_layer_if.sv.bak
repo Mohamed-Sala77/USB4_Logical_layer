@@ -1,32 +1,22 @@
 interface electrical_layer_if(input clk,
         input SB_clock,
-	input gen2_lane_clk,
-	input gen3_lane_clk,
-	input gen4_lane_clk);
+	    input gen2_lane_clk,
+	    input gen3_lane_clk,
+	    input gen4_lane_clk);
 
 	// elec layer inputs signals
 	logic sbrx;
 	logic lane_0_rx;
 	logic lane_1_rx;
+    logic data_incoming;
 
 	// elec layer Output signals
 	logic sbtx;
 	logic lane_0_tx;
 	logic lane_1_tx;
+	logic enable_rs;
+	
 
 endinterface : electrical_layer_if
 
-/*   
-i need interface with name electrical_layer_if and input signal call clk and six internal signals logic type called (sbrx, lane_0_rx, lane_1_rx, sbtx, lane_0_tx, and lane_1_txsbrx, lane_0_rx, lane_1_rx)
 
-interface electrical_layer_if(input clk);
-
-    // Internal signals
-    logic sbrx;
-    logic lane_0_rx;
-    logic lane_1_rx;
-    logic sbtx;
-    logic lane_0_tx;
-    logic lane_1_tx;
-
-endinterface : electrical_layer_if */

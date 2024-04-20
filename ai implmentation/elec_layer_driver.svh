@@ -1,5 +1,5 @@
 ////////////////////////****driver package****//////////////////////////////
-`timescale 1us/1ns
+//`timescale 1us/1ns
 package electrical_layer_driver_pkg;
 import electrical_layer_transaction_pkg::*;
 
@@ -34,7 +34,7 @@ import electrical_layer_transaction_pkg::*;
 	parameter PRBS11_SYMBOL_SIZE = 448; // Size of the PRBS11 symbol
 
   //timing parameters
-  parameter tConnectRx = 50;        //min is 25us
+  parameter tConnectRx = 25;        //min is 25us
   parameter tDisconnectRx = 1500;   //max is 1000us
   parameter	tDisconnectTx =	100000; //min is 50ms
 
@@ -197,8 +197,8 @@ import electrical_layer_transaction_pkg::*;
 
    
 	// Seeds for the Pseudo Random Sequences
-	parameter [10:0] PRBS11_lane0_seed = 11'b11111111111;
-	parameter [10:0] PRBS11_lane1_seed = 11'b11101110000;
+	parameter [10:0] PRBS11_lane0_seed =11'b11111111111;
+	parameter [10:0] PRBS11_lane1_seed =11'b11101110000;
 
 
 ///-------------------------///
@@ -265,7 +265,7 @@ endtask: PRSC11
                                          bit [6:0] len = 0 ,bit [23:0] cmd_rsp_data = 0,
                                          tr_type trans_type = None);
     extern task send_LT_fall_2_DUT();
-    extern task CALC_CRC(bit [7:0] STX,bit [7:0] data_symb[$], output bit [15:0] CRC_out);
+    extern task CALC_CRC(/*bit [7:0] STX,*/bit [7:0] data_symb[$], output bit [15:0] CRC_out);
     ///---------------------------///
 
     //**tasks to send OS to DUT**//
@@ -292,7 +292,7 @@ endtask: PRSC11
      ///**add here task to reset the dut**///
 
 
- endclass:electrical_layer_driver;
+ endclass:electrical_layer_driver
 
 
 task electrical_layer_driver::Disconnect_2_DUT();
@@ -307,7 +307,7 @@ endtask
 ///************ Define the task outside electrical_layer_driver class************///
 
 // Task to calculate the CRC
-task electrical_layer_driver::CALC_CRC(input bit [7:0] STX, input bit [7:0] data_symb[$], output bit [15:0] CRC_out);
+task electrical_layer_driver::CALC_CRC(/*input bit [7:0] STX,*/ input bit [7:0] data_symb[$], output bit [15:0] CRC_out);
     bit [15:0] crc; // Initial value
     bit [15:0] poly; // Polynomial (CRC-16)
     bit [15:0] data;
@@ -365,15 +365,16 @@ int k;  //counter
 conn={read_write,len};
 //choose send command or response
 if(trans_type==AT_cmd)begin
-data_symb ={DLE,STX_cmd,address,,DLE,ETX}; //zakarian check
+data_symb ={DLE,STX_cmd,address,conn,DLE,ETX};
+CRC_DATA_Q=data_symb[1:$-2]; 
+CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
 end
 else if (trans_type==AT_rsp) begin
-  data_symb ={DLE,STX_rsp,address,conn,cmd_rsp_data,DLE,ETX};   //zakarian check
+  data_symb ={DLE,STX_rsp,address,conn,cmd_rsp_data,DLE,ETX};
+  CRC_DATA_Q=data_symb[1:$-2];   
+  CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
 end
-
-CRC_DATA_Q=data_symb[1:$-2];
-CALC_CRC(STX_cmd,CRC_DATA_Q,{H_CRC,L_CRC});
-$display("CRC_DATA_Q size= %d", CRC_DATA_Q.size());  //check size of CRC_DATA_Q
+$display("CRC_DATA_Q size= %d", CRC_DATA_Q.size());  
 data_symb.delete();
 
 //choose send command or response
@@ -390,25 +391,14 @@ end
         foreach(data_symb[i]) begin
           send_data_symb[i] = {stop_bit, data_symb[i],start_bit};   ///ERROR///
         end
-
-        //to send correct data to the DUT
-       /* foreach(send_data_symb[i]) begin
-          bit [9:0] reversed_byte = 0;
-          for(int j = 0; j < 10; j++) begin
-            reversed_byte[j] = send_data_symb[i][9-j];
-          end
-          actual_send_data_symb.push_back(reversed_byte);
-        end*/
-        $display("actual_send_data_symb: %p",send_data_symb);
+        $display("[ELEC DRIVER] actual_send_data_symb: %p",send_data_symb);
         
         // Send the data symbols to the DUT
         foreach(send_data_symb[i,j]) begin
-            @(negedge ELEC_vif.SB_clock);
-            // Send bit to DUT
-            ELEC_vif.sbrx <= send_data_symb[i][j];
-          end
-        
-       //->elec_gen_driver_done; // Indicate that the driver has finished sending the transaction
+            @(posedge ELEC_vif.SB_clock);
+        // Send bit to DUT
+        ELEC_vif.sbrx <= send_data_symb[i][j];
+        end
 endtask: send_AT_cmd_OR_res_2_DUT
 
 task electrical_layer_driver::send_LT_fall_2_DUT(); //correct send no need to flip
@@ -435,11 +425,11 @@ data_symb_lane1={DLE,LSE_lane1,CLSE_lane1};
       LT_FALL_arr[1][i*10 + j] = send_data_symb_lane1[i][j];
     end
   end
-
+  
 // Send the LT_FALL symbols to the DUT
 foreach(LT_FALL_arr[i,j])
  begin
-  @(negedge ELEC_vif.SB_clock);
+  @(posedge ELEC_vif.SB_clock);
     // Send bit to DUT
     ELEC_vif.sbrx <= LT_FALL_arr[i][j];
  end
@@ -676,7 +666,7 @@ endtask: send_data_2_DUT
       case(transaction.phase)
       3'b010:begin  //indecate the phase 2 of the transaction
          @(negedge ELEC_vif.SB_clock);
-         ELEC_vif.sbrx=transaction.sbrx;
+         ELEC_vif.sbrx <=transaction.sbrx;
          #(tConnectRx);          // Wait for the time required for the connection to be established
         end
 
@@ -748,27 +738,6 @@ endcase
       
       end
 
-  endtask 
-  
+  endtask: run
+
 endpackage:electrical_layer_driver_pkg
-
-
-
-
-
-
-/* Testbench
-module CRC_Test;
-
-  bit [7:0] STX = 8'h05;
-  bit [7:0] data_symb[] = '{8'h01, 8'h0a};
-  bit [15:0] CRC_out;
-
-  initial begin
-    CALC_CRC(STX, data_symb, CRC_out);
-    $display("CRC_out = %h", CRC_out);
-  end
-
-
-
-endmodule*/

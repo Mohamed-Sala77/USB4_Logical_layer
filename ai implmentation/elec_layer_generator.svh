@@ -8,7 +8,7 @@ package electrical_layer_generator_pkg;
     // Declare events
     event sbrx_transition_high;
     event elec_gen_driver_done;
-    event sbtx_transition_high;
+    //event sbtx_transition_high;
     event correct_OS; // New event
 
     // Declare transactions
@@ -21,10 +21,11 @@ package electrical_layer_generator_pkg;
                              elec_gen_2_scoreboard; 
 
     // Constructor
-    function new(event sbrx_transition_high, event elec_gen_driver_done, event sbtx_transition_high, event correct_OS, mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
+    function new(event sbrx_transition_high, elec_gen_driver_done, correct_OS,
+                 mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
       this.sbrx_transition_high = sbrx_transition_high;
       this.elec_gen_driver_done = elec_gen_driver_done;
-      this.sbtx_transition_high = sbtx_transition_high;
+      //this.sbtx_transition_high = sbtx_transition_high;
       this.correct_OS = correct_OS; // Assign the correct_OS event
       this.elec_gen_drv = elec_gen_drv;
       this.elec_gen_mod = elec_gen_mod;
@@ -47,7 +48,7 @@ package electrical_layer_generator_pkg;
 
    task electrical_layer_generator::sbrx_after_sbtx_high();
    // @(sbtx_transition_high); // Blocking with the event sbtx_transition_high (do it on sequance)
-    $display("[ELEC GENERATOR] : sbtx is high");
+    //$display("[ELEC GENERATOR] : sbtx is high");
     transaction = new();                    // Construct the transaction
     transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
     transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
@@ -57,12 +58,12 @@ package electrical_layer_generator_pkg;
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
     $display("[ELEC GENERATOR] : SENT sbrx is high SUCCESSFULLY");
-   endtask
+   endtask: sbrx_after_sbtx_high
 
 
     // Transaction methods
-    task electrical_layer_generator::send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0, input bit [31:0] address = 0,
-                                                      input bit [31:0] len = 0, input bit [31:0] cmd_rsp_data = 0, input GEN generation = gen2);
+    task electrical_layer_generator::send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0, input bit [7:0] address = 0,
+                                                      input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0, input GEN generation = gen4);
       transaction = new(); // Instantiate the transaction object using the default constructor
       transaction.phase ='d3;
       transaction.transaction_type = trans_type;
@@ -92,7 +93,7 @@ package electrical_layer_generator_pkg;
 
      //task to send ordered sets
     task electrical_layer_generator::Send_OS(input OS_type OS, input GEN generation);
-      $display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%0p] ", OS);
+      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%0p] ", OS);
       @correct_OS; // Blocking with the correct_OS event "this event on sboard"
       $display("[ELEC GENERATOR] correct recieved order_sets from type [%0p] ", OS);
       

@@ -32,13 +32,16 @@ class elec_scoreboard;
             begin
                 elec_mon_sboard.get(model_tr);
                 elec_mod_sboard.get(monitor_tr);
+                $display("[scoreboard]model transaction=%0p",model_tr);
+                $display("[scoreboard]monitor transaction=%0p",monitor_tr);
                 case (monitor_tr.phase)
                 3'd0: begin
-                    phase1: assert (model_tr.sbtx == monitor_tr.sbtx)
+                       assert (model_tr.sbtx == monitor_tr.sbtx)
+                            $display("[scoreboard]correct sbtx high");
                         else $error("[scoreboard]case sbtx=1 is failed!");
                 end
-                3'd2:begin                  //check on AT_Cmd transaction 
-                   phase2: assert (model_tr.transaction_type == monitor_tr.transaction_type)
+              /*  3'd2:begin                  //check on AT_Cmd transaction 
+                    assert (model_tr.transaction_type == monitor_tr.transaction_type)
                         else $error("[scoreboard]case transaction_type is failed!");
                     assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                         else $error("[scoreboard]case cmd_rsp_data is failed!");
@@ -51,24 +54,56 @@ class elec_scoreboard;
                     assert (model_tr.read_write == monitor_tr.read_write)
                         else $error("[scoreboard]case read_write is failed!");
 
-                end
+                end*/
 
                 3'd3:begin
                     case(monitor_tr.transaction_type)
                     LT_fall:begin
-                        phase3: assert (model_tr.sbtx == monitor_tr.sbtx)
-                            else $error("[scoreboard]case sbtx is failed!");
+                            assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical == monitor_tr.transport_to_electrical))
+                            else $error("[scoreboard](LT_FALL)case sbtx is failed!");
                     end
-                    AT_cmd:begin   //wait AT response
-
-                    end
-                    AT_rsp:begin  //wait first ordered set depending on the generation
-                        
+                    AT_cmd,AT_rsp:begin   //recieve the AT_cmd transaction
+                        assert (model_tr.transaction_type == monitor_tr.transaction_type)
+                            else $error("[scoreboard](%0p)case transaction_type is failed!",model_tr.transaction_type);
+                        assert (model_tr.crc_received == monitor_tr.crc_received)
+                            else $error("[scoreboard](%0p)case crc_received is failed!",model_tr.transaction_type);
+                        assert (model_tr.len == monitor_tr.len)
+                            else $error("[scoreboard](%0p)case len is failed!",model_tr.transaction_type);
+                        assert (model_tr.address == monitor_tr.address)
+                            else $error("[scoreboard](%0p)case address is failed!",model_tr.transaction_type);
+                        assert (model_tr.read_write == monitor_tr.read_write)
+                            else $error("[scoreboard](%0p)case read_write is failed!",model_tr.transaction_type);
+                        if(monitor_tr.transaction_type==AT_rsp)
+                        begin
+                            assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
+                            else $error("[scoreboard](%0p)case cmd_rsp_data is failed!",model_tr.transaction_type);
+                        end
                     end
                     endcase
                 end
 
                 3'd4:begin
+                    case(monitor_tr.o_sets)
+                    SLOS1,SLOS2,TS1_gen2_3,TS2_gen2_3:begin
+                        assert ((model_tr.sbtx == monitor_tr.sbtx)&&
+                                (model_tr.lane== monitor_tr.lane) &&
+                                (model_tr.tr_os== monitor_tr.tr_os) &&
+                                (model_tr.o_sets== monitor_tr.o_sets) &&
+                                (model_tr.gen_speed== monitor_tr.gen_speed))
+                                $display("[scoreboard](%0p)OS send is correct!",model_tr.o_sets);
+                        else $error("[scoreboard](SLOS1)case sbtx is failed!");
+                    end
+                    TS1_gen4, TS2_gen4, TS3, TS4:begin
+                        assert ((model_tr.sbtx == monitor_tr.sbtx)&&
+                                (model_tr.lane== monitor_tr.lane) &&
+                                (model_tr.tr_os== monitor_tr.tr_os) &&
+                                (model_tr.o_sets== monitor_tr.o_sets) &&
+                                (model_tr.gen_speed== monitor_tr.gen_speed))
+                                $display("[scoreboard](%0p)OS send is correct!",model_tr.o_sets);
+                        else $error("[scoreboard](SLOS2)case sbtx is failed!");
+                    end
+
+                    endcase
                 end
 
                 3'd6:begin
