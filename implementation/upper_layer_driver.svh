@@ -27,6 +27,7 @@
 		endfunction : new
 
 		task run;
+			//parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
 			forever begin
 
 				//////////////////////////////////////////////////
@@ -67,11 +68,61 @@
 
 				
 				wait_negedge(UL_tr.gen_speed); 
+				
+
+				//wait_negedge(UL_tr.gen_speed); 
+
+				if (UL_tr.enable_receive)
 				begin
+					repeat (24) //Z said 24 !!!!!!!!!!!!!!!!!!
+						wait_negedge(UL_tr.gen_speed); 
+					v_if.enable_monitor = 1;
+
+				end
+
+				else if (UL_tr.send_to_elec_enable)
+				begin
+					
+					//repeat (2)
+					//begin
+						//assert(UL_tr.randomize);
+
+						v_if.transport_layer_data_in = UL_tr.T_Data;
+						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data);
+
+						repeat (4)
+							wait_negedge(UL_tr.gen_speed); 
+
+						v_if.transport_layer_data_in = UL_tr.T_Data_1;
+						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data_1);
+
+						repeat (4-1) // only 3 because there is an extra wait_negedge() before the next data
+							wait_negedge(UL_tr.gen_speed); 
+					//end
+
+					/*
 					v_if.transport_layer_data_in = UL_tr.T_Data;
-					-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
+					$display("[UL DRIVER] Data sent to electrical layer: %b", UL_tr.T_Data);
+					
+					repeat (8)
+						wait_negedge(UL_tr.gen_speed); 
+					*/
+
+
+					//#(8 * (10**15)/(2*freq_40));
+					//-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
+				end
+
+				else 
+				begin
+					//To disable the monitor
+					repeat (24) //Z said 24 !!!!!!!!!!!!!!!!!!
+						wait_negedge(UL_tr.gen_speed); 
+					//v_if.enable_monitor = 1;
+					v_if.enable_monitor = 0;
 				end
 				
+				-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
 
 
 			end

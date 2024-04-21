@@ -537,7 +537,7 @@ always @(*) begin
 
 					3: begin 
 						ns = DATA_READ_RESPONSE_DATA;
-						trans_reg = {1'b1,sb_read[23:16],1'b0};
+						trans_reg = {1'b1,sb_read[7:0],1'b0};
 						crc_en_reg = 1;
 						sbtx_sel_reg=0;
 					end 
@@ -573,7 +573,7 @@ always @(*) begin
 
 								1: begin
 									ns = DATA_READ_RESPONSE_DATA;
-									trans_reg = {1'b1,sb_read[7:0],1'b0};
+									trans_reg = {1'b1,sb_read[23:16],1'b0};
 									crc_en_reg = 1;
 									sbtx_sel_reg=0; 
 								end

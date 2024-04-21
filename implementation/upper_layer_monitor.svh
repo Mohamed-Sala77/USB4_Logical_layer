@@ -10,6 +10,7 @@
 		// Mailboxes
 		mailbox #(upper_layer_tr) UL_mon_scr; // connects monitor to the scoreboard
 
+		bit x;
 
 
 		// NEW Function
@@ -34,19 +35,43 @@
 				//////////////////////////////////////////////////
 
 
-				wait_negedge(v_if.generation_speed); 
+				/*wait_negedge(v_if.generation_speed); 
 				begin 
 					UL_tr.T_Data = v_if.transport_layer_data_out; //transport_layer_data_in for debugging
-				end 
+				end*/ 
 				
 				
 				//////////////////////////////////////////////////
 				//TESTED INTEFACE SIGNAL SENT TO THE SCOREBOARD///
 				//////////////////////////////////////////////////
-				if(v_if.phase == 5)
+				/*if(v_if.phase == 5)
 					begin
 						UL_mon_scr.put(UL_tr);	
+					end*/
+
+				if (v_if.enable_monitor)
+				begin
+					wait_negedge(v_if.generation_speed); 
+					begin 
+						UL_tr.T_Data = v_if.transport_layer_data_out; //transport_layer_data_in for debugging
 					end
+				
+					UL_mon_scr.put(UL_tr);	//Sending the transaction to the scoreboard
+
+					//wait_negedge(v_if.generation_speed);
+					/*if(!x)
+						$display("UL Monitor enable @: ",$time);
+					x = 1;*/
+					$display("Time: %t [UL MONITOR]: Received from the logical layer: %h", $time, UL_tr.T_Data);
+					repeat(4-1)
+					wait_negedge(v_if.generation_speed);
+
+				end
+
+				else
+				begin
+					wait_negedge(v_if.generation_speed); 
+				end
 			end
 			
 

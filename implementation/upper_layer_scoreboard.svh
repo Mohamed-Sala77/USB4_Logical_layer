@@ -24,6 +24,7 @@
 			forever begin
 				
 				UL_tr = new();
+				UL_tr_model = new();
 
 				/*
 				if(UL_mod_scr.try_get(UL_tr_model))

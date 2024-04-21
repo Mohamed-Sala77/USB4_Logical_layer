@@ -14,6 +14,8 @@ interface upper_layer_if(input clk,
 	GEN generation_speed;
 	logic [2:0] phase; 
 
+	bit enable_monitor; // signal sent by the driver to enable the monitor to receive data from transport_layer_data_out
+
 endinterface: upper_layer_if
 
 

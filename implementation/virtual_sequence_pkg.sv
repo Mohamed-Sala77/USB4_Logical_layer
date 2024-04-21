@@ -8,6 +8,21 @@
 
 		//Basic Flow 1
 		task run;
+			parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
+
+			/*repeat (5)
+			begin
+				//fork 
+
+					v_upper_layer_generator.send_transport_data(gen4);
+			end*/
+			// v_upper_layer_generator.send_transport_data(gen4);
+			// v_upper_layer_generator.send_transport_data(gen4);
+			// v_upper_layer_generator.send_transport_data(gen4);
+			// v_upper_layer_generator.send_transport_data(gen4);
+			// v_upper_layer_generator.send_transport_data(gen4);
+
+			// $stop;
 
 			//Phase 1
 			v_elec_layer_generator.phase_force(1);
@@ -20,13 +35,14 @@
 			//$stop;
 
 			// Phase 3
-			v_elec_layer_generator.phase_force(3);
+			//v_elec_layer_generator.phase_force(3);
 
 			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd3,24'h053303);  
 			
 
 			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'd78,7'd3,24'h000000); 
 
+			//$stop;
 
 
 			
@@ -58,18 +74,62 @@
 			v_elec_layer_generator.send_ordered_sets(TS4,gen4);
 		
 	
-			/*
+			
 			// Phase 5
 			// fork join for electrical_to_transport layer data and vice versa
 			//v_elec_layer_generator.phase_force(5);
-			repeat (20)
-			begin
-				v_upper_layer_generator.send_transport_data(gen4);	
-			end
 			
+			#((10**15)/freq_40);
+
+			fork 
+				begin
+					repeat (5)
+						v_upper_layer_generator.send_transport_data(gen4);
+				end
+
+				begin
+					//repeat (5)
+						v_elec_layer_generator.elec_phase_5_read_control (gen4, "enable");		
+				end
+
+			join
+
+			v_elec_layer_generator.elec_phase_5_read_control (gen4, "disable");		
+
+			fork
+				begin
+					repeat(10)
+						v_elec_layer_generator.send_to_transport_layer(gen4);
+
+				end
+
+				begin
+					v_upper_layer_generator.start_receiving(gen4);
+				end
+
+			join
+
+			v_upper_layer_generator.disable_monitor();
+
+
+			//v_elec_layer_generator.send_to_transport_layer(gen4);
+
+
+			/*
+			repeat (5)
+			begin
+				//fork 
+
+					v_upper_layer_generator.send_transport_data(gen4);
+					v_elec_layer_generator.elec_read_enable_phase_5 (gen4);
+
+				//join
+
+			end
+			*/
 			//disable
 			$stop();
-*/
+
 		endtask : run
 
 

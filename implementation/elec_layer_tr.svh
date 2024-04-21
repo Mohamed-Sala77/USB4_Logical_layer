@@ -20,9 +20,11 @@
 
 		//Driver Components
 		rand bit sbrx;
-		rand var [7:0] electrical_to_transport; // Data sent after training between electrical layer and transport layer.
+		rand var [15:0] electrical_to_transport; // Data sent after training between electrical layer and transport layer.
 		rand var [2:0] phase; // specifies current initialization phase 
 		rand tr_os_type tr_os; // indicates whether the driver will send transaction or ordered set
+		bit phase_5_read_disable; // to disable the monitor in phase 5 from reading from the Lanes (if no transport layer packets are sent)
+		bit send_to_UL; // to allow the driver to send data on the lanes to be received by the transport layer
 
 		//Monitor Components
 		logic sbtx;

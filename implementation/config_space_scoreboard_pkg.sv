@@ -23,6 +23,9 @@
 			forever
 			begin
 
+				transaction_model = new();
+				transaction_mon = new();
+
 				/*
 				if (mb_model.try_get(transaction_model))
 					begin
@@ -41,25 +44,20 @@
 
 
 				
-				assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
-				assert(transaction_model.c_write === transaction_mon.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
-				assert(transaction_model.c_address === transaction_mon.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
-				assert(transaction_model.c_data_out === transaction_mon.c_data_out) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
+				Config_c_read: assert(transaction_model.c_read === transaction_mon.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
+				Config_c_write: assert(transaction_model.c_write === transaction_mon.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
+				Config_c_address: assert(transaction_model.c_address === transaction_mon.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
+				Config_c_data_out: assert(transaction_model.c_data_out === transaction_mon.c_data_out) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
 
-				assert(	(transaction_model.c_read === transaction_mon.c_read) 		&&
-						(transaction_model.c_write === transaction_mon.c_write) 	&&
-						(transaction_model.c_address === transaction_mon.c_address)	&&
-						(transaction_model.c_data_out === transaction_mon.c_data_out)
-						) $display("[CONFIG SCOREBOARD] CORRECT transaction received ");
-
-
-
-
-
-				
+				config_transactions: assert(	(transaction_model.c_read === transaction_mon.c_read) 		&&
+												(transaction_model.c_write === transaction_mon.c_write) 	&&
+												(transaction_model.c_address === transaction_mon.c_address)	&&
+												(transaction_model.c_data_out === transaction_mon.c_data_out)
+												) $display("[CONFIG SCOREBOARD] CORRECT transaction received ");
 			end
 
 		endtask : run
+
 
 
 		task event_trigger;

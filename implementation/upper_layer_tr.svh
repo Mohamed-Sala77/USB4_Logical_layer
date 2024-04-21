@@ -1,17 +1,22 @@
 		class upper_layer_tr;
 		//Components
-		rand var [127:0] T_Data;
+		rand var [7:0] T_Data;
+		rand var [7:0] T_Data_1;
+		//rand var [127:0] T_Data;
 		rand var [2:0] phase; // specifies current initialization phase 
-		rand GEN gen_speed;
+		GEN gen_speed;
+
+		bit send_to_elec_enable; //to enable sending data to the electrical layer
+		bit enable_receive; // to enable the monitor of the UL to start receiving data from transport_data_out
 		//constraints
 
-
+		/*
 		//Copy Function
 		virtual function upper_layer_tr copy();
  			copy = new();
  			copy.T_Data = T_Data; // Copy data fields
  		endfunction
-
+		*/
 
 	endclass : upper_layer_tr
 

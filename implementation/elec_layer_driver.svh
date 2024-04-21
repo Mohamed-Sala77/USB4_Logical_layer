@@ -29,12 +29,13 @@
 		bit PRBS11_lane0 [$];
 		bit PRBS11_lane1 [$];  
 
-
-
 		bit [3:0] indication;	//Indication field (notifies the adjacent Router about the progress of the Lane Initialization)
 		bit [7:0] indication_4;	//same as the previous but for TS4 (8 bits instead of 4 bits)
 		bit [7:0] counter;		//Counter field (carries the number of TS sent)
 		bit [3:0] counter_4;		//same as the previous but for TS4 (4 bits instead of 8 bits)
+
+		//Data sent to transport layer through lane 0 and lane 1
+		bit [7:0] elec_to_trans_0, elec_to_trans_1;
 
 		// SYMBOL GENERATION CLASS
 		TS_Symbols TS_Symbols;
@@ -79,6 +80,55 @@
 				
 
 				v_if.phase = elec_tr.phase;
+
+				if (elec_tr.phase == 5)
+				begin
+
+					if (elec_tr.send_to_UL) // in case we are sending to the transport layer
+					begin
+						elec_to_trans_0 = elec_tr.electrical_to_transport[7:0];
+						elec_to_trans_1 = elec_tr.electrical_to_transport[15:8];
+
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %h ", elec_to_trans_0);
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %h ", elec_to_trans_1);
+
+						
+						foreach (elec_to_trans_0[i])
+						begin
+							wait_negedge (elec_tr.gen_speed);
+							v_if.data_incoming = 1;
+							v_if.lane_0_rx = elec_to_trans_0[i];		
+							v_if.lane_1_rx = elec_to_trans_1[i];		
+						end
+							
+					end
+
+					else 
+					begin
+						if (elec_tr.phase_5_read_disable == 0) // in case we are sending to the transport layer
+						begin
+							repeat (7) // The DUT starts serializing the data after 7 clk cycles
+								wait_negedge(elec_tr.gen_speed);
+						
+							v_if.phase_5_read_enable = 1;	
+							v_if.data_incoming = 0;
+						end
+						
+
+						else 
+						begin
+							repeat (8) // To give time (8 clk cycles) for the last byte to be recieved from the DUT
+								wait_negedge(elec_tr.gen_speed);
+
+							v_if.phase_5_read_enable = 0;
+						end
+					
+					end
+					
+					
+					-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+
+				end
 
 				//////////////////////////////////////////////////
 				//////////////PIN LEVEL ASSIGNMENT ///////////////
@@ -356,7 +406,7 @@
 
 								fork
 									begin
-										foreach (TS_Symbols.TS1_lane_0[0][j])
+										foreach (TS_Symbols.TS1_lane_0[,j])
 										begin
 											@(negedge v_if.gen4_lane_clk);
 											//$display("[DRIVER] PRBS11_lane0 bits sent[%0b]",PRBS11_lane0[i]);
@@ -365,7 +415,7 @@
 									end
 
 									begin
-										foreach (TS_Symbols.TS1_lane_1[i,j])
+										foreach (TS_Symbols.TS1_lane_1[,j])
 										begin
 											@(negedge v_if.gen4_lane_clk);
 											//$display("[DRIVER] PRBS11_lane1 bits sent[%0b]",PRBS11_lane1[i]);	

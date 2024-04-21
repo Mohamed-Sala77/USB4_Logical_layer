@@ -543,6 +543,51 @@
 
 	endtask : send_ordered_sets
 
+
+	task elec_phase_5_read_control (input GEN speed = gen4, input string control = "enable");
+
+		transaction = new(); 
+		transaction.phase = 5 ; 
+		transaction.gen_speed = speed;
+		
+		if (control == "enable")
+		begin
+			transaction.phase_5_read_disable = 0;		
+		end
+
+		else if (control == "disable")
+		begin
+			transaction.phase_5_read_disable = 1;		
+			
+		end
+
+		elec_gen_drv.put(transaction);
+
+		@(elec_gen_drv_done);
+
+
+	endtask : elec_phase_5_read_control
+
+
+	task send_to_transport_layer(input GEN speed = gen4);
+		
+		transaction = new();
+
+		assert (transaction.randomize); // to randomize electrical_to_transport 
+		transaction.phase = 5;
+		transaction.sbrx = 1;
+		transaction.gen_speed = speed;
+		transaction.send_to_UL = 1;
+		transaction.tr_os = none;
+		
+		elec_gen_drv.put(transaction); // Sending transaction to the Driver
+		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+
+
+		@(elec_gen_drv_done);
+
+	endtask : send_to_transport_layer
+
 	
  	task phase_force (input int num, input GEN speed = gen4);
 
@@ -550,10 +595,9 @@
 		transaction.phase = num ; 
 		transaction.sbrx = 1; 
 		transaction.gen_speed = speed;
-		
-		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
-		
-		if (num != 3)
+		if (num != 4)
+			elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+
 		elec_gen_drv.put(transaction);
 		
 	endtask //phase_force
