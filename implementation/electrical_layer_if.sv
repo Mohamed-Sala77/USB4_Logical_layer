@@ -17,8 +17,12 @@ interface electrical_layer_if(input clk,
 	logic lane_0_tx;
 	logic lane_1_tx;
 
+	// Internal signals
 	GEN generation_speed;
 	logic [2:0] phase;
+	bit phase_5_read_enable;
+
+	
 
 
 endinterface : electrical_layer_if

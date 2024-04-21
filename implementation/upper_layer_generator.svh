@@ -36,6 +36,9 @@
 			assert(UL_tr.randomize);
 			UL_tr.gen_speed = gen_speed;
 			UL_tr.phase = 5;
+			UL_tr.send_to_elec_enable = 1;
+			UL_tr.enable_receive = 0;
+
 
 			//////////////////////////////////////////////////
 			////////////////DRIVER ASSIGNMENT/////////////////
@@ -44,11 +47,43 @@
 			UL_gen_mod.put(UL_tr); // Sending transaction to the Reference Model
 			UL_gen_drv.put(UL_tr); // Sending transaction to the Driver
 
-			@UL_gen_drv_done; // waiting for event triggering from driver
+			@ (UL_gen_drv_done); // waiting for event triggering from driver
 			
 
 
 		endtask : send_transport_data
+
+
+		task start_receiving (input GEN gen_speed);
+
+			UL_tr = new();
+
+			UL_tr.enable_receive = 1;
+			UL_tr.send_to_elec_enable = 0;
+			UL_tr.gen_speed = gen_speed;
+			UL_tr.phase = 5;
+
+
+			UL_gen_drv.put(UL_tr); // Sending transaction to the Driver
+			//UL_gen_mod.put(UL_tr); // Sending transaction to the Reference Model
+
+			@ (UL_gen_drv_done); // waiting for event triggering from driver
+			
+
+		endtask : start_receiving
+
+
+		task disable_monitor();
+
+			UL_tr.enable_receive = 0;
+			UL_tr.send_to_elec_enable = 0;
+
+			UL_gen_drv.put(UL_tr); // Sending transaction to the Driver
+
+			@ (UL_gen_drv_done); // waiting for event triggering from driver
+
+
+		endtask : disable_monitor
 
 		
 	endclass : upper_layer_generator
