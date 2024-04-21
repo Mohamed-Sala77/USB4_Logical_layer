@@ -35,7 +35,7 @@
 			//$stop;
 
 			// Phase 3
-			//v_elec_layer_generator.phase_force(3);
+			v_elec_layer_generator.phase_force(3);
 
 			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd3,24'h053303);  
 			
@@ -78,7 +78,7 @@
 			// Phase 5
 			// fork join for electrical_to_transport layer data and vice versa
 			//v_elec_layer_generator.phase_force(5);
-			
+/*			
 			#((10**15)/freq_40);
 
 			fork 
@@ -111,7 +111,7 @@
 
 			v_upper_layer_generator.disable_monitor();
 
-
+*/
 			//v_elec_layer_generator.send_to_transport_layer(gen4);
 
 

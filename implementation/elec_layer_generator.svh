@@ -595,9 +595,9 @@
 		transaction.phase = num ; 
 		transaction.sbrx = 1; 
 		transaction.gen_speed = speed;
-		if (num != 4)
+		
 			elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
-
+			if (num != 3)
 		elec_gen_drv.put(transaction);
 		
 	endtask //phase_force
