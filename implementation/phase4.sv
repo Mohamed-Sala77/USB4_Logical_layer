@@ -284,9 +284,9 @@ endtask
         $display ("m_transaction %p ",m_transaction);
         E_transaction.sbtx = 1;
 
-        case (m_transaction.gen_speed)
+        case (E_transaction.gen_speed)
             gen2: begin
-                $display("we are in gen2");
+                $display("we are in gen2"); 
                 case (packet)
                     SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
                     SLOS2: send_SLOS2(packet);             // send SLOS2 packet 2 times
@@ -320,12 +320,11 @@ endtask
 
     task  get_transactions();
 
-         //elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
+         elec_ag_Rx.peek (E_transaction);    //We make that peek since we need to sbrx action case 
          config_ag_Rx.try_get(C_transaction);
          $display ("in phase4 C_transaction = %p",C_transaction);
          $display ("in phase4 E_transaction = %p",E_transaction);
          mem_ag.try_get(m_transaction); 
-         m_transaction.gen_speed = gen4; // we are in gen 4 //!delete;
 
 
     endtask
@@ -333,16 +332,15 @@ endtask
     task put_transactions ();;
 
         E_transaction.lane= lane_0 ;
-
         // here we use ""shallow copy""" , not to share the same memory for both transactions
         temp_elec_lane = new E_transaction ;        // this temp transaction for not make all handels point to same object for E_transaction 
         elec_ag_Tx.put(E_transaction);      //* send in lane 0
-        //$display ("in phase 4 lane_0 E_transaction = %p",E_transaction);
+        $display ("in phase 4 lane_0 E_transaction = %p",E_transaction);
         E_transaction = new();
 
         temp_elec_lane.lane= lane_1 ;
         elec_ag_Tx.put(temp_elec_lane); //* send in lane 1
-        //$display ("in phase 4 lane_1 E_transaction = %p",temp_elec_lane);
+        $display ("in phase 4 lane_1 E_transaction = %p",temp_elec_lane);
         temp_elec_lane = new();
 
     endtask 
@@ -352,7 +350,6 @@ endtask
     begin            
 
         create_transactions();
-        //$display("done create transaction",);
         get_transactions();
 
 
