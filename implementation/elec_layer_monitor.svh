@@ -1009,6 +1009,8 @@
 			elec_tr_lane_x.lane = lane;
 			elec_tr_lane_x.tr_os = ord_set;
 			elec_tr_lane_x.phase = 4;
+			elec_tr_lane_x.phase = v_if.sbtx;
+
 			
 			elec_mon_scr.put(elec_tr_lane_x);
 
