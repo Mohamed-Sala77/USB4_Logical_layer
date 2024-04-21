@@ -106,7 +106,20 @@ class elec_scoreboard;
                     endcase
                 end
 
+                //***this thread check it after reciecve on descision***//
+               /* 3'd5:begin
+                    assert ((model_tr.sbtx == monitor_tr.sbtx)&&)
+                            $display("[scoreboard]transport data send is correct!");
+                        else $error("[scoreboard]case transport data CONNECT is failed!");
+                end*/
+
+
                 3'd6:begin
+                    assert ((model_tr.sbtx == monitor_tr.sbtx)&&
+                            (model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
+                            $display("[scoreboard]DISCONNECT send is correct!");
+                        else $error("[scoreboard]case DISCONNECT is failed!");
+
                 end
 
                 endcase
@@ -115,10 +128,10 @@ class elec_scoreboard;
 
             begin  
                 ele_generator_sboard.get(gen_tr);
-                env_cfg_mem.phase=ele_drv_sboard.phase;
-                env_cfg_mem.transaction_type=ele_drv_sboard.transaction_type;
-                env_cfg_mem.gen_speed=ele_drv_sboard.gen_speed;
-                env_cfg_mem.o_sets=ele_drv_sboard.o_sets;
+                env_cfg_mem.phase=ele_generator_sboard.phase;
+                env_cfg_mem.transaction_type=ele_generator_sboard.transaction_type;
+                env_cfg_mem.gen_speed=ele_generator_sboard.gen_speed;
+                env_cfg_mem.o_sets=ele_generator_sboard.o_sets;
                 env_cfg_mem.data_income=1;
             end
          join

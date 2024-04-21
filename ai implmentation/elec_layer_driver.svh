@@ -4,7 +4,7 @@ package electrical_layer_driver_pkg;
 import electrical_layer_transaction_pkg::*;
 
   ///************ Define the parent class inside electrical_layer_driver_pkg************///
-  class parent;
+class parent;
 	parameter start_bit = 1'b0;
 	parameter stop_bit = 1'b1;
 
@@ -28,7 +28,7 @@ import electrical_layer_transaction_pkg::*;
 	parameter SLOS_SIZE = 2112; // 66 * 32 = 2112 or 132 * 16 = 2112
   parameter SLOS_SIZE_IN_BYTE=(SLOS_SIZE/8);
 	parameter TS_GEN_2_3_SIZE = 64;
-	parameter TS_GEN_4_HEADER_SIZE = 28;
+	parameter TS_GEN_4_HEADER_SIZE = 32;
 	parameter TS16_SIZE = 7168; // Size of 16 back to back TS (448 * 16 = 7168)
 
 	parameter PRBS11_SYMBOL_SIZE = 448; // Size of the PRBS11 symbol
@@ -139,7 +139,7 @@ import electrical_layer_transaction_pkg::*;
 
 
 	parameter [2111:0] SLOS1_128_1 = {	SLOS1_128[15], SLOS1_128[14], SLOS1_128[13], SLOS1_128[12], SLOS1_128[11], SLOS1_128[10], SLOS1_128[9], SLOS1_128[8], 
-										SLOS1_128[7], SLOS1_128[6], SLOS1_128[5], SLOS1_128[4], SLOS1_128[3], SLOS1_128[2], SLOS1_128[1], SLOS1_128[0] };
+										SLOS1_128[7], SLOS1_128[6], SLOS1_128[5], SLOS1_128[4], SLOS1_128[3], SLOS1_128[2], SLOS1_128[1], SLOS1_128[0]};
 
 
 	parameter [131:0] SLOS2_128 [0:15] = {	132'b101010111111110101111110111011110101010110111111100101111100011011100100010100010101110101111010111011011101010010101111001111011000,
@@ -192,8 +192,8 @@ import electrical_layer_transaction_pkg::*;
 
 
    //Order sets TS1&2 for Gen4
-  parameter [27:0] TS2_gen4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
-  parameter [27:0] TS3_gen4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
+  parameter [27:0] ts2_gen4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
+  parameter [27:0] ts3_gen4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
 
    
 	// Seeds for the Pseudo Random Sequences
@@ -299,8 +299,7 @@ task electrical_layer_driver::Disconnect_2_DUT();
     @(negedge ELEC_vif.SB_clock);
     ELEC_vif.sbrx = 1'b0;
     #(tDisconnectRx);
-    //->elec_gen_driver_done;
-endtask
+endtask: Disconnect_2_DUT
 
 
 
@@ -321,7 +320,7 @@ task electrical_layer_driver::CALC_CRC(/*input bit [7:0] STX,*/ input bit [7:0] 
     poly = 16'h8005;
 
     // Include STX in CRC calculation
-    data_symb.push_front(STX);
+    //data_symb.push_front(SbTX);
 
     // Calculate CRC
     for(i=0; i<data_symb.size(); i++) begin
@@ -444,27 +443,28 @@ endtask: send_LT_fall_2_DUT
 task electrical_layer_driver::SLOS1_2_DUT(input GEN gen_speed);  //check it send 2 on each lane or 2 no both lanes 
 
 if(gen_speed ==gen2) begin
-   @(posedge ELEC_vif.gen2_lane_clk);
-   ELEC_vif.data_incoming <=1;
+      @(posedge ELEC_vif.gen2_lane_clk);
+      ELEC_vif.data_incoming <=1;
 
-   foreach (SLOS1_64_1[i])
-   begin
-    ELEC_vif.lane_0_rx <=SLOS1_64_1[i];
-    ELEC_vif.lane_1_rx <=SLOS1_64_1[i];
-    @(posedge ELEC_vif.gen2_lane_clk);
-   end
+      foreach (SLOS1_64_1[i])
+      begin
+        ELEC_vif.lane_0_rx <=SLOS1_64_1[i];
+        ELEC_vif.lane_1_rx <=SLOS1_64_1[i];
+        @(posedge ELEC_vif.gen2_lane_clk);
+      end
     end
 else if(gen_speed ==gen3) begin
-  @(posedge ELEC_vif.gen3_lane_clk);
-ELEC_vif.data_incoming <=1;
-
- foreach (SLOS1_128_1[i])
-   begin
-    ELEC_vif.lane_0_rx <=SLOS1_128_1[i];
-    ELEC_vif.lane_1_rx <=SLOS1_128_1[i];
     @(posedge ELEC_vif.gen3_lane_clk);
-   end
+      ELEC_vif.data_incoming <=1;
+
+      foreach (SLOS1_128_1[i])
+        begin
+          ELEC_vif.lane_0_rx <=SLOS1_128_1[i];
+          ELEC_vif.lane_1_rx <=SLOS1_128_1[i];
+          @(posedge ELEC_vif.gen3_lane_clk);
+    end
 end
+    ELEC_vif.data_incoming <=0;
 endtask: SLOS1_2_DUT
 
 task electrical_layer_driver::SLOS2_2_DUT(input GEN gen_speed);
@@ -489,19 +489,20 @@ ELEC_vif.data_incoming <=1;
     @(posedge ELEC_vif.gen2_lane_clk);
    end
 end
+  ELEC_vif.data_incoming <=0;
 endtask: SLOS2_2_DUT
 
 
 task electrical_layer_driver::TS1_gen23_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
-   @(posedge ELEC_vif.gen2_lane_clk);
-   ELEC_vif.data_incoming <=1;
-
-    foreach(TS1_gen2_3_lane0[i]) begin
-    ELEC_vif.lane_0_rx <=TS1_gen2_3_lane0[i];
-    ELEC_vif.lane_1_rx <=TS1_gen2_3_lane1[i];
     @(posedge ELEC_vif.gen2_lane_clk);
-    end
+    ELEC_vif.data_incoming <=1;
+
+      foreach(TS1_gen2_3_lane0[i]) begin
+      ELEC_vif.lane_0_rx <=TS1_gen2_3_lane0[i];
+      ELEC_vif.lane_1_rx <=TS1_gen2_3_lane1[i];
+      @(posedge ELEC_vif.gen2_lane_clk);
+      end
     end
     
 else if(gen_speed ==gen3) begin
@@ -514,6 +515,7 @@ else if(gen_speed ==gen3) begin
     @(posedge ELEC_vif.gen3_lane_clk);
     end
 end
+ELEC_vif.data_incoming <=0;
 endtask: TS1_gen23_2_DUT
 
 
@@ -537,10 +539,12 @@ else if(gen_speed ==gen3) begin
     @(posedge ELEC_vif.gen3_lane_clk);
     end
 end
+  ELEC_vif.data_incoming <=0;
 endtask: TS2_gen23_2_DUT
 
 task electrical_layer_driver::TS1_gen4_2_DUT();
-bit PRBS11_OUT_lane0[$],PRBS11_OUT_lane1[$];
+bit PRBS11_OUT_lane0[$],
+    PRBS11_OUT_lane1[$];
 bit trancated_PRBS11_OUT_lane0[0:419],
     trancated_PRBS11_OUT_lane1[0:419];
 bit TS1_Frame_lane0 [447:0],
@@ -558,6 +562,7 @@ trancated_PRBS11_OUT_lane1.reverse();     //reverse the trancated PRBS11
 
 TS1_Frame_lane0={ >>{trancated_PRBS11_OUT_lane0,HEADER_TS1_GEN4}};
 TS1_Frame_lane1={ >>{trancated_PRBS11_OUT_lane1,HEADER_TS1_GEN4}};
+
 //send the TS1 symbols to the DUT
 @(posedge ELEC_vif.gen4_lane_clk);
    ELEC_vif.data_incoming <=1;
@@ -567,6 +572,7 @@ TS1_Frame_lane1={ >>{trancated_PRBS11_OUT_lane1,HEADER_TS1_GEN4}};
     ELEC_vif.lane_1_rx <=TS1_Frame_lane1[i];
     @(posedge ELEC_vif.gen4_lane_clk);
     end
+    ELEC_vif.data_incoming <=0;
 endtask: TS1_gen4_2_DUT
 
 task electrical_layer_driver::TS2_gen4_2_DUT();
@@ -576,21 +582,23 @@ task electrical_layer_driver::TS2_gen4_2_DUT();
 
    foreach(HEADER_TS2_GEN4[i])
     begin
-    ELEC_vif.lane_0_rx=HEADER_TS2_GEN4[i];
-    ELEC_vif.lane_1_rx=HEADER_TS2_GEN4[i];
+    ELEC_vif.lane_0_rx <=HEADER_TS2_GEN4[i];
+    ELEC_vif.lane_1_rx <=HEADER_TS2_GEN4[i];
     @(posedge ELEC_vif.gen4_lane_clk);
    end
+   ELEC_vif.data_incoming <=0;
 endtask: TS2_gen4_2_DUT
 
 task electrical_layer_driver::TS3_2_DUT();
 @(posedge ELEC_vif.gen4_lane_clk);
    ELEC_vif.data_incoming <=1;
-    foreach(HEADER_TS2_GEN4[i]) 
+    foreach(HEADER_TS3_GEN4[i]) 
     begin
     ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[i];
     ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[i];
     @(posedge ELEC_vif.gen4_lane_clk);
    end
+   ELEC_vif.data_incoming <=0;
 endtask: TS3_2_DUT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //task send data to the DUT
@@ -691,7 +699,7 @@ endcase
       end
       3'b100:begin
        //**stable consant signal on interface during training**// 
-      ELEC_vif.sbrx=1;           //drive sbrx to 1 
+      ELEC_vif.sbrx <=1;           //drive sbrx to 1 
       case(transaction.o_sets)
         SLOS1: begin
            SLOS1_2_DUT(transaction.gen_speed);
@@ -723,7 +731,7 @@ endcase
        
       end
       3'b101:begin   //added phase represent send data from electrical layer to the DUT
-        ELEC_vif.sbrx<=1;           //drive sbrx to 1
+        ELEC_vif.sbrx <=1;           //drive sbrx to 1
         send_data_2_DUT( transaction.electrical_to_transport
                          ,transaction.gen_speed,transaction.lane);
       end

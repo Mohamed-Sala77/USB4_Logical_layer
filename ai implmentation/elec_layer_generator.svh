@@ -34,8 +34,8 @@ package electrical_layer_generator_pkg;
 
     // Declare the task as extern
     extern task sbrx_after_sbtx_high();
-    extern task send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0,input bit [31:0] address = 0,
-                                          input bit [31:0] len = 0, input bit [31:0] cmd_rsp_data = 0,input GEN generation = gen2);
+    extern task send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0,input bit [7:0] address = 0,
+                                          input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0,input GEN generation = gen4);
     extern task Send_OS(input OS_type OS, input GEN generation);
     extern task send_data(input logic [7:0] data, input GEN gen_speed,input LANE lane);
     extern task Disconnect();
@@ -126,7 +126,7 @@ package electrical_layer_generator_pkg;
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
        elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
-      $display("[ELEC GENERATOR] data sent");
+      $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
       endtask: send_data
 
   
