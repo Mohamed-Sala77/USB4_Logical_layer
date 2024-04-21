@@ -78,7 +78,7 @@
 			// Phase 5
 			// fork join for electrical_to_transport layer data and vice versa
 			//v_elec_layer_generator.phase_force(5);
-/*			
+
 			#((10**15)/freq_40);
 
 			fork 
@@ -111,7 +111,7 @@
 
 			v_upper_layer_generator.disable_monitor();
 
-*/
+
 			//v_elec_layer_generator.send_to_transport_layer(gen4);
 
 

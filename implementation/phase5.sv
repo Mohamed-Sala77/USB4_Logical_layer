@@ -14,9 +14,13 @@ endfunction
 
 task elec_to_trans ;
     if (E_transaction.phase == 5) begin
-        T_transaction_Tx.T_Data = E_transaction.electrical_to_transport ;
-        $display(" T_transaction_Tx = %p" ,T_transaction_Tx);
+        T_transaction_Tx.T_Data = E_transaction.electrical_to_transport[7:0] ;
+        $display(" first T_transaction_Tx = %p" ,T_transaction_Tx);
         trans_ag_Tx.put(T_transaction_Tx);  
+        T_transaction_Tx =new();      
+
+        T_transaction_Tx.T_Data = E_transaction.electrical_to_transport[15:8] ;
+        $display(" second T_transaction_Tx = %p" ,T_transaction_Tx);
         T_transaction_Tx =new();      
     end
     ////$display ("done elec_to_trans");
@@ -25,6 +29,14 @@ endtask //elec_to_trans
 task trans_to_elec ;
 if (E_transaction.phase == 5) begin
     E_transaction.transport_to_electrical = T_transaction_Rx.T_Data ;
+    E_transaction.lane = lane_0 ;
+    $display(" first E_transaction = %p" ,E_transaction);
+    elec_ag_Tx.put(E_transaction);
+    E_transaction = new();
+
+    E_transaction.transport_to_electrical = T_transaction_Rx.T_Data_1 ;
+    E_transaction.lane = lane_1 ;
+    $display(" second E_transaction = %p" ,E_transaction);
     elec_ag_Tx.put(E_transaction);
     E_transaction = new();
 
@@ -37,9 +49,9 @@ endtask //trans_to_elec
 
 
 task  get_transactions();
-elec_ag_Rx.try_get (E_transaction);    
+elec_ag_Rx.get (E_transaction);    
+trans_ag_Rx.get(T_transaction_Rx);
 config_ag_Rx.try_get(C_transaction);
-trans_ag_Rx.try_get(T_transaction_Rx);
 $display ("in phase5 E_transaction = %p",E_transaction);
 $display ("in phase5 C_transaction = %p",C_transaction);
 $display ("in phase5 T_transaction_Rx = %p",T_transaction_Rx);

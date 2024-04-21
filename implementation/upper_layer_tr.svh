@@ -1,7 +1,7 @@
 		class upper_layer_tr;
 		//Components
-		rand var [7:0] T_Data;
-		rand var [7:0] T_Data_1;
+		rand var [7:0] T_Data;		//for model data for 0 -> 7
+		rand var [7:0] T_Data_1;	//for model  data for 8 -> 15
 		//rand var [127:0] T_Data;
 		rand var [2:0] phase; // specifies current initialization phase 
 		GEN gen_speed;

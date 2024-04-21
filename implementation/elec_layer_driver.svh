@@ -89,8 +89,8 @@
 						elec_to_trans_0 = elec_tr.electrical_to_transport[7:0];
 						elec_to_trans_1 = elec_tr.electrical_to_transport[15:8];
 
-						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %h ", elec_to_trans_0);
-						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %h ", elec_to_trans_1);
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %d ", elec_to_trans_0);
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %d ", elec_to_trans_1);
 
 						
 						foreach (elec_to_trans_0[i])
