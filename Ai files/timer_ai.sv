@@ -1,4 +1,4 @@
-module timer_ai (
+module timer (
     input wire sb_clk,       // high clock frequency
     input wire clk_b,        // slow clock frequency
     input wire rst,          // reset signal
