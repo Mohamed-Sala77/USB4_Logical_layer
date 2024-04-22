@@ -1,4 +1,4 @@
-module descrambler_ai (
+module descrambler (
   input wire clk,
   input wire rst,
   input wire scrambled_in,
