@@ -34,7 +34,7 @@ class config_agent;
         this.next_stimulus = next_stimulus;
         // Initialize agent components
         cfg_gen = new(mb_mod_gen, mb_drv_gen, driverDone, next_stimulus);
-        cfg_drv = new(vif, mb_drv_gen, driverDone);
+        cfg_drv = new( mb_drv_gen,vif,driverDone);
         cfg_mon = new(vif, mb_mon_scr);
     endfunction
     

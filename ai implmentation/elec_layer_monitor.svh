@@ -1,14 +1,4 @@
-//logic TS2_gen4; // Add this line to define TS2_gen4
-////////////////////////****monitor package****//////////////////////////////
-//`timescale 1us/1ns
-package electrical_layer_monitor_pkg;
-
-	import electrical_layer_transaction_pkg::*;
-	import env_cfg_class_pkg::*;                    //import the env_cfg_class package
-    import electrical_layer_driver_pkg::parent;
-  ///************ Define the parent class inside electrical_layer_driver_pkg************///
-  
-  class electrical_layer_monitor  extends parent;
+class electrical_layer_monitor  extends parent;
 	//import electrical_layer_transaction_pkg::*;
 
 	//timing parameters
@@ -923,7 +913,7 @@ endtask:recieved_TS1_gen4
       
 		 endtask
 
-endpackage : electrical_layer_monitor_pkg
+//endpackage : electrical_layer_monitor_pkg
 
 
 

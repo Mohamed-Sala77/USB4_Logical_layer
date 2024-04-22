@@ -1,13 +1,11 @@
-//////////////////////****scoreboard package****//////////////////////////////
-package electrical_layer_scoreboard_pkg;
-import electrical_layer_transaction_pkg::*;
-import env_cfg_class_pkg::*;
 class elec_scoreboard;
  
     elec_layer_tr model_tr,
                   monitor_tr,
                   gen_tr;
     env_cfg_class env_cfg_mem;
+
+    event recieved_on_elec_sboard;
 
     // Mailboxes for module and monitor transactions
     mailbox #(elec_layer_tr) elec_mod_sboard,
@@ -17,11 +15,12 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem);
+                           env_cfg_class env_cfg_mem,event recieved_on_elec_sboard);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
+        this.recieved_on_elec_sboard=recieved_on_elec_sboard;
     endfunction: new
 
     // Main task to run the scoreboard
@@ -78,6 +77,7 @@ class elec_scoreboard;
                             assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                             else $error("[scoreboard](%0p)case cmd_rsp_data is failed!",model_tr.transaction_type);
                         end
+                        ->recieved_on_elec_sboard;
                     end
                     endcase
                 end
@@ -104,6 +104,7 @@ class elec_scoreboard;
                     end
 
                     endcase
+                    ->recieved_on_elec_sboard;
                 end
 
                 //***this thread check it after reciecve on descision***//
@@ -138,7 +139,7 @@ class elec_scoreboard;
         end
     endtask
 endclass
-endpackage:electrical_layer_scoreboard_pkg 
+ 
 
 
 

@@ -2,7 +2,7 @@
 class config_monitor;
 
     // Interface to the config space
-    config_space_if cfg_if;
+     virtual config_space_if cfg_if;
 
     // Transaction object
     config_transaction cfg_trans;
@@ -11,7 +11,7 @@ class config_monitor;
     mailbox #(config_transaction) cfg_mbox;
 
     // Constructor
-    function new(config_space_if cfg_if, mailbox #(config_transaction) cfg_mbox);
+    function new(virtual config_space_if cfg_if, mailbox #(config_transaction) cfg_mbox);
         this.cfg_if = cfg_if;
         this.cfg_mbox = cfg_mbox;
         cfg_trans = new();

@@ -33,7 +33,7 @@ class up_driver;
 
             // If data is valid, drive the data and signal that driving is done
             if (vif.dataValidIn == 1) begin
-                vif.transportLayerDataOut = tr.transactionData;
+                vif.transport_layer_data_out = tr.T_Data;
                 -> driveDone;
             end
 

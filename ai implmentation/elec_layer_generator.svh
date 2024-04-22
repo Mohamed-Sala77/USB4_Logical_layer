@@ -1,19 +1,13 @@
-//////////////////////****stimulus gen package****//////////////////////////////
-package electrical_layer_generator_pkg;
-
-  import electrical_layer_transaction_pkg::*;   // Import the elec_layer_tr class
-
-  class electrical_layer_generator;
+class electrical_layer_generator;
 
     // Declare events
-    event sbrx_transition_high;
     event elec_gen_driver_done;
     //event sbtx_transition_high;
     event correct_OS; // New event
 
     // Declare transactions
     elec_layer_tr transaction;
-    elec_layer_tr tr_mon;
+    //elec_layer_tr tr_mon;
 
     // Declare mailboxes of type elec_layer_tr
     mailbox #(elec_layer_tr) elec_gen_drv,
@@ -21,9 +15,8 @@ package electrical_layer_generator_pkg;
                              elec_gen_2_scoreboard; 
 
     // Constructor
-    function new(event sbrx_transition_high, elec_gen_driver_done, correct_OS,
-                 mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
-      this.sbrx_transition_high = sbrx_transition_high;
+    function new(event elec_gen_driver_done, correct_OS,mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
+      //this.sbrx_transition_high = sbrx_transition_high;
       this.elec_gen_driver_done = elec_gen_driver_done;
       //this.sbtx_transition_high = sbtx_transition_high;
       this.correct_OS = correct_OS; // Assign the correct_OS event
@@ -143,8 +136,6 @@ package electrical_layer_generator_pkg;
   
 
 
-
-endpackage: electrical_layer_generator_pkg
 
 
 
