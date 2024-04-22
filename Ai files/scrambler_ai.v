@@ -1,4 +1,4 @@
-module scrambler_ai (
+module scrambler(
   input wire clk,
   input wire rst,
   input wire data_in,
