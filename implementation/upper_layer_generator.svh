@@ -46,7 +46,7 @@
 
 			UL_gen_mod.put(UL_tr); // Sending transaction to the Reference Model
 			UL_gen_drv.put(UL_tr); // Sending transaction to the Driver
-			UL_tr = nrew() ;  //* we add that line to make the handles point to a new transaction object
+			UL_tr = new() ;  //* we add that line to make the handles point to a new transaction object
 
 			@ (UL_gen_drv_done); // waiting for event triggering from driver
 			

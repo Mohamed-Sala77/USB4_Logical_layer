@@ -49,7 +49,7 @@ class extentions ;
   endfunction:DefaultValue*/
 
 
-  task SB_RIG;
+  /*task SB_RIG;
   input  logic [23:0] SB_write;
   input  logic [7:0]  SB_add;
   input  bit          sb_en,W_R;   //W_R=1 in case (read) and =0 in case (write).
@@ -66,7 +66,7 @@ class extentions ;
       end
 
 
-endtask:SB_RIG
+endtask:SB_RIG*/
 
 
 task trans_type;
@@ -77,12 +77,11 @@ task trans_type;
         if(sel) //case command 
         begin
           this.C_trans_2_serializar={DATA_Symbols,STX,sel,DLE};
-          this.cmd_rsp_data='b0;
         end
         else   //case response
         begin
-          this.R_trans_2_serializar={this.SB_read,DATA_Symbols,STX,sel,DLE};
-          this.cmd_rsp_data=this.SB_read;
+          this.cmd_rsp_data=24'd340739;
+          this.R_trans_2_serializar={cmd_rsp_data,DATA_Symbols,STX,sel,DLE};
         end
   
       end
@@ -201,7 +200,6 @@ task  get_values ();
       //     generate_AT();
   
           // for generate response 
-            int_ag.get(i_transaction);
             trans_type(.sel(i_transaction.At_sel),.tran_en(i_transaction.tran_en));
             generate_AT();
         end

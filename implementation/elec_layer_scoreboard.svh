@@ -146,6 +146,7 @@
 				5:
 				begin
 					assert(	(elec_tr_model.transport_to_electrical === elec_tr.transport_to_electrical)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 5)  behavior ");
+					else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 5) in transport_to_electrical ");
 				end
 
 
