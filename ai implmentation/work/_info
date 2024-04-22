@@ -1,0 +1,82 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Wello/Desktop/material/GP/AI_BAK
+Yconfig_space_if
+Z0 DXx6 sv_std 3 std 0 22 d=_JfHTnXCN[H5FjiaJJc0
+!s110 1713824729
+!i10b 1
+!s100 Wmcf_YL_EEPgo_02mfOcL0
+I9;A@DP5;iO5<GLVP=LEN30
+VDg1SIo80bB@j0V0VzS_@n1
+!s105 config_space_if_sv_unit
+S1
+Z1 dC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation
+w1713775491
+8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv
+FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv
+L0 1
+Z2 OL;L;10.7c;67
+r1
+!s85 0
+31
+!s108 1713824729.000000
+!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv|
+!s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv|
+!i113 0
+Z3 o-work work -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z4 tCvgOpt 0
+Xtestbench_sv_unit
+!s115 config_space_if
+!s115 upper_layer_if
+!s115 electrical_layer_if
+R0
+!s110 1713828681
+!i10b 1
+!s100 z>if_U?LNc4>c2cDAFbe^1
+I12:ic^X`SG`J8POI3YPX91
+V12:ic^X`SG`J8POI3YPX91
+!i103 1
+S1
+R1
+w1713828679
+8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
+FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
+Felec_layer_tr.svh
+Fconfig_space_pkg.sv
+Fupper_layer_tr.svh
+Fenv_cfg_class.sv
+Felec_layer_generator.svh
+Fup_stimulus_generator.sv
+Fconfig_generator.sv
+Felec_layer_driver.svh
+Fup_driver.sv
+Fconfig _driver.sv
+Felec_layer_monitor.svh
+Fup_monitor.sv
+Fconfig_monitor.sv
+Felec_layer_agent.svh
+Fup_agent.sv
+Fconfig_agent.sv
+Felec_layer_scoreboard.svh
+Fup_scoreboard.sv
+Fconfig_scoreboard.sv
+Fvirtual_sequence.sv
+FTestenv.svh
+L0 1
+R2
+r1
+!s85 0
+31
+!s108 1713828681.000000
+!s107 Testenv.svh|virtual_sequence.sv|config_scoreboard.sv|up_scoreboard.sv|elec_layer_scoreboard.svh|config_agent.sv|up_agent.sv|elec_layer_agent.svh|config_monitor.sv|up_monitor.sv|elec_layer_monitor.svh|config _driver.sv|up_driver.sv|elec_layer_driver.svh|config_generator.sv|up_stimulus_generator.sv|elec_layer_generator.svh|env_cfg_class.sv|upper_layer_tr.svh|config_space_pkg.sv|elec_layer_tr.svh|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
+!s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
+!i113 0
+R3
+R4

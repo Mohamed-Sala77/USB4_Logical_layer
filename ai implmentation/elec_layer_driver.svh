@@ -1,9 +1,4 @@
-////////////////////////****driver package****//////////////////////////////
-//`timescale 1us/1ns
-package electrical_layer_driver_pkg;
-import electrical_layer_transaction_pkg::*;
-
-  ///************ Define the parent class inside electrical_layer_driver_pkg************///
+///************ Define the parent class inside electrical_layer_driver_pkg************///
 class parent;
 	parameter start_bit = 1'b0;
 	parameter stop_bit = 1'b1;
@@ -748,4 +743,4 @@ endcase
 
   endtask: run
 
-endpackage:electrical_layer_driver_pkg
+//endpackage:electrical_layer_driver_pkg
