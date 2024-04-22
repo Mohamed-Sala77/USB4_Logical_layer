@@ -1,16 +1,19 @@
-module clock_div_ai (
+module clock_div (
     input wire local_clk,   // Input clock
+    input wire sb_clk,
     input wire rst,         // Reset signal
     input wire [1:0] gen_speed, // Clock dividing ratio selector
     output reg ser_clk,     // Serial clock output
     output reg enc_clk,     // Encoder clock output
-    output reg fsm_clk      // Finite state machine clock output
+    output reg fsm_clk,      // Finite state machine clock output
+    output reg ms_clk
 );
 
 reg [3:0] ser_counter;
 reg [7:0] enc_counter;
 reg [4:0] fsm_counter; // Increased size to handle non-integer division ratios
 reg [6:0] factor_counter;
+reg [9:0] ms_counter;
 
 localparam FREQ_FACTOR = 32;
 
@@ -128,6 +131,20 @@ always @(posedge local_clk or negedge rst) begin
                 end
             end
         endcase
+    end
+end
+
+always @(posedge sb_clk or negedge rst) begin
+
+    if (~rst) begin
+        ms_counter <= 0;
+    end else begin
+         ms_counter <= ms_counter + 1'b1;
+                
+        if (ms_counter == 999) begin
+            ms_clk <= ~ms_clk;
+            ms_counter <= 0;
+        end
     end
 end
 
