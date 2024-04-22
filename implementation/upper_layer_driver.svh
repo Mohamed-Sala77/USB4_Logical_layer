@@ -88,13 +88,13 @@
 						//assert(UL_tr.randomize);
 
 						v_if.transport_layer_data_in = UL_tr.T_Data;
-						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data);
+						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %d", $time, UL_tr.T_Data);
 
 						repeat (4)
 							wait_negedge(UL_tr.gen_speed); 
 
 						v_if.transport_layer_data_in = UL_tr.T_Data_1;
-						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data_1);
+						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %d", $time, UL_tr.T_Data_1);
 
 						repeat (4-1) // only 3 because there is an extra wait_negedge() before the next data
 							wait_negedge(UL_tr.gen_speed); 

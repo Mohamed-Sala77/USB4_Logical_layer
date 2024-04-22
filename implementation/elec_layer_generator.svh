@@ -582,6 +582,7 @@
 		
 		elec_gen_drv.put(transaction); // Sending transaction to the Driver
 		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+		transaction = new(); //* we add that line to make the handles point to a new transaction object
 
 
 		@(elec_gen_drv_done);

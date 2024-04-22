@@ -57,12 +57,12 @@
 					end
 				
 					UL_mon_scr.put(UL_tr);	//Sending the transaction to the scoreboard
-
+					
 					//wait_negedge(v_if.generation_speed);
 					/*if(!x)
 						$display("UL Monitor enable @: ",$time);
 					x = 1;*/
-					$display("Time: %t [UL MONITOR]: Received from the logical layer: %h", $time, UL_tr.T_Data);
+					$display("Time: %t [UL MONITOR]: Received from the logical layer: %d", $time, UL_tr.T_Data);
 					repeat(4-1)
 					wait_negedge(v_if.generation_speed);
 

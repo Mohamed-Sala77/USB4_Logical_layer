@@ -164,7 +164,7 @@
 								elec_tr_lane0.phase = 5;
 								elec_tr_lane0.sbtx = v_if.sbtx;
 								elec_tr_lane0.transport_to_electrical = { >> {lane_0_UL_received} };
-								$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %h", elec_tr_lane0.transport_to_electrical);
+								$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %d", elec_tr_lane0.transport_to_electrical);
 								lane_0_UL_received = {};
 								elec_mon_scr.put(elec_tr_lane0);
 								elec_tr_lane0 = new();
@@ -176,7 +176,7 @@
 								elec_tr_lane1.phase = 5;
 								elec_tr_lane1.sbtx = v_if.sbtx;
 								elec_tr_lane1.transport_to_electrical = { >> {lane_1_UL_received} };
-								$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %h", elec_tr_lane1.transport_to_electrical);
+								$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %d", elec_tr_lane1.transport_to_electrical);
 								lane_1_UL_received = {};
 								elec_mon_scr.put(elec_tr_lane1);
 								elec_tr_lane1 = new();
