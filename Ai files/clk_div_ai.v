@@ -1,3 +1,5 @@
+`default_nettype none
+
 module clock_div (
     input wire local_clk,   // Input clock
     input wire sb_clk,
