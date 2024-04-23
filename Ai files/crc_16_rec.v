@@ -1,10 +1,10 @@
 `default_nettype none
 
 module crc_16_rec(
-    input wire clk,
-    input wire reset,
-    input wire enable,
-    input wire data_in,
+    input wire sb_clk,
+    input wire rst,
+    input wire crc_en,
+    input wire trans_ser,
     output reg error
     );
 
@@ -13,15 +13,15 @@ reg  [3:0] cnt;
 reg  flag;
 wire feedback;
 
-assign feedback = crc_reg[15] ^ data_in;
+assign feedback = crc_reg[15] ^ trans_ser;
 
-always @(posedge clk or negedge reset) begin
-    if (!reset) begin
+always @(posedge sb_clk or negedge rst) begin
+    if (!rst) begin
         crc_reg <= 16'hFFFF;
         error <= 1'b0;
         flag <= 1'b0;
         cnt <= 4'b0;
-    end else if (enable) begin
+    end else if (crc_en) begin
         error <= 1'b0;
 		cnt <= (cnt == 9)? 0 : cnt + 1;
 		if (cnt!=0 && cnt!=9) begin // Normal CRC Calculation Mode
