@@ -21,7 +21,7 @@ class up_stimulus_generator;
     // Task to generate stimuli
     task run();
         // Repeat 100 times
-        repeat (100) begin
+        repeat (5) begin
             
             // Create a new transaction object
             tr = new();

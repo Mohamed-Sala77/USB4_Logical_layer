@@ -1,13 +1,13 @@
-/*package virtual_sequence_pkg;
-import electrical_layer_transaction_pkg::*; // Import the elec_layer_tr class
-import electrical_layer_generator_pkg::*;*/
+
 class virtual_sequence;
 
 ////***stimulus generation declaration***////
-electrical_layer_generator virtual_elec_gen;
+    electrical_layer_generator virtual_elec_gen;
+    config_generator virtual_cfg_gen; 
+    up_stimulus_generator virtual_up_gen;
 
 ////***event declaration***////
-event sbtx_transition_high,  //connect with elec_monitor
+    event sbtx_transition_high,  //connect with elec_monitor
       sbtx_response,
       recieved_on_elec_sboard;  //connect with elec_scoreboard to indecate recieve transaction
 
@@ -16,8 +16,11 @@ function new(event sbtx_transition_high,sbtx_response,recieved_on_elec_sboard);
     this.sbtx_response = sbtx_response;
     this.recieved_on_elec_sboard=recieved_on_elec_sboard;
 endfunction: new
-
 task run;
+
+    ///phase 1///
+    virtual_cfg_gen.generate_stimulus() ;
+
    ///phase 2///
    @(sbtx_transition_high); // Blocking with the event sbtx_transition_high 
    ->sbtx_response;
@@ -36,10 +39,14 @@ task run;
     virtual_elec_gen.Send_OS(TS4,gen4);
 
     ///phase 5///
+    virtual_up_gen.run();
+    virtual_elec_gen.send_data(8'hFF,gen4,lane1);
 
-$stop;
+
+    $stop; // Stop the simulation
+
+
 endtask: run      
 
 
 endclass: virtual_sequence
-//endpackage

@@ -22,7 +22,7 @@ class config_generator;
 
     // This task generates stimulus for the driver and model.
     task generate_stimulus();
-        forever begin
+       
             // Wait for scr_mon_done event
             @(scr_mon_done);
 
@@ -40,6 +40,6 @@ class config_generator;
 
             // Wait for driver_done event
             @(driver_done);
-        end
+        
     endtask
 endclass
