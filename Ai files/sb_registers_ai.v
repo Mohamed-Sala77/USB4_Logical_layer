@@ -1,12 +1,9 @@
 `default_nettype none
 
 module sb_registers (
-	input wire s_read_o_s_write_0,
-	input wire [7:0] s_address_o,
-	input wire [7:0] s_data_o,
-	output reg [23:0] sb_read,
-	input wire sb_clk,
-	input wire rst
+	input wire fsm_clk, rst, s_read, s_write,
+    input wire [7:0] s_data, s_address,
+    output reg [23:0] sb_read 
 	);
 
   reg [7:0] sb_memory [0:156]; // 8-bit wide and 157 in depth register file
@@ -28,10 +25,10 @@ module sb_registers (
       sb_read <= 24'b0; // Reset to zero
 
   end else begin
-      if (s_read_o_s_write_0) begin // Read operation
+      if (s_read) begin // Read operation
       	sb_read <= link_configuration;
-      end else begin // Write operation
-      	sb_memory[s_address_o] <= s_data_o;
+      end else if (s_write) begin // Write operation
+      	sb_memory[s_address] <= s_data;
 	sb_read <= sb_read;
       end
   end
