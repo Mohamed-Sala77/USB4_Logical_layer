@@ -181,7 +181,7 @@
 								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
 								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
-
+								//$display("[drive send AT_cmd]	crc: %0d", {high_crc, low_crc});
 
 								// data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(STX_cmd), stop_bit},
 								// 			 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
@@ -220,6 +220,7 @@
 								$display("&&&&&&&&&&&&AT RESP DATA SYMBOL %p",data_symbol);
 
 								crc_calculation(STX_rsp, data_symbol, high_crc, low_crc);
+								//$display("[drive  send AT_rsp]	crc: %0d", {high_crc, low_crc});
 								// ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII LINE 173
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(STX_rsp), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol

@@ -16,10 +16,10 @@ class extentions ;
   endfunction
 
     /////*defind constant parts of code*/////
-      const var DLE=8'hfe, 
+      parameter DLE=8'hfe, 
                 STX=7'h02,                                   //we will concatinate it with last bit represent (command_response)
                 ETX=8'h40,
-                DATA_Symbols=16'h030c;                        //reviewing(rig 12) =>incase send commend to read the parameters of another router 
+                DATA_Symbols=16'h034e;                        //reviewing(rig 12) =>incase send commend to read the parameters of another router 
 
        //some parameters//
        parameter SB_width=24,reg_size=16;     //sb reg size in bits
@@ -72,16 +72,23 @@ endtask:SB_RIG*/
 task trans_type;
    input  bit       tran_en,sel;
    this.sel=sel;
-   if(tran_en)
+
+   
+   //$display("[wellooooooo]tran_en = %0d",tran_en);
+   if(1)
       begin
-        if(sel) //case command 
+        //$display("[wellooooooo]this.sel = %0d",this.sel);
+        if(this.sel) //case command 
         begin
-          this.C_trans_2_serializar={DATA_Symbols,STX,sel,DLE};
+          this.C_trans_2_serializar={>>{DATA_Symbols,STX,sel,DLE}};
+          $display("[wellooooooo]C_trans_2_serializar =%0h",this.C_trans_2_serializar);
         end
         else   //case response
         begin
           this.cmd_rsp_data=24'd340739;
-          this.R_trans_2_serializar={cmd_rsp_data,DATA_Symbols,STX,sel,DLE};
+          //$display("[wellooooooo]cmd_rsp_data = %d",this.cmd_rsp_data);
+          this.R_trans_2_serializar={>>{cmd_rsp_data,DATA_Symbols,STX,sel,DLE}};
+           $display("[welloooo] at trans_type task the value of this.R_trans_2_serializar %0h and the size=%0d",this.R_trans_2_serializar,$size(R_trans_2_serializar));    
         end
   
       end
@@ -90,7 +97,8 @@ endtask:trans_type
 
 
 task generate_AT;
-begin
+
+
    logic [5:0][7:0]          R_trans_2_serializar;       //serial data response
    logic [2:0][7:0]          C_trans_2_serializar;       //serial data commmend
    bit   [15:0]              crc;
@@ -104,6 +112,8 @@ begin
    if(this.sel)        //command
    begin
      C_trans_2_serializar=this.C_trans_2_serializar[3:1];
+    // C_trans_2_serializar={8'hfe,8'h51,8'h80,8'h0a,8'h43,8'h85,8'h62,8'h05};  
+     $display("[welloooo] at generate_AT task the value of this.C_trans_2_serializar %0h and the size=%0d",C_trans_2_serializar,$size(C_trans_2_serializar));
       for(int k=0;k<$size(C_trans_2_serializar);k++)
        begin
         b_yte=C_trans_2_serializar[k];
@@ -131,6 +141,7 @@ begin
    else         //response
     begin
       R_trans_2_serializar=this.R_trans_2_serializar[6:1];
+      $display("[welloooo] at generate_AT task the value of this.R_trans_2_serializar %0h and the size=%0d",R_trans_2_serializar,$size(R_trans_2_serializar));    
       for(int k=0;k<$size(R_trans_2_serializar);k++)
        begin
         b_yte=R_trans_2_serializar[k];
@@ -156,6 +167,8 @@ begin
       end
       crc=R_rigister;
       end
+
+$display("[welloooo] at generate_AT task the value of crc %0h and the size=%0d",crc,$size(crc));
     this.crc=crc;
     this.len=7'd3;
     this.address=8'd78;
@@ -177,7 +190,7 @@ begin
       elec_ag_Tx.put(E_transaction);  
       $display ("E_transaction in phase 3 sent to scoreboard = %p",E_transaction);
       E_transaction = new();  
-  end
+
 endtask
 
 task  get_values ();
@@ -186,11 +199,15 @@ task  get_values ();
 
 
     int_ag.get(i_transaction);
+    //$display ("[wellooooooo]i_transaction = %0d",i_transaction.At_sel);
+    //$display ("[wellooooooo]i_transaction.tran_en = %0d",i_transaction.tran_en);
    if (i_transaction.gen_res==0)      //  genrate command only for phase 3 
       begin
     // for generate command 
         trans_type(.sel(i_transaction.At_sel),.tran_en(i_transaction.tran_en));
         generate_AT();
+          
+        
       end
 
       else if (i_transaction.gen_res==1)      //  genrate  response
@@ -200,8 +217,11 @@ task  get_values ();
       //     generate_AT();
   
           // for generate response 
-            trans_type(.sel(i_transaction.At_sel),.tran_en(i_transaction.tran_en));
+            trans_type(.sel(i_transaction.At_sel),.tran_en(1));
             generate_AT();
+            $stop;
+          
+            
         end
 
 endtask
@@ -209,3 +229,4 @@ endtask
 
 
 endclass:extentions
+
