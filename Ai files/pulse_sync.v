@@ -5,6 +5,7 @@
 // Description: Synchronizing a  pulse from fast clock domain to slow clock domain.
 // Note: This block is implemented using AI (chatgpt3.5).
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+`default_nettype none
 module pulse_sync (
     input wire clk_a,         // Fast Clock
     input wire clk_b,         // Slow Clock
@@ -63,5 +64,5 @@ assign mux1_out = (reg3_out) ? 1'b0 : reg1_out;
 assign busy = reg1_out | reg3_out;
 
 endmodule
-`default_nettype none
+
 `resetall	
