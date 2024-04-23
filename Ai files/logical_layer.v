@@ -5,6 +5,9 @@
 // Description: the top module combining all blocks of usb4 logical layer.
 // Note: This block is implemented using AI (chatgpt3.5).
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+`default_nettype none
+
 module logical_layer(
     input wire local_clk, sb_clk, rst, lane_disable, sbrx, data_incoming,
     input wire [31:0] c_data_in,
@@ -333,5 +336,5 @@ timer timer
   .tgen4_ts2_timeout       ( tgen4_ts2_timeout)      
 );
 endmodule
-`default_nettype none
+
 `resetall	
