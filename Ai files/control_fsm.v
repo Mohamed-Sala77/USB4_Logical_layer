@@ -5,6 +5,7 @@
 // Description: Exchanging of parameters, clock switching, sending and receiving ordered sets orders, enabling the transmission of data
 // Note: This block is implemented using AI (chatgpt3.5).
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+`default_nettype none
 module control_fsm (
     input wire fsm_clk,
     input wire reset_n,
@@ -615,5 +616,4 @@ end
 // Output logic and other state-specific logic...
 
 endmodule
-`default_nettype none
 `resetall	
