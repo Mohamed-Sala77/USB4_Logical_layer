@@ -82,7 +82,7 @@ data_bus data_bus_inst(
     .os_sent(os_sent),     // Connects to data_incoming
     .transport_layer_data_out(transport_layer_data_out),
     .rx_lanes_on(rx_lanes_on),   // Connects to rx_lanes_on
-    .data_os_i(data_os_o)            // Connects to data_os_i
+    .data_os(data_os_o)            // Connects to data_os_i
 );
 control_fsm ctrl_fsm(
     .fsm_clk(fsm_clk),
