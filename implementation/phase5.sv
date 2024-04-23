@@ -14,6 +14,11 @@ endfunction
 
 task elec_to_trans ;
     if (E_transaction.phase == 5) begin
+        // get the data from electrical agent
+        elec_ag_Rx.get (E_transaction); 
+        $display ("in phase5 E_transaction = %p",E_transaction);
+
+        // send the data to transport agent
         T_transaction_Tx.T_Data = E_transaction.electrical_to_transport[7:0] ;
         $display(" first T_transaction_Tx = %p" ,T_transaction_Tx);
         trans_ag_Tx.put(T_transaction_Tx);  
@@ -21,6 +26,7 @@ task elec_to_trans ;
 
         T_transaction_Tx.T_Data = E_transaction.electrical_to_transport[15:8] ;
         $display(" second T_transaction_Tx = %p" ,T_transaction_Tx);
+        trans_ag_Tx.put(T_transaction_Tx);  
         T_transaction_Tx =new();      
     end
     ////$display ("done elec_to_trans");
@@ -28,6 +34,12 @@ endtask //elec_to_trans
 
 task trans_to_elec ;
 if (E_transaction.phase == 5) begin
+
+    // get the data from transport agent
+    trans_ag_Rx.get(T_transaction_Rx);
+    $display ("in phase5 T_transaction_Rx = %p",T_transaction_Rx);
+
+    // send the data to electrical agent
     E_transaction.transport_to_electrical = T_transaction_Rx.T_Data ;
     E_transaction.lane = lane_0 ;
     $display(" first E_transaction = %p" ,E_transaction);
@@ -47,24 +59,19 @@ endtask //trans_to_elec
 
 
 
-
-task  get_transactions();
-elec_ag_Rx.get (E_transaction);    
-trans_ag_Rx.get(T_transaction_Rx);
-config_ag_Rx.try_get(C_transaction);
-$display ("in phase5 E_transaction = %p",E_transaction);
-$display ("in phase5 C_transaction = %p",C_transaction);
-$display ("in phase5 T_transaction_Rx = %p",T_transaction_Rx);
-    ////$display ("in phase5 C_transaction = %p",C_transaction);
-    endtask
-
-
 // Task to execute the phase
 task run_phase5();
     begin 
     create_transactions();
     //$display("create transactions done");
-    get_transactions();
+
+    // get the data from config agent
+    config_ag_Rx.try_get(C_transaction);
+    $display ("in phase5 C_transaction = %p",C_transaction);
+    
+    // peel the data from electrical agent
+    elec_ag_Rx.peek (E_transaction); 
+    $display ("in phase5 E_transaction = %p",E_transaction);
     
 
                        // ----------------------- handle actions ----------------------
@@ -101,7 +108,7 @@ task run_phase5();
     fork
         elec_to_trans ();
         trans_to_elec ();
-    join
+    join_any
 
  end
 endtask   //get_data
