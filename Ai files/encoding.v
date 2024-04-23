@@ -1,4 +1,4 @@
-module encoder (
+module encoding_block (
     input enc_clk,
     input rst,
     input enable,
