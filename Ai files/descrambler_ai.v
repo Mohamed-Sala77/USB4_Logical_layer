@@ -1,3 +1,5 @@
+`default_nettype none
+
 module descrambler (
   input wire clk,
   input wire rst,
