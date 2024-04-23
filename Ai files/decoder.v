@@ -1,4 +1,4 @@
-module decoder (
+module decoding_block (
     input enc_clk,
     input rst,
     input enable_dec,
