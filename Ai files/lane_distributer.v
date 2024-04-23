@@ -5,6 +5,7 @@
 //Description: distributtion of data from data bus on lane 0 and lane 1
 //Note: This block is implemented totally using AI (Chatgpt 3.5). 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+`default_nettype none
 module lane_distributer (
     input  wire       clk,
     input  wire       rst, 
@@ -158,5 +159,5 @@ always @(posedge clk or negedge rst) begin
 end
 
 endmodule
-`default_nettype none
+
 `resetall	
