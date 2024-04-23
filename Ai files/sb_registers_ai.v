@@ -32,6 +32,7 @@ module sb_registers (
       	sb_read <= link_configuration;
       end else begin // Write operation
       	sb_memory[s_address_o] <= s_data_o;
+	sb_read <= sb_read;
       end
   end
 end
