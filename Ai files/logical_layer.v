@@ -9,7 +9,7 @@
 `default_nettype none
 
 module logical_layer(
-    input wire local_clk, sb_clk, rst, lane_disable, sbrx, data_incoming,
+    input wire local_clk, sb_clk, rst, lane_disable, sbrx, enable_deser,
     input wire [31:0] c_data_in,
     input wire [7:0] transport_layer_data_in,
     input wire lane_0_rx_i, lane_1_rx_i,
@@ -188,7 +188,7 @@ lanes_ser_deser  lanes_serializer_deserializer_inst(
   .clk                     ( ser_clk), 
   .rst                     ( rst),
   .enable_ser              ( enable_ser),
-  .enable_deser            ( data_incoming),
+  .enable_deser            ( enable_deser),
   .lane_0_tx_parallel      ( lane_0_tx_enc_old),
   .lane_1_tx_parallel      ( lane_1_tx_enc_old),
   .gen_speed               ( gen_speed),
