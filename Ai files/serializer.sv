@@ -1,7 +1,7 @@
 `default_nettype none
 
 module serializer #(
-    parameter DATA_WIDTH = 8  // Define the width of the parallel data input
+    parameter DATA_WIDTH = 10  // Define the width of the parallel data input
 )(
     input wire clk,                    // Clock input
     input wire rst,                  // Active low reset
