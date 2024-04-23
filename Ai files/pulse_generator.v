@@ -5,7 +5,7 @@
 // Description: converting a level signal into a pulse signal.
 // Note: This block is implemented using AI (chatgpt3.5).
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+`default_nettype none
 module pulse_generator 
 (
 input  wire        clk, reset_n,
@@ -52,5 +52,4 @@ pul_gen pul_gen_inst4
 );
 		
 endmodule	
-`default_nettype none
 `resetall					 
