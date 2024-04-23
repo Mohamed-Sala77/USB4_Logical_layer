@@ -1,4 +1,6 @@
-module scrambler(
+`default_nettype none
+
+module scrambler (
   input wire clk,
   input wire rst,
   input wire data_in,
