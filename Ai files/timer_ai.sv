@@ -1,3 +1,5 @@
+`default_nettype none
+
 module timer (
     input wire sb_clk,       // high clock frequency
     input wire clk_b,        // slow clock frequency
