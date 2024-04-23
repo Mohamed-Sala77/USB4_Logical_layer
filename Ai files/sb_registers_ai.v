@@ -12,7 +12,7 @@ module sb_registers (
   
   assign link_configuration = {sb_memory[80], sb_memory[79],sb_memory[78]};
 
-  always @(posedge sb_clk or negedge rst) begin
+always @(posedge fsm_clk or negedge rst) begin
   	if (~rst) begin
 
   		sb_memory[78] <= 8'b00000011;
