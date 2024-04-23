@@ -1,4 +1,6 @@
-module sb_registers_ai (
+`default_nettype none
+
+module sb_registers (
 	input wire s_read_o_s_write_0,
 	input wire [7:0] s_address_o,
 	input wire [7:0] s_data_o,
