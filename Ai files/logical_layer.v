@@ -125,20 +125,18 @@ control_fsm ctrl_fsm(
     // Add other connections here
 );
 
-clk_divider clk_div_inst(
+clock_div clk_div_inst(
     .local_clk(local_clk),
     .rst(rst),
     .gen_speed(gen_speed),
     .ser_clk(ser_clk),
     .enc_clk(enc_clk),
-    .fsm_clk(fsm_clk)
+    .fsm_clk(fsm_clk),
+	.sb_clk(sb_clk),
+	.ms_clk(ms_clk)
 );
 
-ms_clk ms_clk_inst(
-    .sb_clk(sb_clk),
-    .rst(rst),
-    .ms_clk(ms_clk)
-);
+
 
 lane_distributer lane_dist_inst(
     .clk(fsm_clk),
@@ -184,9 +182,9 @@ decoding_block decoding_block_inst(
   .enable_deskew           (enable_deskew),
   .lane_0_rx               (lane_0_rx_encoder),
   .lane_1_rx               (lane_1_rx_encoder),
-  .data_os_i                 (data_os_i)
+  .data_os                 (data_os_i)
 );
-lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer_inst(
+lanes_ser_deser  lanes_serializer_deserializer_inst(
   .clk                     ( ser_clk), 
   .rst                     ( rst),
   .enable_ser              ( enable_ser),
@@ -212,7 +210,7 @@ pul_gen pul_gen_inst(
 .pulse_sig(new_sym)
 );
 
-serializer #(.WIDTH(10)) serializer_inst(
+serializer serializer_inst(
   .clk                     (sb_clk), 
   .rst                     (rst),
   .parallel_in             (trans),
@@ -258,7 +256,7 @@ transactions_fsm transactions_fsm_inst (
   .rst                     (rst),
   .sbrx                    (sbrx_parallel_in),
   .error                   (crc_error),
-  .tdisconnet              (tdisconnect_rx_min),
+  .tdisconnect              (tdisconnect_rx_min),
   .tconnect                (tconnect_rx_min),
   .t_valid                 (t_valid_level),
   .trans_error             (trans_error_level),
@@ -278,7 +276,7 @@ sbtx_mux sbtx_mux_inst (
     .sbtx(sbtx)
 );
 
-crc_16_rec #(.SEED('hFFFF)) crc_16_rec_inst ( 
+crc_16_rec  crc_16_rec_inst ( 
   .sb_clk                  (sb_clk),          
   .rst                     (rst),          
   .trans_ser               (sbrx),    
@@ -286,14 +284,14 @@ crc_16_rec #(.SEED('hFFFF)) crc_16_rec_inst (
   .error                   (crc_error)        
 );
 
-deserializer #(.WIDTH(10)) deserializer_inst (
+deserializer  deserializer_inst (
   .clk                     (sb_clk), 
   .rst                     (rst),
   .in_bit                  (sbrx),
   .parallel_data           (sbrx_parallel_in) 
 );
 
-crc_16 #(.SEED('hFFFF)) crc_16_inst
+crc_16  crc_16_inst
 ( 
   .sb_clk                  ( sb_clk),          
   .rst                     ( rst),          
