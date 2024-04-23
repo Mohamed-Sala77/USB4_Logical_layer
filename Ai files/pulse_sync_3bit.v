@@ -5,6 +5,7 @@
 // Description: Synchronizing a 4-bit pulse from fast clock domain to slow clock domain.
 // Note: This block is implemented using AI (chatgpt3.5).
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+`default_nettype none
 module pulse_sync_3bit
 (
 input  wire [2:0] sig_3bit,
@@ -50,5 +51,5 @@ pulse_sync pulse_sync_inst3
 assign busy = |busy_inst;
   
 endmodule
-`default_nettype none
+
 `resetall	
