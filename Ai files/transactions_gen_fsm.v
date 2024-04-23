@@ -1,3 +1,4 @@
+`default_nettype none
 module transactions_gen_fsm (
     input            sb_clk,                   
     input            rst,                       
@@ -569,4 +570,5 @@ always @(posedge sb_clk or negedge rst) begin
 
 
 endmodule
+`resetall	
 
