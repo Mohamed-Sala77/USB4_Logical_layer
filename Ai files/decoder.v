@@ -1,3 +1,4 @@
+`default_nettype none
 module decoding_block (
     input enc_clk,
     input rst,
@@ -145,3 +146,4 @@ always @(posedge enc_clk or negedge rst) begin
 	end
 
 endmodule
+`resetall	
