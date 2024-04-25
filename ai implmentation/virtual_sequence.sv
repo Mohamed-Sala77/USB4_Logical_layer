@@ -4,7 +4,7 @@ class virtual_sequence;
 ////***stimulus generation declaration***////
     electrical_layer_generator virtual_elec_gen;
     config_generator virtual_cfg_gen; 
-    up_stimulus_generator virtual_up_gen;
+   // up_stimulus_generator virtual_up_gen;
 
 ////***event declaration***////
     event sbtx_transition_high,  //connect with elec_monitor
@@ -39,7 +39,7 @@ task run;
     virtual_elec_gen.Send_OS(TS4,gen4);
 
     ///phase 5///
-    virtual_up_gen.run();
+    //virtual_up_gen.run();
     //virtual_elec_gen.send_data(8'hFF,gen4,lane1);
 
 

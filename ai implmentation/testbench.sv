@@ -13,8 +13,8 @@
 
 //include the driver classes
 `include "elec_layer_driver.svh"
-`include "up_driver.sv"
 `include "config _driver.sv"
+`include "up_driver.sv"
 
 //include the monitor classes
 `include "elec_layer_monitor.svh"
@@ -38,6 +38,10 @@
 `include "Testenv.svh"
 
 
+//include innterfaces
+`include "config_space_if.sv"
+`include "upper_layer_if.sv"
+`include "electrical_layer_if.sv"
 
 
 

@@ -21,7 +21,7 @@ class config_monitor;
     task run();
         forever begin
             // Wait for the negative edge of the gen_speed signal
-            wait_for_negedge(cfg_if.gen_speed);     //* in our design we work with gen4 only here
+           @(negedge cfg_if.gen4_fsm_clk);    //* in our design we work with gen4 only here
 
             // Update the transaction object with the current values from the interface
             cfg_trans.c_read        = cfg_if.c_read;
@@ -38,12 +38,12 @@ class config_monitor;
     endtask
 
     // Task to wait for the negative edge of a specific clock
-    task wait_for_negedge(input GEN gen_speed);
+    /*task wait_for_negedge(input GEN gen_speed);
         case (gen_speed)
             gen2: @(negedge cfg_if.gen2_fsm_clk);
             gen3: @(negedge cfg_if.gen3_fsm_clk);
             gen4: @(negedge cfg_if.gen4_fsm_clk);
         endcase
-    endtask
+    endtask*/
 
 endclass
