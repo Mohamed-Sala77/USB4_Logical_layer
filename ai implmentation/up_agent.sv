@@ -7,10 +7,8 @@ class ub_agent;
     // Mailboxes for communication
     mailbox #(upper_layer_tr) mb_mon_scr;
     mailbox #(upper_layer_tr) mb_drv_gen;
-    mailbox #(upper_layer_tr) mb_mod_gen;
 
     // Agent Components
-    up_stimulus_generator up_gen;
     up_driver up_drv;
     up_monitor up_mon;
 
@@ -22,17 +20,14 @@ class ub_agent;
         virtual upper_layer_if vif, 
         mailbox #(upper_layer_tr) mb_mon_scr,
         mailbox #(upper_layer_tr) mb_drv_gen, 
-        event driveDone,
-        mailbox #(upper_layer_tr) mb_mod_gen
+        event driveDone
     );
         this.vif = vif;
         this.mb_mon_scr = mb_mon_scr;
         this.mb_drv_gen = mb_drv_gen;
-        this.mb_mod_gen = mb_mod_gen;
         this.driveDone = driveDone;
 
         // Initialize agent components
-        up_gen   = new(mb_mod_gen, mb_drv_gen, driveDone);
         up_drv   = new(vif, mb_drv_gen, driveDone);
         up_mon = new(vif, mb_mon_scr);
     endfunction
@@ -40,10 +35,10 @@ class ub_agent;
     // Main task that runs the agent components
     task run();
         fork
-            up_gen.run();
             up_drv.run();
             up_mon.run();
         join
     endtask
+
 
 endclass // ub_agent

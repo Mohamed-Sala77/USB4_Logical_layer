@@ -129,14 +129,29 @@ class elec_scoreboard;
 
             begin  
                 ele_generator_sboard.get(gen_tr);
-                env_cfg_mem.phase=ele_generator_sboard.phase;
-                env_cfg_mem.transaction_type=ele_generator_sboard.transaction_type;
-                env_cfg_mem.gen_speed=ele_generator_sboard.gen_speed;
-                env_cfg_mem.o_sets=ele_generator_sboard.o_sets;
+                env_cfg_mem.phase=gen_tr.phase;
+                env_cfg_mem.transaction_type=gen_tr.transaction_type;
+                env_cfg_mem.gen_speed=gen_tr.gen_speed;
+                env_cfg_mem.o_sets=gen_tr.o_sets;
                 env_cfg_mem.data_income=1;
             end
          join
         end
+    endtask
+
+
+
+
+
+
+//--------for test model only -----------//
+    
+    // Main task to run the scoreboard
+    task run_m();
+            begin
+                elec_mod_sboard.get(monitor_tr);
+                $display("[scoreboard]model transaction=%0p",model_tr);
+            end
     endtask
 endclass
  

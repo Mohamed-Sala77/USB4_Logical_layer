@@ -48,17 +48,19 @@ class env;
                                  elec_monitor_2_Sboard,
                                  elec_model_2_sboard;
 
-        mailbox #(config_transaction) mb_cfg_mon_scr ;
-        mailbox #(config_transaction) mb_cfg_drv_gen ;
-        mailbox #(config_transaction) mb_cfg_mod_gen ;
+        mailbox #(config_transaction) cfg_mon_scr ;
+        mailbox #(config_transaction) cfg_mod_scr ;
+        mailbox #(config_transaction) cfg_drv_gen ;
+        mailbox #(config_transaction) cfg_mod_gen ;
         
-        mailbox #(upper_layer_tr) mb_up_mon_scr ;
-        mailbox #(upper_layer_tr) mb_up_drv_gen ;
-        mailbox #(upper_layer_tr) mb_up_mod_gen ;
+        mailbox #(upper_layer_tr) up_mon_scr ;
+        mailbox #(upper_layer_tr) up_mod_scr ;
+        mailbox #(upper_layer_tr) up_drv_gen ;
+        mailbox #(upper_layer_tr) up_mod_gen ;
 
 
         //--------Declare the referance model -----------//
-
+        ref_model model ;
 
 
 
@@ -74,14 +76,15 @@ class env;
             elec_gen_2_scoreboard = new();
             elec_monitor_2_Sboard = new();
             elec_model_2_sboard = new();
-            mb_cfg_mon_scr = new();
-            mb_cfg_drv_gen = new();
-            mb_cfg_mod_gen = new();
-            mb_up_mon_scr = new();
-            mb_up_drv_gen = new();
-            mb_up_mod_gen = new();
+            cfg_mon_scr = new();
+            cfg_drv_gen = new();
+            cfg_mod_gen = new();
+            up_mon_scr = new();
+            up_drv_gen = new();
+            up_mod_gen = new();
 
         //--------Initialize the ref_model-----------//  
+            model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
 
         //--------Initialize the components -----------//
         // memory
@@ -89,23 +92,23 @@ class env;
 
         // Agents
         elec_agent =new(ELEC_vif,elec_gen_2_driver,elec_monitor_2_Sboard,elec_gen_driver_done,sbtx_transition_high,correct_OS,sbtx_response,env_cfg_mem);
-        cfg_agent = new(cfg_if, mb_cfg_mon_scr, mb_cfg_drv_gen, cfg_driverDone, cfg_next_stimulus, mb_cfg_mod_gen);
-        up_agent = new(up_if, mb_up_mon_scr, mb_up_drv_gen, up_driveDone, mb_up_mod_gen);
+        cfg_agent = new(cfg_if, cfg_mon_scr, cfg_drv_gen, cfg_driverDone, cfg_next_stimulus);
+        up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone);
                       
         //Sequences
         virtual_seq =new(sbtx_transition_high,sbtx_response,recieved_on_elec_sboard);
-        cfg_scoreboard = new(mb_cfg_mod_gen, mb_cfg_mon_scr, cfg_next_stimulus);
-        up_scoreboard = new(mb_up_mod_gen, mb_up_mon_scr);
+        cfg_scoreboard = new(cfg_mod_gen, cfg_mon_scr, cfg_next_stimulus);
+        up_scoreboard = new(up_mod_gen, up_mon_scr);
 
         // Scoreboards
         elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,recieved_on_elec_sboard);
-        cfg_scoreboard = new(mb_cfg_mod_gen, mb_cfg_mon_scr, cfg_next_stimulus);
-        up_scoreboard  = new(mb_up_mod_gen, mb_up_mon_scr);
+        cfg_scoreboard = new(cfg_mod_gen, cfg_mon_scr, cfg_next_stimulus);
+        up_scoreboard  = new(up_mod_gen, up_mon_scr);
         
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard);
-        cfg_gen = new(mb_cfg_drv_gen, mb_cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
-        up_gen = new(mb_up_mod_gen, mb_up_drv_gen, up_driveDone);
+        cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
+        up_gen = new(up_mod_gen, up_drv_gen, up_driveDone);
         
         // Virtual Sequence connections
         virtual_seq.virtual_elec_gen = elec_gen;
@@ -114,6 +117,63 @@ class env;
         endfunction: new
 
         //--------Declare the run task -----------//
+
+
+        // for test the model coming data only
+        task test_model();
+            fork
+
+            //**********Run the components**********//
+                //ELEC_components
+                elec_sboard.run_m();
+
+                // Config components
+                cfg_scoreboard.run_m();
+
+                // Upper layer components
+                up_scoreboard.run_scr_m();
+
+                //Virtual Sequence
+                virtual_seq.run_m();
+
+                //ref_model
+                model.run_phase();
+                
+            join
+        endtask: 
+
+
+        // for test the dut coming data only
+        task test_dut();
+            fork
+
+            //**********Run the components**********//
+                //ELEC_components
+                elec_agent.run();
+                elec_sboard.run();
+
+                
+                // Config components
+                cfg_agent.run();
+                cfg_scoreboard.run();
+
+                // Upper layer components
+                up_agent.run();
+                up_scoreboard.run_scr();
+
+                
+
+                //Virtual Sequence
+                virtual_seq.run();
+
+                //ref_model
+                model.run_phase();
+                
+            join
+        endtask: 
+
+
+        // for compare the performance of the dut with the model
         task run();
             fork
 
@@ -137,9 +197,11 @@ class env;
                 virtual_seq.run();
 
                 //ref_model
-
+                model.run_phase();
                 
             join
-        endtask: run
+        endtask: 
+
+        
 
 endclass

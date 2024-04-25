@@ -6,10 +6,8 @@ class config_agent;
     // Mailboxes for communication
     mailbox #(config_transaction) mb_mon_scr;
     mailbox #(config_transaction) mb_drv_gen;
-    mailbox #(config_transaction) mb_mod_gen;
 
     // Agent Components
-    config_generator cfg_gen;
     config_driver cfg_drv;
     config_monitor cfg_mon;
 
@@ -23,8 +21,7 @@ class config_agent;
         mailbox #(config_transaction) mb_mon_scr,
         mailbox #(config_transaction) mb_drv_gen, 
         event driverDone,
-        event next_stimulus,
-        mailbox #(config_transaction) mb_mod_gen
+        event next_stimulus
     );
         this.vif = vif;
         this.mb_mon_scr = mb_mon_scr;
@@ -41,9 +38,11 @@ class config_agent;
     // Main task that runs the agent components
     task run();
         fork
-            cfg_gen.generate_stimulus();
             cfg_drv.run();
             cfg_mon.run();
         join
     endtask
+
+
+
 endclass // config_agent

@@ -42,4 +42,22 @@ class config_generator;
             @(driver_done);
         
     endtask
+
+
+    // This task generates stimulus for the model only.
+    task generate_stimulus_m();
+       
+    
+    // Create a new transaction and set its variables
+    transaction = new();
+    transaction.c_data_in = 32'h00200040; // Set c_data_in
+    transaction.lane_disable = 0; // Set lane_disable
+
+    // Display a message for debugging
+    $display ("[Config generator ] send at time (%0t) usb4 data");
+
+    // Put the transaction into the mailboxes
+    mb_gen_mod.put(transaction);
+
+    endtask
 endclass
