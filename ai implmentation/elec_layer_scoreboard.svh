@@ -138,6 +138,21 @@ class elec_scoreboard;
          join
         end
     endtask
+
+
+
+
+
+
+//--------for test model only -----------//
+    
+    // Main task to run the scoreboard
+    task run_m();
+            begin
+                elec_mod_sboard.get(monitor_tr);
+                $display("[scoreboard]model transaction=%0p",model_tr);
+            end
+    endtask
 endclass
  
 

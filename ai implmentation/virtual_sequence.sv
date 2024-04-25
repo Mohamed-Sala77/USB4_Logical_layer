@@ -16,6 +16,8 @@ function new(event sbtx_transition_high,sbtx_response,recieved_on_elec_sboard);
     this.sbtx_response = sbtx_response;
     this.recieved_on_elec_sboard=recieved_on_elec_sboard;
 endfunction: new
+
+
 task run;
 
     ///phase 1///
@@ -46,7 +48,38 @@ task run;
     $stop; // Stop the simulation
 
 
-endtask: run      
+endtask: run  
+
+
+
+    task run_m;
+
+    ///phase 1///
+            virtual_elec_gen.phase_force(1);
+            virtual_cfg_gen.generate_stimulus_m() ;
+
+    ///phase 2///
+   virtual_elec_gen.sbrx_after_sbtx_high_m; // Call the sbrx_after_sbtx_high task
+
+
+   ///phase 3///
+    virtual_elec_gen.send_transaction_2_driver_m(AT_rsp,0,8'd78,7'd3,24'h053303,gen4);  
+	virtual_elec_gen.send_transaction_2_driver_m(AT_cmd,0,8'd78,7'd3,24'h000000,gen4); 
+
+   ///phase 4///
+    virtual_elec_gen.Send_OS_m(TS1_gen4,gen4);
+    virtual_elec_gen.Send_OS_m(TS2_gen4,gen4);
+    virtual_elec_gen.Send_OS_m(TS3,gen4);
+    virtual_elec_gen.Send_OS_m(TS4,gen4);
+
+    ///phase 5///
+    virtual_up_gen.run_m();
+
+
+    $stop; // Stop the simulation
+
+
+    endtask: run  
 
 
 endclass: virtual_sequence

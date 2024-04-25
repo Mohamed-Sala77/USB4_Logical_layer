@@ -78,6 +78,9 @@ module top;
 	//Clocks' Initialization
 	initial begin
 
+		$timeformat(-9 , 2 , " ns", 10);
+
+
 		SystemClock = 0 ;
 		Rx_Clock = 0;
 		local_clk = 0;

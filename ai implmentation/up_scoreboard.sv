@@ -30,5 +30,23 @@ class up_scoreboard;
 
     end
   endtask: run_scr
+
+
+//--------for test model only -----------//
+
+ //for model only 
+  task run_scr_m();
+  upper_layer_tr mod_tr, mon_tr;
+
+  forever begin
+    UL_mod_scr.get(mod_tr);
+
+    // Display the values from mod_tr 
+    $display("------------------------------");
+    $display("[Scoreboard Upper layer ]get from Mod_tr: %p",mod_tr);
+    
+
+  end
+  endtask: run_scr_m
   
 endclass: up_scoreboard
