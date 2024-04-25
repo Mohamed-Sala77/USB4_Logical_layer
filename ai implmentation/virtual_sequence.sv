@@ -40,7 +40,7 @@ task run;
 
     ///phase 5///
     virtual_up_gen.run();
-    virtual_elec_gen.send_data(8'hFF,gen4,lane1);
+    //virtual_elec_gen.send_data(8'hFF,gen4,lane1);
 
 
     $stop; // Stop the simulation

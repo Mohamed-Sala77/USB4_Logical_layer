@@ -80,8 +80,9 @@
 				end
 
 				3:
+				
 			 	begin
-
+						//$display("[ELEC SEOREBOARD at %0s]CRC:[%0d]",elec_tr.transaction_type.name(),elec_tr.crc_received);
 			 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
 			 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
 			 				(elec_tr_model.read_write === elec_tr.read_write)				&&
