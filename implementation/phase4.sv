@@ -282,10 +282,13 @@ endtask
     begin
         $display("we are in send_packet");
         $display ("m_transaction %p ",m_transaction);
-        E_transaction.sbtx = 1;
+        
 
         case (E_transaction.gen_speed)
             gen2: begin
+                E_transaction = new();
+                E_transaction.sbtx = 1;
+
                 $display("we are in gen2"); 
                 case (packet)
                     SLOS1: send_SLOS1(packet);              // send SLOS1 packet 2 times
@@ -295,6 +298,8 @@ endtask
                 endcase
             end
             gen3: begin
+                E_transaction = new();
+                E_transaction.sbtx = 1;
                 $display("we are in gen3");
                 case (packet)
                     SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
@@ -304,6 +309,8 @@ endtask
                 endcase
             end
             gen4: begin
+                E_transaction = new();
+                E_transaction.sbtx = 1;
                 $display("we are in gen4");
                 case (packet)
                     TS1_G4: send_TS1_G4(packet);          // send TS1_G4 packet 16 times 
@@ -329,7 +336,7 @@ endtask
 
     endtask
 
-    task put_transactions ();;
+    task put_transactions ();
 
         E_transaction.lane= lane_0 ;
         // here we use ""shallow copy""" , not to share the same memory for both transactions
