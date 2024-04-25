@@ -1,12 +1,12 @@
 `default_nettype none
 module transactions_fsm(
 
-    input           sb_clk,
-    input           rst,
-    input [9:0]     sbrx,
-    input           error,
-    input           tdisconnect,
-    input           tconnect,
+    input  wire         sb_clk,
+    input  wire         rst,
+    input wire[9:0]     sbrx,
+    input  wire         error,
+    input  wire         tdisconnect,
+    input   wire        tconnect,
 
     output reg      t_valid,
     output reg      trans_error,

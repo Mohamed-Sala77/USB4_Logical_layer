@@ -2,21 +2,21 @@
 
 module data_bus (
 
-    input         fsm_clk, 
-    input         rst, 
-    input         data_os,
-    input         rx_lanes_on,
-    input   [7:0] lane_0_rx,
-    input   [7:0] lane_1_rx,
-	input   [3:0] d_sel,
-	input   [7:0] transport_layer_data_in,
-	output        tx_lanes_on,
-	output  [3:0] os_in_l0,
-	output  [3:0] os_in_l1,
-	output  [7:0] lane_0_tx,
-	output  [7:0] lane_1_tx,
-	output        os_sent,
-	output  [7:0] transport_layer_data_out
+    input   wire       fsm_clk, 
+    input   wire       rst, 
+    input   wire       data_os,
+    input   wire       rx_lanes_on,
+    input   wire [7:0] lane_0_rx,
+    input   wire [7:0] lane_1_rx,
+    input   wire [3:0] d_sel,
+    input   wire[7:0]  transport_layer_data_in,
+	output  wire       tx_lanes_on,
+	output wire [3:0] os_in_l0,
+	output wire [3:0] os_in_l1,
+	output wire [7:0] lane_0_tx,
+	output wire [7:0] lane_1_tx,
+	output wire       os_sent,
+	output wire [7:0] transport_layer_data_out
 );
 
     data_bus_transmit t_data_bus 

@@ -5,11 +5,11 @@ module prbs11_g4_send #
     parameter lane0_lane1 = 1
 )
 (
-    input clk,
-    input reset,
-    input enable,
-    output data_out,
-    output os_sent
+    input wire clk,
+    input wire reset,
+    input wire enable,
+    output wire data_out,
+    output wire os_sent
 );
 
 reg [10:0] reg_val;

@@ -2,10 +2,10 @@
 
 module prbs11_rec_g4 #(parameter lane0_lane1 = 1)
 (
-    input clk,
-    input reset,
-    input enable,
-    input data_in,
+    input wire clk,
+    input wire reset,
+    input wire enable,
+    input wire data_in,
     output reg os_rec
 );
 

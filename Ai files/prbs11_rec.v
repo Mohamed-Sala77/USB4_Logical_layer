@@ -2,11 +2,11 @@
 
 module prbs11_rec #(parameter SEED = 'h400)
 (
-    input clk,
-    input reset,
-    input enable,
-    input slos1_slos2,
-    input data_in,
+    input wire clk,
+    input wire reset,
+    input wire enable,
+    input wire slos1_slos2,
+    input wire data_in,
     output reg slos_rec
 );
 

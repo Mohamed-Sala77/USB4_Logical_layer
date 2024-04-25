@@ -5,10 +5,10 @@ module slos_send #
     parameter SEED = 'h400
 )
 (
-    input clk,
-    input reset,
-    input enable,
-    input slos1_slos2,
+    input wire clk,
+    input wire reset,
+    input wire enable,
+    input wire slos1_slos2,
     output reg  data_out,
     output reg  slos_sent
 );

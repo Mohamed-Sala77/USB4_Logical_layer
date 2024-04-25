@@ -1,10 +1,10 @@
 `default_nettype none
 
 module data_bus_transmit (
-    input clk,                             // Clock input
-    input rst,                             // Reset input
-    input [3:0] d_sel,                     // Data selection input 
-    input [7:0] transport_layer_data_in,   // Transport layer data input 
+    input wire clk,                             // Clock input
+    input wire  rst,                             // Reset input
+    input wire  [3:0] d_sel,                     // Data selection input 
+    input wire  [7:0] transport_layer_data_in,   // Transport layer data input 
     output reg [7:0] lane_0_tx,            // Lane 0 transmission output 
     output reg [7:0] lane_1_tx,            // Lane 1 transmission output 
     output reg tx_lanes_on,                // Transmission lanes enable output 

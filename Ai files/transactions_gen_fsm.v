@@ -1,12 +1,12 @@
 `default_nettype none
 module transactions_gen_fsm (
-    input            sb_clk,                   
-    input            rst,                       
+    input  wire           sb_clk,                   
+    input  wire           rst,                       
 
-    input [23:0]     sb_read,                   
-    input [2:0]      trans_sel,                 
-    input            disconnect_sbtx,
-    input            tdisconnect_tx_min,
+    input  wire[23:0]     sb_read,                   
+    input  wire[2:0]      trans_sel,                 
+    input  wire           disconnect_sbtx,
+    input  wire           tdisconnect_tx_min,
 
     output reg [9:0] trans,  
     output reg [ 1 : 0 ] trans_state,                       

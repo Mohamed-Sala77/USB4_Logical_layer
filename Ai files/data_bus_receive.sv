@@ -1,13 +1,13 @@
 `default_nettype none
 
 module data_bus_receive (
-    input clk,                         // Clock input
-    input rst,                         // Reset input
-    input data_os,                     // Data or ordered sets
-    input lane_rx_on,                  // data bus receive enable input
-    input [3:0] d_sel,                 // Data selection input 
-    input [7:0] lane_0_rx,             // Lane 0 reception input 
-    input [7:0] lane_1_rx,             // Lane 1 reception input 
+    input wire clk,                         // Clock input
+    input wire  rst,                         // Reset input
+    input wire  data_os,                     // Data or ordered sets
+    input wire  lane_rx_on,                  // data bus receive enable input
+    input wire  [3:0] d_sel,                 // Data selection input 
+    input wire  [7:0] lane_0_rx,             // Lane 0 reception input 
+    input wire  [7:0] lane_1_rx,             // Lane 1 reception input 
     output reg [3:0] os_in_l0,         // Ordered set in lane 0
     output reg [3:0] os_in_l1,         // Ordered set in lane 1
     output reg [7:0] transport_layer_data_out // Transport layer data output 

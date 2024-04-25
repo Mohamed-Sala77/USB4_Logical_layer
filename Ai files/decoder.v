@@ -1,15 +1,15 @@
 `default_nettype none
 module decoding_block (
-    input enc_clk,
-    input rst,
-    input enable_dec,
-    input [131:0] lane_0_rx_enc,
-    input [131:0] lane_1_rx_enc,
-    input [1:0] gen_speed,
-    input [3:0] d_sel,
+    input wire enc_clk,
+    input wire rst,
+    input wire enable_dec,
+    input wire [131:0] lane_0_rx_enc,
+    input wire [131:0] lane_1_rx_enc,
+    input wire [1:0] gen_speed,
+    input wire [3:0] d_sel,
     output reg [7:0] lane_0_rx,
     output reg [7:0] lane_1_rx,
-    output reg [127:0] data_os,
+    output reg       data_os,
     output reg enable_deskew
 );
 
