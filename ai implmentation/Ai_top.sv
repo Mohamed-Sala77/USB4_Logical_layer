@@ -3,21 +3,12 @@
 
 module Ai_top;
 
-logic SystemClock; logic Rx_Clock;
+	logic SystemClock; logic Rx_Clock;
 	logic local_clk;
 	logic SB_clock;
 	logic gen2_lane_clk, gen3_lane_clk, gen4_lane_clk;
 	logic gen2_fsm_clk, gen3_fsm_clk, gen4_fsm_clk;
 	logic SystemReset;
-
-    //Reset generation
-	task reset();
-		repeat (3) @(posedge SB_clock) SystemReset = 0;
-		SystemReset = 1;
-		
-		
-	endtask
-
 
 	parameter Sys_clock_cycle = 1 * 10**6; parameter Rx_clock_cycle = 50;
 
@@ -28,6 +19,17 @@ logic SystemClock; logic Rx_Clock;
 	parameter [63:0] freq_20 = 64'd20 * 10 ** 9;		//20 GHz
 	parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
 	parameter [63:0] freq_80 = 80 * 10 ** 9;			//80 GHz
+	
+    //Reset generation
+	task reset();
+		 SystemReset = 0;
+		 #(3*(1/SB_freq)); // 3 cycles of SB clock
+		SystemReset = 1;
+		
+		
+	endtask
+
+
 
 
 config_space_if      c_if(SystemClock,gen4_fsm_clk);
@@ -53,7 +55,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	
 	end
 
-
+/*
 logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
@@ -76,7 +78,7 @@ logical_layer l_layer(
 									.lane_1_tx_o(e_if.lane_1_tx),
 									.enable_scr(enable_rs)
 );    
-
+*/
 
 
 
@@ -85,8 +87,13 @@ logical_layer l_layer(
 		env enviro;
 		enviro = new(e_if, c_if ,u_if); 
 		reset();
-	
-		enviro.run();
+
+		//-------main test----------//
+		//enviro.run();
+
+
+		//-------for test model only ----------//
+		enviro.test_model();
 		
 	end
 
@@ -103,24 +110,7 @@ logical_layer l_layer(
 
 
 
-	//Clocks' Initialization
-	initial begin
 
-		SystemClock = 0 ;
-		Rx_Clock = 0;
-		local_clk = 0;
-		gen2_lane_clk = 0;
-		gen3_lane_clk = 0;
-		gen4_lane_clk = 1;
-		gen2_fsm_clk = 0;
-		gen3_fsm_clk = 0;
-		gen4_fsm_clk = 0;
-		SB_clock = 0;
-		
-		//$display("freq_10: %0d", freq_10);
-		//$display("period: %0d", ((10**12)/freq_10));
-	
-	end
 
 
 

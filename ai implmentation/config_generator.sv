@@ -54,7 +54,7 @@ class config_generator;
     transaction.lane_disable = 0; // Set lane_disable
 
     // Display a message for debugging
-    $display ("[Config generator ] send at time (%0t) usb4 data");
+    $display ("[Config generator ] send at time usb4 data");
 
     // Put the transaction into the mailboxes
     mb_gen_mod.put(transaction);

@@ -26,11 +26,9 @@ class config_agent;
         this.vif = vif;
         this.mb_mon_scr = mb_mon_scr;
         this.mb_drv_gen = mb_drv_gen;
-        this.mb_mod_gen = mb_mod_gen;
         this.driverDone = driverDone;
         this.next_stimulus = next_stimulus;
         // Initialize agent components
-        cfg_gen = new(mb_mod_gen, mb_drv_gen, driverDone, next_stimulus);
         cfg_drv = new( mb_drv_gen,vif,driverDone);
         cfg_mon = new(vif, mb_mon_scr);
     endfunction

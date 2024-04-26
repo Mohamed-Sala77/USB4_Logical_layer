@@ -4,7 +4,7 @@ class virtual_sequence;
 ////***stimulus generation declaration***////
     electrical_layer_generator virtual_elec_gen;
     config_generator virtual_cfg_gen; 
-   // up_stimulus_generator virtual_up_gen;
+    up_stimulus_generator virtual_up_gen;
 
 ////***event declaration***////
     event sbtx_transition_high,  //connect with elec_monitor
@@ -48,38 +48,48 @@ task run;
     $stop; // Stop the simulation
 
 
-endtask: run  
+endtask
 
 
 
     task run_m;
 
     ///phase 1///
-            virtual_elec_gen.phase_force(1);
-            virtual_cfg_gen.generate_stimulus_m() ;
-
+    virtual_elec_gen.wake_up(1);
+        #10 ;
+    virtual_cfg_gen.generate_stimulus_m() ;
+        #10 ;
     ///phase 2///
    virtual_elec_gen.sbrx_after_sbtx_high_m; // Call the sbrx_after_sbtx_high task
 
-
+        #10 ;
    ///phase 3///
-    virtual_elec_gen.send_transaction_2_driver_m(AT_rsp,0,8'd78,7'd3,24'h053303,gen4);  
+    virtual_elec_gen.wake_up(3);
+        #10 ;
+    virtual_elec_gen.send_transaction_2_driver_m(AT_rsp,0,8'd78,7'd3,24'h053303,gen4);
+        #10 ;
 	virtual_elec_gen.send_transaction_2_driver_m(AT_cmd,0,8'd78,7'd3,24'h000000,gen4); 
-
+        #10 ;
    ///phase 4///
+    virtual_elec_gen.wake_up(4,gen4);
+        #10 ;
     virtual_elec_gen.Send_OS_m(TS1_gen4,gen4);
+        #10 ;
     virtual_elec_gen.Send_OS_m(TS2_gen4,gen4);
-    virtual_elec_gen.Send_OS_m(TS3,gen4);
-    virtual_elec_gen.Send_OS_m(TS4,gen4);
 
+    virtual_elec_gen.Send_OS_m(TS3,gen4);
+
+    virtual_elec_gen.Send_OS_m(TS4,gen4);
+        #10 ;
+    /*
     ///phase 5///
     virtual_up_gen.run_m();
 
 
     $stop; // Stop the simulation
 
-
-    endtask: run  
+*/
+    endtask
 
 
 endclass: virtual_sequence

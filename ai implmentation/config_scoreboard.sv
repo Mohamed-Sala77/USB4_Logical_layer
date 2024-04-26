@@ -13,6 +13,9 @@ class config_scoreboard;
         this.ref_mbox = ref_mbox;
         this.mon_mbox = mon_mbox;
         this.next_stimulus = next_stimulus;
+        ref_trans = new();
+        mon_trans = new();
+
     endfunction
 
     // Task to compare transactions
@@ -55,15 +58,15 @@ class config_scoreboard;
     // Function to get transactions from both mailboxes
     task get_transactions();
         ref_mbox.get(ref_trans);
-        $display("[Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+        $display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
            
         mon_mbox.get(mon_trans);
-        $display("[Scoreboard] received at time (%0t) data of : %p", $time ,mon_trans);
+        $display("[Config Scoreboard] received at time (%0t) data of : %p", $time ,mon_trans);
     endtask
 
     task get_transactions_m();
     ref_mbox.get(ref_trans);
-    $display("[Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+    $display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
     endtask
 
     // Function to check for specific condition and trigger event

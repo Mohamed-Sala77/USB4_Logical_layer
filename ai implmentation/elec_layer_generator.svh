@@ -31,7 +31,7 @@ class electrical_layer_generator;
                                           input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0,input GEN generation = gen4);
     extern task Send_OS(input OS_type OS, input GEN generation);
     extern task send_data(input logic [7:0] data, input GEN gen_speed,input LANE lane);
-    extern task wake_up(input bit [2:0] phase);
+    extern task wake_up(input bit [2:0] phase, input GEN speed = gen4);
     extern task Disconnect();
 
 
@@ -39,12 +39,11 @@ class electrical_layer_generator;
     //--------for test model only -----------//
     
     // Declare the task as extern
-    extern task sbrx_after_sbtx_high();
+    extern task sbrx_after_sbtx_high_m();
     extern task send_transaction_2_driver_m(input tr_type trans_type = None, input bit read_write = 0,input bit [7:0] address = 0,
                                           input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0,input GEN generation = gen4);
     extern task Send_OS_m(input OS_type OS, input GEN generation);
     extern task send_data_m(input logic [7:0] data, input GEN gen_speed,input LANE lane);
-    extern task wake_up(input bit [2:0] phase);
     extern task Disconnect_m();
   endclass : electrical_layer_generator
 
@@ -63,7 +62,7 @@ class electrical_layer_generator;
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
     $display("[ELEC GENERATOR] : SENT sbrx is high SUCCESSFULLY");
-   endtask: sbrx_after_sbtx_high
+   endtask
 
 
     // Transaction methods
@@ -132,7 +131,7 @@ class electrical_layer_generator;
        elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
-      endtask: send_data
+      endtask
 
   
       task electrical_layer_generator::Disconnect();
@@ -144,14 +143,15 @@ class electrical_layer_generator;
       elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] Disconnect order sent to driver");
-      endtask: Disconnect
+      endtask
   
 
 
-      task  electrical_layer_generator::wake_up(input bit [2:0] phase);
+      task  electrical_layer_generator::wake_up(input bit [2:0] phase, input GEN speed = gen4);
       transaction = new();                     // Instantiate the transaction object using the default constructor
       transaction.sbrx = 1;
       transaction.phase = phase;                //not real phase but for env only
+		  transaction.gen_speed = speed;
       elec_gen_mod.put(transaction);           // Sending transaction to the Driver
     endtask
 
@@ -180,7 +180,7 @@ class electrical_layer_generator;
     elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
-   endtask: sbrx_after_sbtx_high
+   endtask
 
 
 
@@ -241,7 +241,7 @@ class electrical_layer_generator;
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
        elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
-      endtask: send_data
+      endtask
 
   
       task electrical_layer_generator::Disconnect_m();
@@ -251,7 +251,7 @@ class electrical_layer_generator;
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
       elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
       $display("[ELEC GENERATOR] Disconnect order sent to driver");
-      endtask: Disconnect
+      endtask
   
 
 

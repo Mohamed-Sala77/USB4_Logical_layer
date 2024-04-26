@@ -18,5 +18,3 @@ interface electrical_layer_if(input clk,
 	
 
 endinterface : electrical_layer_if
-
-

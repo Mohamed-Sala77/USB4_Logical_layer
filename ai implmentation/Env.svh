@@ -96,13 +96,11 @@ class env;
                       
         //Sequences
         virtual_seq =new(sbtx_transition_high,sbtx_response,recieved_on_elec_sboard);
-        cfg_scoreboard = new(cfg_mod_gen, cfg_mon_scr, cfg_next_stimulus);
-        up_scoreboard = new(up_mod_gen, up_mon_scr);
 
         // Scoreboards
         elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,recieved_on_elec_sboard);
-        cfg_scoreboard = new(cfg_mod_gen, cfg_mon_scr, cfg_next_stimulus);
-        up_scoreboard  = new(up_mod_gen, up_mon_scr);
+        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus);
+        up_scoreboard  = new(up_mod_scr, up_mon_scr);
         
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard);
@@ -111,6 +109,9 @@ class env;
         
         // Virtual Sequence connections
         virtual_seq.virtual_elec_gen = elec_gen;
+        virtual_seq.virtual_cfg_gen = cfg_gen;
+        virtual_seq.virtual_up_gen = up_gen;
+
 
 
         endfunction: new
@@ -139,7 +140,7 @@ class env;
                 model.run_phase();
                 
             join
-        endtask: 
+        endtask
 
 
         // for test the dut coming data only
@@ -169,7 +170,7 @@ class env;
                 model.run_phase();
                 
             join
-        endtask: 
+        endtask
 
 
         // for compare the performance of the dut with the model
@@ -199,7 +200,7 @@ class env;
                 model.run_phase();
                 
             join
-        endtask: 
+        endtask 
 
         
 
