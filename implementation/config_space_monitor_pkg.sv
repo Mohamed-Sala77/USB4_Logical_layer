@@ -42,6 +42,8 @@
 				if (transaction_mon.c_read || transaction_mon.c_write)
 					begin
 						mb_mon.put(transaction_mon);
+						$display("[Config monitor] received at time (%0t) data of ", $time);
+
 					end
 				
 
