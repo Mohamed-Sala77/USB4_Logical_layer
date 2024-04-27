@@ -39,6 +39,9 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	//Clocks' Initialization
 	initial begin
 
+		$timeformat(-9 , 2 , " ns", 10);
+
+
 		SystemClock = 0 ;
 		Rx_Clock = 0;
 		local_clk = 0;
@@ -72,13 +75,13 @@ logical_layer l_layer(
 									.lane_1_rx_i(e_if.lane_1_rx),
                                     .sbtx(e_if.sbtx),
 									// .control_unit_data(0),
-									.enable_deser(e_if.data_incoming),
+									.data_incoming(e_if.data_incoming),
 									.sbrx(e_if.sbrx),		
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
 									.enable_scr(enable_rs)
 );    
-*/
+
 
 
 
@@ -89,11 +92,11 @@ logical_layer l_layer(
 		reset();
 
 		//-------main test----------//
-		//enviro.run();
+		enviro.run();
 
 
 		//-------for test model only ----------//
-		enviro.test_model();
+		//enviro.test_model();
 		
 	end
 
