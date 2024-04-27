@@ -682,11 +682,12 @@
 							elec_tr.address = { << { SB_data_received[21:28] }}; 
 							elec_tr.len =  { << { SB_data_received[31:37] }};
 							elec_tr.read_write =  { << { SB_data_received[38] }} ;
-							elec_tr.crc_received[15:8] =  { << { SB_data_received[41:48] }};
-							elec_tr.crc_received[7:0] =  { << { SB_data_received[51:58] }};
+							elec_tr.crc_received[7:0] =  { << { SB_data_received[41:48] }};
+							elec_tr.crc_received[15:8] =  { << { SB_data_received[51:58] }};
 
 							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
 							elec_tr.phase = 3;
+							elec_tr.sbtx = 1;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -725,8 +726,8 @@
 
 						//$display("[MONITOR] Rsp_Data [%0h]",Rsp_Data[23:0]);
 						elec_tr.cmd_rsp_data[23:0] = {Rsp_Data[28:21],Rsp_Data[18:11],Rsp_Data[8:1]};
-						elec_tr.crc_received [15:8] = { << {SB_data_received[1:8]} };
-						elec_tr.crc_received [7:0] = { << {SB_data_received[11:18]} };
+						elec_tr.crc_received [7:0] = { << {SB_data_received[1:8]} };
+						elec_tr.crc_received [15:8] = { << {SB_data_received[11:18]} };
 
 						repeat (20)
 						begin
@@ -746,6 +747,7 @@
 
 					 		$display("[ELEC MONITOR] Time: %0t  Correct AT Response Received", $time);
 					 		elec_tr.phase = v_if.phase;
+					 		elec_tr.sbtx = 1;
 							elec_mon_scr.put(elec_tr);
 							SB_data_received = {};
 							elec_tr = new();
@@ -1009,7 +1011,7 @@
 			elec_tr_lane_x.lane = lane;
 			elec_tr_lane_x.tr_os = ord_set;
 			elec_tr_lane_x.phase = 4;
-			elec_tr_lane_x.phase = v_if.sbtx;
+			elec_tr_lane_x.sbtx = v_if.sbtx;
 
 			
 			elec_mon_scr.put(elec_tr_lane_x);
@@ -1096,6 +1098,7 @@
 			elec_tr_lane_x.lane = lane;
 			elec_tr_lane_x.tr_os = ord_set;
 			elec_tr_lane_x.phase = 4;
+			elec_tr_lane_x.sbtx = v_if.sbtx;
 
 			elec_mon_scr.put(elec_tr_lane_x);
 			
@@ -1124,6 +1127,7 @@
 			elec_tr_lane_x.o_sets = o_sets;
 			elec_tr_lane_x.tr_os = tr_os;
 			elec_tr_lane_x.lane = lane;
+			elec_tr_lane_x.sbtx = v_if.sbtx;
 			lane_x_gen23_received = {};
 
 			elec_mon_scr.put(elec_tr_lane_x);

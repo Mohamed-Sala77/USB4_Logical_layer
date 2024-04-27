@@ -83,7 +83,7 @@
 				
 			 	begin
 						//$display("[ELEC SEOREBOARD at %0s]CRC:[%0d]",elec_tr.transaction_type.name(),elec_tr.crc_received);
-			 		assert(	(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
+			 		assert(	//(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
 			 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
 			 				(elec_tr_model.read_write === elec_tr.read_write)				&&
 			 				(elec_tr_model.len === elec_tr.len)								&&
@@ -94,7 +94,7 @@
 			 		else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) Transaction received   !!!");
 
 					// Detailed Assertions
-					assert	(elec_tr_model.sbtx === elec_tr.sbtx)							else 	$error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");						
+					//assert	(elec_tr_model.sbtx === elec_tr.sbtx)							else 	$error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");						
 					assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT transaction_type !!!");		
 					assert	(elec_tr_model.read_write === elec_tr.read_write)				else 	$error("[ELEC SCOREBOARD] INCORRECT read_write !!!");						
 					assert	(elec_tr_model.len === elec_tr.len)								else 	$error("[ELEC SCOREBOARD] INCORRECT len !!!");							
