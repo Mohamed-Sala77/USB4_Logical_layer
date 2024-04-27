@@ -452,10 +452,10 @@ always @(*) begin
         DISABLED: begin
             if (lane_disable)
                 next_state = DISABLED;
-            else if (!lane_disable && tdisabled_min)
-                next_state = CLD_CABLE;
-            else
+		else if (!lane_disable && !tdisabled_min)
                 next_state = DISABLED;
+            else
+                next_state = CLD_CABLE;
         end
         CLD_CABLE: begin
             if (lane_disable)
