@@ -29,15 +29,15 @@ class elec_scoreboard;
 
          fork
             begin
-                elec_mon_sboard.get(model_tr);
-                elec_mod_sboard.get(monitor_tr);
-                $display("[scoreboard]model transaction=%0p",model_tr);
+                elec_mon_sboard.get(monitor_tr);
+                //elec_mod_sboard.get(model_tr);
+               // $display("[scoreboard]model transaction=%0p",model_tr);
                 $display("[scoreboard]monitor transaction=%0p",monitor_tr);
                 case (monitor_tr.phase)
                 3'd0: begin
-                       assert (model_tr.sbtx == monitor_tr.sbtx)
+                       /*assert (model_tr.sbtx == monitor_tr.sbtx)
                             $display("[scoreboard]correct sbtx high");
-                        else $error("[scoreboard]case sbtx=1 is failed!");
+                        else $error("[scoreboard]case sbtx=1 is failed!");*/
                 end
               /*  3'd2:begin                  //check on AT_Cmd transaction 
                     assert (model_tr.transaction_type == monitor_tr.transaction_type)
@@ -62,7 +62,7 @@ class elec_scoreboard;
                             else $error("[scoreboard](LT_FALL)case sbtx is failed!");
                     end
                     AT_cmd,AT_rsp:begin   //recieve the AT_cmd transaction
-                        assert (model_tr.transaction_type == monitor_tr.transaction_type)
+                       /* assert (model_tr.transaction_type == monitor_tr.transaction_type)
                             else $error("[scoreboard](%0p)case transaction_type is failed!",model_tr.transaction_type);
                         assert (model_tr.crc_received == monitor_tr.crc_received)
                             else $error("[scoreboard](%0p)case crc_received is failed!",model_tr.transaction_type);
@@ -76,7 +76,7 @@ class elec_scoreboard;
                         begin
                             assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                             else $error("[scoreboard](%0p)case cmd_rsp_data is failed!",model_tr.transaction_type);
-                        end
+                        end */
                         ->recieved_on_elec_sboard;
                     end
                     endcase

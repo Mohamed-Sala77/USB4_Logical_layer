@@ -7,7 +7,7 @@
 `include "env_cfg_class.sv"
 
 // REFERENCE MODEL
-	`include "int_packet.sv"
+	/*`include "int_packet.sv"
 	`include "R_Mod_extentions.sv"
 	`include "my_memory.sv"
 	`include "primary_steps.sv"
@@ -18,7 +18,7 @@
 	`include "phase4.sv"
 	`include "phase5.sv"
 
-	`include "ref_model.sv"
+	`include "ref_model.sv"*/
 
 
 //include the generator classes

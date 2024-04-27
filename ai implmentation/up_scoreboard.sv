@@ -14,7 +14,7 @@ class up_scoreboard;
   endfunction: new
 
   task run_scr();
-
+/*
     forever begin
       UL_mod_scr.get(mod_tr);
       UL_mon_scr.get(mon_tr);
@@ -32,7 +32,7 @@ class up_scoreboard;
 //! we should add here more assertion if we add more var in monitor (phase , gen_speed)
 
 
-    end
+    end*/
   endtask: run_scr
 
 

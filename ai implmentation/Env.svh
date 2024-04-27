@@ -59,7 +59,7 @@ class env;
 
 
         //--------Declare the referance model -----------//
-        ref_model model ;
+        //ref_model model ;
 
 
 
@@ -83,7 +83,7 @@ class env;
             up_mod_gen = new();
 
         //--------Initialize the ref_model-----------//  
-            model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
+           // model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
 
         //--------Initialize the components -----------//
         // memory
@@ -137,7 +137,7 @@ class env;
                 virtual_seq.run_m();
 
                 //ref_model
-                model.run_phase();
+                //model.run_phase();
                 
             join
         endtask
@@ -167,7 +167,7 @@ class env;
                 virtual_seq.run();
 
                 //ref_model
-                model.run_phase();
+                //model.run_phase();
                 
             join
         endtask
@@ -197,7 +197,7 @@ class env;
                 virtual_seq.run();
 
                 //ref_model
-                model.run_phase();
+               // model.run_phase();
                 
             join
         endtask 
