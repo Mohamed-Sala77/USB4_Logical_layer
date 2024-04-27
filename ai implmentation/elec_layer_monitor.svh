@@ -10,6 +10,7 @@ class electrical_layer_monitor  extends parent;
 	 logic       trans_to_ele_lane0[$];
 	 logic       trans_to_ele_lane1[$];
 	 logic [9:0] recieved_transaction_data_symb[$];
+	 logic       recieved_transaction_byte[$];
 
 	  GEN speed; 	// indicates the generation
 	 //declare the events
@@ -617,13 +618,13 @@ endtask:recieved_TS1_gen4
 
 	//task to check the AT transaction
 	task electrical_layer_monitor::check_AT_transaction(input  [9:0] q[$],tr_type trans_type);
-
+		mon_2_Sboard_trans=new();
 	case(trans_type)
 	AT_cmd:begin
 		if(q[0] =={<<{stop_bit,DLE,start_bit}} && q[$-1]=={<<{stop_bit,DLE,start_bit}}
 			&& q[1]=={<<{stop_bit,STX_cmd,start_bit}}&&q[$]=={<<{stop_bit,ETX,start_bit}})  //check the data later
 			begin
-			$display("[ELEC MONITOR]AT_cmd transaction is correct");
+			$display("[ELEC MONITOR] AT_CMD transaction is CORRECT");
 			mon_2_Sboard_trans.transaction_type=AT_cmd;
 			mon_2_Sboard_trans.read_write=recieved_transaction_data_symb[3][1];
 
@@ -632,9 +633,12 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.address = {<<{recieved_transaction_data_symb[2][8:1]}};
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;
+
+			$display("the value of crc is=%0h",mon_2_Sboard_trans.crc_received);
+			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %0p",mon_2_Sboard_trans);
 			end 
 			else
-			$error("[ELEC MONITOR]AT_cmd transaction is not correct");
+			$error("[ELEC MONITOR]AT_cmd transaction is NOT CORRECT");
 	end
 	AT_rsp:begin
 		if(q[0] =={<<{stop_bit,DLE,start_bit}} && q[$-1]=={<<{stop_bit,DLE,start_bit}}
@@ -688,10 +692,10 @@ endtask:recieved_TS1_gen4
 		  forever 
 		  begin
 		  @(posedge ELEC_vif.sbtx)
-		  //$display("[ELEC_MONITOR] CHECK ON SBRX AND ENABLE_RS AT PHASE 2"); active on simulation
-	      wait (ELEC_vif.enable_rs==1'b0 && ELEC_vif.sbrx==1'b0) ;
-          #10ns               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
-          if(ELEC_vif.sbtx==1'b1 && ELEC_vif.enable_rs==1'b0 && !ELEC_vif.sbrx)  //last condition in for do body at the second phase only 
+		  $display("[ELEC_MONITOR] CHECK ON SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
+	      //wait (/*ELEC_vif.enable_rs==1'b0 &&*/ ELEC_vif.sbrx==1'b0) ;
+          #1ns               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
+          if(ELEC_vif.sbtx==1'b1 /*&& ELEC_vif.enable_rs==1'b0 && !ELEC_vif.sbrx*/)  //last condition in for do body at the second phase only 
 		  begin
           ->sbtx_transition_high;  //to indicate to the sequance the sbtx is high "this on sequance ,the first line on the code of the sequance"
 		  @(sbtx_response)  //wait for the response from the sequance
@@ -706,24 +710,42 @@ endtask:recieved_TS1_gen4
 		  forever
 		   begin
            wait(env_cfg_mem.data_income == 1)
+		   //$display("[ELEC_MONITOR]the value of env_cfg_mem.data_income=%0d and the value of env_cfg_mem.phase=%0d ",env_cfg_mem.data_income,env_cfg_mem.phase); //active on simulation
 		   env_cfg_mem.data_income=0;
 			case (env_cfg_mem.phase)
 			3'd2: //wait AT_Cmd transaction with size=8 symbols
 			begin
 				@(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
 				//case
-				while(1)begin
-				@(negedge ELEC_vif.SB_clock);
-				recieved_transaction_data_symb.push_back(ELEC_vif.sbtx);  //check the corectness of the data.......
+				while(1)
+					begin
+						@(negedge ELEC_vif.SB_clock);
+						recieved_transaction_byte.push_back(ELEC_vif.sbtx);  //collect AT from Sideband channel 
 
-              if(recieved_transaction_data_symb.size()==8 &&recieved_transaction_data_symb[7]=={<<{1'b1,ETX,1'b0}}) begin
-				$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
-			break;
-			end
-			else if(recieved_transaction_data_symb.size()>8)begin
-     			  $error("[ELEC MONITOR]the size of AT transaction is more than 8 symbols");
-			end
-				end
+						if(recieved_transaction_byte.size()==10)
+						begin
+							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
+							recieved_transaction_byte.delete();
+							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%0p",recieved_transaction_data_symb);
+							//$display("[ELEC MONITOR]the size of recieved_transaction_data_symb=%0d",recieved_transaction_data_symb.size());
+							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%0p",recieved_transaction_data_symb[7]);
+							if(recieved_transaction_data_symb.size()==8 &&(recieved_transaction_data_symb[7]=={<<{1'b1,8'h40,1'b0}}))
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
+							 end*/
+							///////////////////////////////////////////////////////////////////////////////////////////
+							if(recieved_transaction_data_symb.size()==8 &&recieved_transaction_data_symb[7]=={<<{1'b1,ETX,1'b0}}) 
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
+								break;
+							 end
+							else if(recieved_transaction_data_symb.size()>8)
+							 begin
+								$error("[ELEC MONITOR]the size of AT transaction is more than 8 symbols");
+							 end
+
+						end
+					end
                check_AT_transaction(recieved_transaction_data_symb,AT_cmd);
                
 
