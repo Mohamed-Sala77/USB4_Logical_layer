@@ -143,7 +143,7 @@ always @(posedge sb_clk or negedge rst) begin
     end else begin
          ms_counter <= ms_counter + 1'b1;
                 
-        if (ms_counter == 999) begin
+        if (ms_counter ==4) begin
             ms_clk <= ~ms_clk;
             ms_counter <= 0;
         end
