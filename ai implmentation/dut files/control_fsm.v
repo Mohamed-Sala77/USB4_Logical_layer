@@ -78,7 +78,8 @@ reg       AT_flag;
 reg       AT_flag_is_sent;
 reg [1:0] cable_generation;
 reg       usb4_detected;
-reg [1:0] other_adapter_generation;     
+reg [1:0] other_adapter_generation;
+reg 	  address_sent;     
 
 
 //output logic
@@ -101,6 +102,7 @@ always @(posedge fsm_clk or negedge reset_n) begin
 		usb4_detected <= 0;
 	    other_adapter_generation <= 0;
 		cable_generation <= 0;
+		address_sent <=0;
 	  end
 	  
 	else begin
@@ -123,6 +125,7 @@ always @(posedge fsm_clk or negedge reset_n) begin
 			usb4_detected <= 0;
 			other_adapter_generation <= 0;
 			cable_generation <= 0;
+			address_sent <=0;
         end
 		CLD_CABLE: begin
             d_sel <= 'h9; // Zeros in lanes
@@ -135,8 +138,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
         
             if (next_state != CLD_CABLE) begin
                 c_read <= 0;
+				address_sent <= 0;
+				
             end else begin
-                c_read <= 1;
+			    address_sent <= 1;
+                c_read <= !address_sent;
             end
         
             if ((c_data_in[7:0] == 'h40)) 
@@ -415,27 +421,27 @@ always @ (posedge fsm_clk or negedge reset_n) begin
                 s_read_o <= 0;
                 s_write_o <= 0;
                 disconnect_sbtx <= 0;
-            end else if (t_valid) begin
-                if (s_write_i) begin
-                    s_write_o <= 1;
-                    s_read_o <= 0;
-                    s_address_o <= s_address_i;
-                    s_data_o <= payload_in;
-                end else if (s_read_i && !sync_busy) begin
-                    trans_sel <= 4'h3;
-                    s_read_o <= 1;
-                    s_write_o <= 0;
-                    s_address_o <= s_address_i;
-                end else begin
-                    trans_sel <= 4'h0;
-                    s_read_o <= 0;
-                    s_write_o <= 0;
-                end
-                disconnect_sbtx <= 0;
+            end else if (t_valid && s_write_i) begin
+                s_write_o <= 1;
+                s_read_o <= 0;
+                s_address_o <= s_address_i;
+                s_data_o <= payload_in;
+            end  else if (t_valid && s_read_i) begin
+			    if(!sync_busy)
+			        trans_sel <= 'h3;
+			        s_read_o <= 1;
+			        s_write_o <= 0;
+	                s_address_o <= s_address_i;			  
+			        disconnect_sbtx <= 0;
+	        end else begin
+		            trans_sel <= 'h0;
+			        disconnect_sbtx <= 0;
+			        s_read_o <= 0;
+			        s_write_o <= 0;
+		        end
             end
         end
     end
-end
 
 
 // State transition logic
@@ -452,10 +458,10 @@ always @(*) begin
         DISABLED: begin
             if (lane_disable)
                 next_state = DISABLED;
-            else if (!lane_disable && tdisabled_min)
-                next_state = CLD_CABLE;
-            else
+		else if (!lane_disable && !tdisabled_min)
                 next_state = DISABLED;
+            else
+                next_state = CLD_CABLE;
         end
         CLD_CABLE: begin
             if (lane_disable)
