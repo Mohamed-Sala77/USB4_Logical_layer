@@ -392,7 +392,7 @@ always @ (posedge fsm_clk or negedge reset_n)
 			  begin
                 c_address_sent_flag <= 1; //raised after entering this state by 1 clk cycle indicating address reached the cng spaces
                 c_data_received_flag <= c_address_sent_flag; //if address is sent --> data rec next clock cycle
-				c_read <= 1; //read
+				c_read <= !c_address_sent_flag; //read
 			  end
 			  
             is_usb4 <= (c_data_in[7:0] == 'h40);
