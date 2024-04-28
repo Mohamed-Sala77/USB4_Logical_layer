@@ -653,7 +653,7 @@ always @ (posedge fsm_clk or negedge reset_n)
       end
   end
 
-assign cl0_s <= (cs == CL0); 
+assign cl0_s = (cs == CL0); 
 
 ////////////////////////////// Transactions ////////////////////////////////////
 always @ (posedge fsm_clk or negedge reset_n)
