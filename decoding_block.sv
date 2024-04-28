@@ -2,7 +2,7 @@
 
 Author: Ahmed Tarek Shafik Mohamed
 Date: 29/2/2024
-Block: Transactions FSM
+Block: decoding_block
 Project: USB4 Logical layer Human based VS AI based code
 sponsered by: Siemens EDA
 
@@ -156,7 +156,7 @@ reg flag;
 
 				GEN2: begin 
 					
-					case (mem_0 [0][1:0])
+					case (mem_0 [8][1:0])
 
 							'b10: begin 
 								data_os <= 0;
@@ -174,7 +174,7 @@ reg flag;
 
 				GEN3: begin 
 
-						case (mem_0 [0][3:0])
+						case (mem_0 [16][3:0])
 
 							'b1010: begin 
 								data_os <= 0;
