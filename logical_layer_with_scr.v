@@ -30,7 +30,8 @@ module logical_layer_with_scr
   output wire        c_write, 
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
-  output wire        enable_rs
+  output wire        enable_rs,
+  output wire        cl0_s
 );
 
 
@@ -170,7 +171,8 @@ control_fsm ctrl_fsm
   .s_data_o                ( s_data_o                ),
   .s_address_o             ( s_address_o             ),
   .s_read_o                ( s_read_o                ),
-  .s_write_o               ( s_write_o               )
+  .s_write_o               ( s_write_o               ),
+  .cl0_s                   ( cl0_s                   )
 );
 
 data_bus bus
