@@ -19,11 +19,14 @@
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
 		*/
 
-
+		logic [65:0] expected;
 		// Flags
 		logic sbtx_high_flag; // to indicate that sbtx high was received
 		logic sent_to_scr; // to indicate that the transaction was already sent to the scoreboard 
 
+		//TS and payload gen2/3 Size Parameters
+		int TS_SIZE;
+		int PAYLOAD_SIZE;
 
 		// Queues to save DUT signals
 		bit SB_data_received [$];
@@ -93,6 +96,7 @@
 			
 			TS = new();
 			TS.calculate_TS();
+			TS.SLOS_encoder();
 
 			sent_to_scr = 1'b0;
 
@@ -155,8 +159,179 @@
 
 							//wait_negedge (v_if.generation_speed);
 
-							lane_0_UL_received.push_back(v_if.lane_0_tx);
-							lane_1_UL_received.push_back(v_if.lane_1_tx);
+							/*if(v_if.generation_speed == gen2)
+							begin
+								PAYLOAD_SIZE = PAYLOAD_GEN_2_SIZE;
+							end
+							else if (v_if.generation_speed == gen3)
+							begin
+								PAYLOAD_SIZE = PAYLOAD_GEN_3_SIZE;
+							end*/
+
+							lane_0_UL_received.push_back(v_if.lane_0_tx); //v_if.lane_0_rx for debugging
+							lane_1_UL_received.push_back(v_if.lane_1_tx); //v_if.lane_1_rx for debugging
+
+							case (v_if.generation_speed)
+
+								gen2: begin
+
+									if (lane_0_UL_received.size() == PAYLOAD_GEN_2_SIZE)
+									begin
+										
+										if ( !( { >> {lane_0_UL_received [0:1]} } == 2'b01) )
+										begin
+											$error("[ELEC MONITOR] Wrong Sync bits received on Lane 0 in gen2 during phase 5");
+											lane_0_UL_received = {};
+										end
+										else
+										begin
+											//To remove the sync bits after being checked
+											repeat(2)
+												void'(lane_0_UL_received.pop_front());
+
+											elec_tr_lane0.lane = lane_0;
+											elec_tr_lane0.phase = 5;
+											elec_tr_lane0.sbtx = v_if.sbtx;
+
+											for (int i = 0; i < 64; i = i + 8)
+											begin
+												elec_tr_lane0.transport_to_electrical = { >> {lane_0_UL_received [i: i+7]} };
+												$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %h", elec_tr_lane0.transport_to_electrical);
+												elec_mon_scr.put(elec_tr_lane0);
+											end
+											lane_0_UL_received = {};
+											elec_tr_lane0 = new();
+
+										end
+										
+									end
+
+									if (lane_1_UL_received.size() == PAYLOAD_GEN_2_SIZE)
+									begin
+										if ( !( { >> {lane_1_UL_received [0:1]} } == 2'b01) )
+										begin
+											$error("[ELEC MONITOR] Wrong Sync bits received on Lane 1 in gen2 during phase 5");
+											lane_1_UL_received = {};
+										end
+										else
+										begin
+											//To remove the sync bits after being checked
+											repeat(2)
+												void'(lane_1_UL_received.pop_front());
+
+											elec_tr_lane1.lane = lane_1;
+											elec_tr_lane1.phase = 5;
+											elec_tr_lane1.sbtx = v_if.sbtx;
+
+											for (int i = 0; i < 64; i = i + 8)
+											begin
+												elec_tr_lane1.transport_to_electrical = { >> {lane_1_UL_received [i: i+7]} };
+												$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %h", elec_tr_lane1.transport_to_electrical);
+												elec_mon_scr.put(elec_tr_lane1);
+											end
+											lane_1_UL_received = {};
+											elec_tr_lane1 = new();
+
+										end
+									end
+
+								end
+
+								gen3: begin
+
+									if (lane_0_UL_received.size() == PAYLOAD_GEN_3_SIZE)
+									begin
+										
+										if ( !( { >> {lane_0_UL_received [0:3]} } == 4'b0101) )
+										begin
+											$error("[ELEC MONITOR] Wrong Sync bits received on Lane 0 in gen3 during phase 5");
+											lane_0_UL_received = {};
+										end
+										else
+										begin
+											//To remove the sync bits after being checked
+											repeat(4)
+												void'(lane_0_UL_received.pop_front());
+
+											elec_tr_lane0.lane = lane_0;
+											elec_tr_lane0.phase = 5;
+											elec_tr_lane0.sbtx = v_if.sbtx;
+
+											for (int i = 0; i < 128; i = i + 8)
+											begin
+												elec_tr_lane0.transport_to_electrical = { >> {lane_0_UL_received [i: i+7]} };
+												$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %h", elec_tr_lane0.transport_to_electrical);
+												elec_mon_scr.put(elec_tr_lane0);
+											end
+											lane_0_UL_received = {};
+											elec_tr_lane0 = new();
+
+										end
+										
+									end
+
+									if ( (lane_0_UL_received.size() == PAYLOAD_GEN_3_SIZE) )
+									begin
+										if ( !( { >> {lane_1_UL_received [0:3]} } == 4'b0101) )
+										begin
+											$error("[ELEC MONITOR] Wrong Sync bits received on Lane 1 in gen3 during phase 5");
+											lane_1_UL_received = {};
+										end
+										else
+										begin
+											//To remove the sync bits after being checked
+											repeat(4)
+												void'(lane_1_UL_received.pop_front());
+
+											elec_tr_lane1.lane = lane_1;
+											elec_tr_lane1.phase = 5;
+											elec_tr_lane1.sbtx = v_if.sbtx;
+
+											for (int i = 0; i < 128; i = i + 8)
+											begin
+												elec_tr_lane1.transport_to_electrical = { >> {lane_1_UL_received [i: i+7]} };
+												$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %h", elec_tr_lane1.transport_to_electrical);
+												elec_mon_scr.put(elec_tr_lane1);
+											end
+											lane_1_UL_received = {};
+											elec_tr_lane1 = new();
+
+										end
+									end
+
+								end
+
+								gen4: begin
+
+									if (lane_0_UL_received.size() == 8)
+									begin
+										elec_tr_lane0.lane = lane_0;
+										elec_tr_lane0.phase = 5;
+										elec_tr_lane0.sbtx = v_if.sbtx;
+										elec_tr_lane0.transport_to_electrical = { >> {lane_0_UL_received} };
+										$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %h", elec_tr_lane0.transport_to_electrical);
+										lane_0_UL_received = {};
+										elec_mon_scr.put(elec_tr_lane0);
+										elec_tr_lane0 = new();
+									end
+
+									if (lane_1_UL_received.size() == 8)
+									begin
+										elec_tr_lane1.lane = lane_1;
+										elec_tr_lane1.phase = 5;
+										elec_tr_lane1.sbtx = v_if.sbtx;
+										elec_tr_lane1.transport_to_electrical = { >> {lane_1_UL_received} };
+										$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %h", elec_tr_lane1.transport_to_electrical);
+										lane_1_UL_received = {};
+										elec_mon_scr.put(elec_tr_lane1);
+										elec_tr_lane1 = new();
+									end
+
+
+								end
+
+							endcase // v_if.generation_speed
+
 
 							if (lane_0_UL_received.size() == 8)
 							begin
@@ -164,7 +339,7 @@
 								elec_tr_lane0.phase = 5;
 								elec_tr_lane0.sbtx = v_if.sbtx;
 								elec_tr_lane0.transport_to_electrical = { >> {lane_0_UL_received} };
-								$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %d", elec_tr_lane0.transport_to_electrical);
+								$display("[ELEC MONITOR] Data Received on Lane 0 from UL: %h", elec_tr_lane0.transport_to_electrical);
 								lane_0_UL_received = {};
 								elec_mon_scr.put(elec_tr_lane0);
 								elec_tr_lane0 = new();
@@ -176,7 +351,7 @@
 								elec_tr_lane1.phase = 5;
 								elec_tr_lane1.sbtx = v_if.sbtx;
 								elec_tr_lane1.transport_to_electrical = { >> {lane_1_UL_received} };
-								$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %d", elec_tr_lane1.transport_to_electrical);
+								$display("[ELEC MONITOR] Data Received on Lane 1 from UL: %h", elec_tr_lane1.transport_to_electrical);
 								lane_1_UL_received = {};
 								elec_mon_scr.put(elec_tr_lane1);
 								elec_tr_lane1 = new();
@@ -206,6 +381,17 @@
 									lane_1_gen23_TS_received.push_back(v_if.lane_1_tx); // lane_1_rx for debugging
 
 									//$display("[%0t] lane_0_gen23_received outside:[%0p]",$time(),lane_0_gen23_SLOS_received);
+									//$display("[%0t] lane_0_gen23_received outside:[%0p]",$time(),lane_0_gen23_TS_received);
+
+
+									if(v_if.generation_speed == gen2)
+									begin
+										TS_SIZE = TS_GEN_2_SIZE;
+									end
+									else if (v_if.generation_speed == gen3)
+									begin
+										TS_SIZE = TS_GEN_3_SIZE;
+									end
 
 									///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 									/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (SLOS1/SLOS2)               ///////////////////////////////
@@ -234,7 +420,7 @@
 									/////////////////////////////////          LANE 0 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
 									///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-									if (lane_0_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
+									if (lane_0_gen23_TS_received.size() == TS_SIZE)
 									begin
 
 										gen_23_TS_detection(elec_tr_lane0,lane_0_gen23_TS_received,lane_0);
@@ -245,7 +431,7 @@
 									/////////////////////////////////          LANE 1 RECEIVER (gen2/3) (TS1/TS2)               ///////////////////////////////////
 									///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-									if (lane_1_gen23_TS_received.size() == TS_GEN_2_3_SIZE)
+									if (lane_1_gen23_TS_received.size() == TS_SIZE)
 									begin
 
 										gen_23_TS_detection(elec_tr_lane1,lane_1_gen23_TS_received,lane_1);
@@ -687,7 +873,7 @@
 
 							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
 							elec_tr.phase = 3;
-							elec_tr.sbtx = 1;
+							elec_tr.sbtx = 1'b1;
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};
@@ -747,7 +933,7 @@
 
 					 		$display("[ELEC MONITOR] Time: %0t  Correct AT Response Received", $time);
 					 		elec_tr.phase = v_if.phase;
-					 		elec_tr.sbtx = 1;
+					 		elec_tr.sbtx = 1'b1;
 							elec_mon_scr.put(elec_tr);
 							SB_data_received = {};
 							elec_tr = new();
@@ -770,30 +956,30 @@
 			ref bit lane_x_gen23_received [$];
 			input LANE lane;
 
-			case ({ << {lane_x_gen23_received}})
+			case ({ >> {lane_x_gen23_received}})
 
-				SLOS1_64_1: begin
+				TS.SLOS1_64_enc_mon: begin
 
 					$display("[ELEC MONITOR] SLOS 1 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
 					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
 
 				end
 
-				SLOS2_64_1: begin
+				TS.SLOS2_64_enc_mon: begin
 
 					$display("[ELEC MONITOR] SLOS 2 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
 					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
 
 				end
 
-				SLOS1_128_1: begin
+				TS.SLOS1_128_enc_mon: begin
 
 					$display("[ELEC MONITOR] SLOS 1 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
 					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS1,ord_set,lane);
 
 				end
 
-				SLOS2_128_1: begin
+				TS.SLOS2_128_enc_mon: begin
 
 					$display("[ELEC MONITOR] SLOS 2 gen 3 RECEIVED CORRECTLY  ON [%p]",lane);
 					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, SLOS2,ord_set,lane);
@@ -818,7 +1004,7 @@
 			input LANE lane;
 
 			logic [7:0] lane_number;
-
+			
 			if (lane == lane_0)
 				begin
 					lane_number = lane_number_0;
@@ -827,31 +1013,78 @@
 				begin
 					lane_number = lane_number_1;
 				end
+			// expected = {2'b10, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}}}}}};
+			// $display("expected %b",expected);
 
-			case ({ << {lane_x_gen23_received}})
+			// if ({ >> {lane_x_gen23_received}} == {2'b10, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}}}}}})
+			// begin
+			// 		$display("[ELEC MONITOR] [INSIDE IF] TS1 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
+			// 		gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
+			// 		$stop();
+			// end
+			// else
+			// begin
+			// 	$display("NO");
+			// end
 
-				{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}: 
-				begin
+			if(lane_x_gen23_received.size() == TS_GEN_2_SIZE)
+			begin
+				case ({ >> {lane_x_gen23_received}})
 
-					$display("[ELEC MONITOR] TS1 gen 2/3 RECEIVED CORRECTLY  ON [%p]",lane);
-					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
+					{2'b10, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}}}}}}: 
+					begin
+	
+						$display("[ELEC MONITOR] TS1 gen 2 RECEIVED CORRECTLY  ON [%p]",lane);
+						gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
+						
+					end
+	
+					{2'b10, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}}}}}}: 
+					begin
+	
+						$display("[ELEC MONITOR] TS2 gen 2 RECEIVED CORRECTLY  ON  [%p]",lane);
+						gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS2_gen2_3,ord_set,lane);
+	
+					end
+	
+					default:
+					begin
+						void'(lane_x_gen23_received.pop_front());	
+					end
 
-				end
+				endcase
+			end
 
-				{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}: 
-				begin
+			else if(lane_x_gen23_received.size() == TS_GEN_3_SIZE)
+			begin
+				case ({ >> {lane_x_gen23_received}})
 
-					$display("[ELEC MONITOR] TS2 gen 2/3 RECEIVED CORRECTLY  ON  [%p]",lane);
-					gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS2_gen2_3,ord_set,lane);
-
-				end
-
-				default:
-				begin
-					void'(lane_x_gen23_received.pop_front());		
-				end
-
-			endcase
+					{4'b1010, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}}}}}, 
+							{<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS1, SCR}}}}}}: 
+					begin
+	
+						$display("[ELEC MONITOR] TS1 gen 3 RECEIVED CORRECTLY  ON  [%p]",lane);
+						gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS1_gen2_3,ord_set,lane);
+						
+					end
+	
+					{4'b1010, {<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}}}}},
+							{<<8{{<<{{5'b0, 3'b001, lane_number, 16'b0, 3'b0, 3'b001, 10'b0, TSID_TS2, SCR}}}}}}: 
+					begin
+	
+						$display("[ELEC MONITOR] TS2 gen 3 RECEIVED CORRECTLY  ON  [%p]",lane);
+						gen23_transaction_assignment (elec_tr_lane_x,lane_x_gen23_received, None, TS2_gen2_3,ord_set,lane);
+						
+					end
+	
+					default:
+					begin
+						void'(lane_x_gen23_received.pop_front());	
+					end
+	
+				endcase
+			end
+			
 		endtask
 
 

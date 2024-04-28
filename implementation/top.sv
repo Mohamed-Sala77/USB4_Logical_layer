@@ -77,9 +77,8 @@ module top;
 
 	//Clocks' Initialization
 	initial begin
-
+		
 		$timeformat(-9 , 2 , " ns", 10);
-
 
 		SystemClock = 0 ;
 		Rx_Clock = 0;
@@ -125,13 +124,16 @@ module top;
 
 	// TEST 
 	initial begin 
-		Testenv t_env;
-		t_env = new(UL_if, elec_if, config_if);
+		//$timeformat(-9 , 2 , " ns", 10);
+		/*Testenv t_env;
+		t_env = new(UL_if, elec_if, config_if);*/
+		Test test;
+		test = new (UL_if, elec_if, config_if);
 		reset();
-		t_env.build();
+		//t_env.build();
 
 
-		t_env.run();
+		test.run("normal_scenario_gen_4");
 		
 	end
 
