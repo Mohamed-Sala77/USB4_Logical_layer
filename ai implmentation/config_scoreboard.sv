@@ -59,17 +59,17 @@ class config_scoreboard;
     task get_transactions();
 
         mon_mbox.get(mon_trans);
-        $display("[Config Scoreboard] received at time (%0t) data of : %p", $time ,mon_trans);
+        $display("\n[Config Scoreboard From Dut] at time (%t) is --> %p", $time ,mon_trans.convert2string());
 
         //ref_mbox.get(ref_trans);
-        //$display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+        //$display("[Config Scoreboard From Model] at time (%t) --> : %p", $time, ref_trans.convert2string() );
            
        
     endtask
 
     task get_transactions_m();
     ref_mbox.get(ref_trans);
-    $display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+    $display("\n[Config Scoreboard] received at time (%0t) data of --> %p", $time, ref_trans );
     endtask
 
     // Function to check for specific condition and trigger event

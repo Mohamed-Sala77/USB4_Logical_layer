@@ -55,7 +55,7 @@ package electrical_layer_generator_pkg;
           transaction.address = address;
           transaction.len = len;
           transaction.cmd_rsp_data = cmd_rsp_data;
-          $display("[ELEC GENERATOR] sending [%0p] Transaction", trans_type);
+          $display("[ELEC GENERATOR] sending [%p] Transaction", trans_type);
         end
         LT_fall: begin
           //transaction.sbrx = 0;
@@ -72,9 +72,9 @@ package electrical_layer_generator_pkg;
 
     // New task
     task Send_OS(input OS_type OS, input GEN generation);
-      $display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%0p] ", OS);
+      $display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%p] ", OS);
       @correct_OS; // Blocking with the correct_OS event
-      $display("[ELEC GENERATOR] correct recieved order_sets from type [%0p] ", OS);
+      $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
       
       repeat (2) begin
         transaction = new(); // Instantiate a new transaction object
@@ -85,9 +85,9 @@ package electrical_layer_generator_pkg;
 		transaction.phase ='d4;
         elec_gen_drv.put(transaction); // Sending transaction to the Driver
         elec_gen_mod.put(transaction); // Sending transaction to the Reference model
-        $display("[ELEC GENERATOR] SENDING [%0p]", OS);
+        $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done); // To wait for the driver to finish driving the data
-        $display("[ELEC GENERATOR] [%0p] SENT SUCCESSFULLY ", OS);
+        $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
       end
     endtask
 

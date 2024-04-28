@@ -973,7 +973,7 @@ BreakOnAssertion = 3
 ;      "  %K: %i File: %F" (when path is not Process or Signal)
 ;      except that the %i in this case does not report the Process name
 ; %O - Process name
-; %P - Instance/Region path without leaf process
+; %p - Instance/Region path without leaf process
 ; %F - File name
 ; %L - Line number; if assertion message, then line number of assertion or, if
 ;      assertion is in a subprogram, line from which the call is made
@@ -2021,7 +2021,7 @@ MvcHome = $MODEL_TECH/..
 ;   strictstab   - strict random stability
 ; SvRandExtensions = [+|-]<extension>[,[+|-]<extension>*]
 
-; Controls the formatting of '%p' and '%P' conversion specification, used in $display
+; Controls the formatting of '%p' and '%p' conversion specification, used in $display
 ; and similar system tasks.
 ; 1. SVPrettyPrintFlags=I<n><S|T> use <n> spaces(S) or tabs(T) per indentation level. 
 ;    The 'I' flag when present causes relevant data types to be expanded and indented into

@@ -272,7 +272,7 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 		break;
 		end
 	end
-	//$display("the value of recieved_SLOS2_lane0 is %0p for GEN2",recieved_SLOS2_lane0);
+	//$display("the value of recieved_SLOS2_lane0 is %p for GEN2",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN2",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN2",recieved_SLOS2_lane1.size());
 	end
@@ -288,7 +288,7 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 		break;
 	end
 	end
-	//$display("the value of recieved_SLOS2_lane0 is %0p for GEN3",recieved_SLOS2_lane0);
+	//$display("the value of recieved_SLOS2_lane0 is %p for GEN3",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN3",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN3",recieved_SLOS2_lane1.size());
 	end
@@ -510,7 +510,7 @@ repeat(TS16_SIZE) //collect the TS1 from the two lanes
 		end
  end
 
-    //$display("the value of recieved_TS1_gen4 is %0p",recieved_SLOS1_lane0);
+    //$display("the value of recieved_TS1_gen4 is %p",recieved_SLOS1_lane0);
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane0 is %0d and must be 3584 on lane 0",recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane1 is %0d and must be 3584 on lane 1",recieved_TS1_lane1.size());
 
@@ -551,7 +551,7 @@ endtask:recieved_TS1_gen4
 		   break;
 		end
 	end
-	//$display("the value of recieved_SLOS1_lane0 is %0p for GEN2",recieved_SLOS1_lane0);
+	//$display("the value of recieved_SLOS1_lane0 is %p for GEN2",recieved_SLOS1_lane0);
 	$display("the size of recieved_SLOS1_lane0 is %0d for GEN2",recieved_SLOS1_lane0.size());
 	$display("the size of recieved_SLOS1_lane1 is %0d for GEN2",recieved_SLOS1_lane1.size());
 	end
@@ -567,7 +567,7 @@ endtask:recieved_TS1_gen4
 		break;
 	end
 	end
-	//$display("the value of recieved_SLOS1_lane0 is %0p for GEN3",recieved_SLOS1_lane0);
+	//$display("the value of recieved_SLOS1_lane0 is %p for GEN3",recieved_SLOS1_lane0);
 	$display("[ELEC MONITOR] the size of recieved_SLOS1_lane0 is %0d  for GEN3",recieved_SLOS1_lane0.size());
 	$display("[ELEC MONITOR] the size of recieved_SLOS1_lane1 is %0d  for GEN3",recieved_SLOS1_lane1.size());
 	end
@@ -635,7 +635,7 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.phase=3'd3;
 
 			$display("the value of crc is=%0h",mon_2_Sboard_trans.crc_received);
-			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %0p",mon_2_Sboard_trans);
+			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %p",mon_2_Sboard_trans.convert2string());
 			end 
 			else
 			$error("[ELEC MONITOR]AT_cmd transaction is NOT CORRECT");
@@ -692,9 +692,9 @@ endtask:recieved_TS1_gen4
 		  forever 
 		  begin
 		  @(posedge ELEC_vif.sbtx)
-		  $display("[ELEC_MONITOR] CHECK ON SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
+		  $display("[ELEC_MONITOR] CHECKING THE VALUES OF SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
 	      //wait (/*ELEC_vif.enable_rs==1'b0 &&*/ ELEC_vif.sbrx==1'b0) ;
-          #1ns               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
+          #1               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
           if(ELEC_vif.sbtx==1'b1 /*&& ELEC_vif.enable_rs==1'b0 && !ELEC_vif.sbrx*/)  //last condition in for do body at the second phase only 
 		  begin
           ->sbtx_transition_high;  //to indicate to the sequance the sbtx is high "this on sequance ,the first line on the code of the sequance"
@@ -726,9 +726,9 @@ endtask:recieved_TS1_gen4
 						begin
 							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
 							recieved_transaction_byte.delete();
-							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%0p",recieved_transaction_data_symb);
+							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%p",recieved_transaction_data_symb);
 							//$display("[ELEC MONITOR]the size of recieved_transaction_data_symb=%0d",recieved_transaction_data_symb.size());
-							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%0p",recieved_transaction_data_symb[7]);
+							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%p",recieved_transaction_data_symb[7]);
 							if(recieved_transaction_data_symb.size()==8 &&(recieved_transaction_data_symb[7]=={<<{1'b1,8'h40,1'b0}}))
 							 begin
 								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");

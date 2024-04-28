@@ -17,12 +17,10 @@ class up_scoreboard;
 
     forever begin
       UL_mod_scr.get(mod_tr);
+      $display("\n[Scoreboard Upper layer From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
+      
       UL_mon_scr.get(mon_tr);
-
-      // Display the values from mod_tr and mon_tr here
-      $display("------------------------------");
-      $display("[Scoreboard Upper layer ]get at time (%0t) Mod_tr: %p", $time, mod_tr);
-      $display("[Scoreboard Upper layer ]get at time (%0t) mon_tr: %p", $time, mon_tr);
+      $display("\n[Scoreboard Upper layer From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
       
       
          // Assertion to compare the values from the two mailboxes

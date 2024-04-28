@@ -21,6 +21,7 @@ endfunction: new
 task run;
 
     ///phase 1///
+    virtual_elec_gen.wake_up(1);
     virtual_cfg_gen.generate_stimulus() ;
     $display("[virtual_sequence]:waiting for sbtx_transition_high event");
    ///phase 2///
@@ -30,13 +31,14 @@ task run;
    virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
    ///phase 3///
     @(recieved_on_elec_sboard); // wait first AT_cmd fro dut to trigger 
-    $stop;
+    virtual_elec_gen.wake_up(3);
     virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,24'h053303,gen4);  
 	virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4); 
     @(recieved_on_elec_sboard); //  wait AT_rsp fro dut to trigger 
 
    ///phase 4///
    // @(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
+    virtual_elec_gen.wake_up(4,gen4);
     virtual_elec_gen.Send_OS(TS1_gen4,gen4);
     virtual_elec_gen.Send_OS(TS2_gen4,gen4);
     virtual_elec_gen.Send_OS(TS3,gen4);
@@ -48,6 +50,7 @@ task run;
 
 
     // Stop the simulation
+    //$stop;
 
 
 endtask

@@ -37,6 +37,14 @@ class elec_layer_tr;
 	//constraints
 
 
+
+	
+    virtual function string convert2string();
+        return $sformatf("\nTransaction:\tphase = %0d   ,\tread_write = %0d   ,\taddress = %0d   \nsbrx = %0b  ,\tsbtx = %0b \ntr_os = %p    ,\ttransaction_type = %s    ,\tcrc_received = %0d    ,\tlen = %0d   ,\tcmd_rsp_data = %0d   \no_sets = %p  ,\torder = %0d   ,\tlane = %0d,\ngen_speed = %s    ,\telectrical_to_transport = %0d    ,\tphase_5_read_disable = %0b   ,\tsend_to_UL = %0b    ,\ttransport_to_electrical = %0d \n\n  ", 
+			phase, read_write, address, sbrx, sbtx, tr_os, transaction_type, crc_received, len, cmd_rsp_data, o_sets, order, lane, gen_speed, electrical_to_transport, phase_5_read_disable, send_to_UL, transport_to_electrical);
+    endfunction
+
+
 endclass : elec_layer_tr
 
 

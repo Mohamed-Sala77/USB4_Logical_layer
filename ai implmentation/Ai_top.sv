@@ -58,7 +58,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	end
 
 	//Instantiate the logical layer
-logical_layer l_layer(
+/*	logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -79,7 +79,33 @@ logical_layer l_layer(
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
 									.enable_scr(enable_rs)
-);    
+);    */
+
+
+								//--for old dut files --//
+								//Instantiate the logical layer
+logical_layer_no_scr logical_layer (
+	.local_clk(local_clk),
+	.sb_clk(SB_clock),
+	.rst(SystemReset),
+	.lane_disable(c_if.lane_disable),
+	.sbtx(e_if.sbtx),
+	.c_read(c_if.c_read),
+	.c_write(c_if.c_write), 
+	.c_address(c_if.c_address),
+	.c_data_in(c_if.c_data_in),
+	.c_data_out(c_if.c_data_out),
+	.transport_layer_data_in(u_if.transport_layer_data_in),
+	.lane_0_rx_i(e_if.lane_0_rx),		
+	.lane_1_rx_i(e_if.lane_1_rx),
+	// .control_unit_data(0),
+	.data_incoming(e_if.data_incoming),
+	.transport_layer_data_out(u_if.transport_layer_data_out),
+	.sbrx(e_if.sbrx),		
+	.lane_0_tx_o(e_if.lane_0_tx),
+	.lane_1_tx_o(e_if.lane_1_tx),
+	.enable_scr(enable_rs_dummy)
+);
 
 
 

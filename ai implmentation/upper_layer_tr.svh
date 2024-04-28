@@ -18,6 +18,11 @@ virtual function upper_layer_tr copy();
  endfunction
 */
 
+virtual function string convert2string();
+return $sformatf("\nTransaction:   T_Data = %0h   ,\tT_Data_1 = %0h   ,\nphase = %0d   ,\tgen_speed = %s   ,\tsend_to_elec_enable = %0b   ,\tenable_receive = %0b  \n\n", 
+	T_Data, T_Data_1, phase, gen_speed, send_to_elec_enable, enable_receive);
+endfunction
+
 endclass : upper_layer_tr
 
 
