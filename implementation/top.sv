@@ -133,7 +133,7 @@ module top;
 		//t_env.build();
 
 
-		test.run("normal_scenario_gen_4");
+		test.run("normal_scenario_gen_3");
 		
 	end
 
