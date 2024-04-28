@@ -207,11 +207,11 @@ assign sync_bits = mem_0 [16];
 					
 					case (sync_bits [1:0])
 
-							'b10: begin 
+							'b01: begin 
 								data_os <= 0;
 
 							end
-							'b01: begin 
+							'b10: begin 
 								data_os <=1;
 							end
 
@@ -225,11 +225,11 @@ assign sync_bits = mem_0 [16];
 
 						case (sync_bits)
 
-							'b1010: begin 
+							'b0101: begin 
 								data_os <= 0;
 
 							end
-							'b0101: begin 
+							'b1010: begin 
 								data_os <=1;
 							end
 
