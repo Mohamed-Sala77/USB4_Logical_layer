@@ -1,4 +1,4 @@
-	class Testenv;
+	class Environment;
 		//interfaces
 		virtual upper_layer_if v_if;
 		virtual electrical_layer_if elec_v_if;
@@ -25,6 +25,9 @@
 
 		//Virtual Sequence
 		virtual_sequence vseq_config;
+
+		//Scenario control
+		string scenario;
 
 		//Event Signals
 		event elec_gen_drv_done;
@@ -63,10 +66,11 @@
 
 
 		// NEW Function
-		function new(input virtual upper_layer_if v_if, input virtual electrical_layer_if elec_v_if, input virtual config_space_if v_cif);
+		function new(input virtual upper_layer_if v_if, input virtual electrical_layer_if elec_v_if, input virtual config_space_if v_cif, input string scenario);
 			this.v_if = v_if;
 			this.elec_v_if = elec_v_if;
 			this.v_cif = v_cif;
+			this.scenario = scenario;
 		endfunction : new
 
 
@@ -140,7 +144,14 @@
 				sb_config.run();
 
 				// Virtual Sequence run phase
-				vseq_config.run();
+				case (scenario)
+
+					"normal_scenario_gen_4": vseq_config.run();
+					"normal_scenario_gen_3": vseq_config.normal_scenario_gen_3();
+
+
+				endcase // scenario
+				
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Reference model
@@ -152,4 +163,4 @@
 			join
 		endtask : run
 
-	endclass : Testenv
+	endclass : Environment

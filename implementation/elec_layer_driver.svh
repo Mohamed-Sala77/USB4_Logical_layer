@@ -23,6 +23,9 @@
 		bit [31:0] TS_234;					
 		bit [419:0] PRS;		//Pseudo Random Sequence
 
+		// SYNC BITS
+		bit SYNC[$];
+
 		// PSEUDO RANDOM ORDERED SETS
 		bit [1:0] PRTS7_lane0 [$];
 		bit [1:0] PRTS7_lane1 [$];
@@ -36,6 +39,10 @@
 
 		//Data sent to transport layer through lane 0 and lane 1
 		bit [7:0] elec_to_trans_0, elec_to_trans_1;
+		bit elec_to_trans_enc_0 [$];
+		bit elec_to_trans_enc_1 [$];
+		bit [65:0] elec_to_trans_enc_0_gen_2, elec_to_trans_enc_1_gen_2;
+		bit [131:0] elec_to_trans_enc_0_gen_3, elec_to_trans_enc_1_gen_3;
 
 		// SYMBOL GENERATION CLASS
 		TS_Symbols TS_Symbols;
@@ -68,6 +75,7 @@
 
 			TS_Symbols = new();
 			TS_Symbols.calculate_TS();
+			TS_Symbols.SLOS_encoder();
 
 			forever begin
 
@@ -86,19 +94,95 @@
 
 					if (elec_tr.send_to_UL) // in case we are sending to the transport layer
 					begin
-						elec_to_trans_0 = elec_tr.electrical_to_transport[7:0];
-						elec_to_trans_1 = elec_tr.electrical_to_transport[15:8];
-
-						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %d ", elec_to_trans_0);
-						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %d ", elec_to_trans_1);
-
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %h ", elec_tr.electrical_to_transport[7:0]);
+						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %h ", elec_tr.electrical_to_transport[15:8]);
 						
-						foreach (elec_to_trans_0[i])
+						if(elec_tr.gen_speed == gen2)
 						begin
-							wait_negedge (elec_tr.gen_speed);
-							v_if.data_incoming = 1;
-							v_if.lane_0_rx = elec_to_trans_0[i];		
-							v_if.lane_1_rx = elec_to_trans_1[i];		
+							if (elec_to_trans_enc_0.size() == 64)
+							begin
+								elec_to_trans_enc_0_gen_2 = {1'b0, 1'b1, {>>{elec_to_trans_enc_0}}};
+								elec_to_trans_enc_1_gen_2 = {1'b0, 1'b1, {>>{elec_to_trans_enc_1}}};
+
+								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %p ", elec_to_trans_enc_0);
+								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %p ", elec_to_trans_enc_1);
+								
+								foreach (elec_to_trans_enc_0[i]) 
+								begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.data_incoming = 1;
+									v_if.lane_0_rx = elec_to_trans_enc_0[i];		
+									v_if.lane_1_rx = elec_to_trans_enc_1[i];
+								end
+
+								wait_negedge (elec_tr.gen_speed);
+								v_if.data_incoming = 0;
+								elec_to_trans_enc_0 = {};
+								elec_to_trans_enc_1 = {};
+							end
+
+							else
+							begin
+								for (int i = 0; i < 8; i++)
+								begin
+									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i]);
+									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i+8]);
+									
+								end
+							end
+						end
+
+						else if (elec_tr.gen_speed == gen3)
+						begin
+							if (elec_to_trans_enc_1.size() == 128)
+							begin
+								elec_to_trans_enc_0_gen_3 = {1'b0, 1'b1, 1'b0, 1'b1, {>>{elec_to_trans_enc_0}}};
+								elec_to_trans_enc_1_gen_3 = {1'b0, 1'b1, 1'b0, 1'b1, {>>{elec_to_trans_enc_1}}};
+
+								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %p ", elec_to_trans_enc_0);
+								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %p ", elec_to_trans_enc_1);
+								
+								foreach (elec_to_trans_enc_0[i]) 
+								begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.data_incoming = 1;
+									v_if.lane_0_rx = elec_to_trans_enc_0[i];		
+									v_if.lane_1_rx = elec_to_trans_enc_1[i];
+								end
+
+								wait_negedge (elec_tr.gen_speed);
+								v_if.data_incoming = 0;
+								elec_to_trans_enc_0 = {};
+								elec_to_trans_enc_1 = {};
+							end
+
+							else
+							begin
+								for (int i = 0; i < 8; i++)
+								begin
+									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i]);
+									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i+8]);
+									
+								end
+							end
+						end
+
+						else if (elec_tr.gen_speed == gen4)
+						begin
+							elec_to_trans_0 = elec_tr.electrical_to_transport[7:0];
+							elec_to_trans_1 = elec_tr.electrical_to_transport[15:8];
+
+							// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %d ", elec_to_trans_0);
+							// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %d ", elec_to_trans_1);
+
+							
+							foreach (elec_to_trans_0[i])
+							begin
+								wait_negedge (elec_tr.gen_speed);
+								v_if.data_incoming = 1;
+								v_if.lane_0_rx = elec_to_trans_0[i];		
+								v_if.lane_1_rx = elec_to_trans_1[i];		
+							end
 						end
 							
 					end
@@ -181,7 +265,7 @@
 								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
 								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
-								//$display("[drive send AT_cmd]	crc: %0d", {high_crc, low_crc});
+
 
 								// data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(STX_cmd), stop_bit},
 								// 			 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
@@ -220,7 +304,6 @@
 								$display("&&&&&&&&&&&&AT RESP DATA SYMBOL %p",data_symbol);
 
 								crc_calculation(STX_rsp, data_symbol, high_crc, low_crc);
-								//$display("[drive  send AT_rsp]	crc: %0d", {high_crc, low_crc});
 								// ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII LINE 173
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(STX_rsp), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
@@ -258,12 +341,12 @@
 								if (elec_tr.gen_speed == gen2)
 								begin
 									$display("[ELEC DRIVER] SLOS1_64 IS being sent");
-									foreach (SLOS1_64[i,j])
+									foreach (TS_Symbols.SLOS1_64_enc[i,j])
 									begin
 										@(negedge v_if.gen2_lane_clk);
-										v_if.lane_0_rx = SLOS1_64[i][65 - j];		
-										v_if.lane_1_rx = SLOS1_64[i][65 - j];
-										//$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",SLOS1_64[i][65 - j]);		
+										v_if.lane_0_rx = TS_Symbols.SLOS1_64_enc[i][j];		
+										v_if.lane_1_rx = TS_Symbols.SLOS1_64_enc[i][j];
+										$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_64_enc[i][j]);		
 									end
 								end	
 								
@@ -271,18 +354,19 @@
 								else if (elec_tr.gen_speed == gen3)
 								begin
 									
-									foreach (SLOS1_128[i,j])
+									foreach (TS_Symbols.SLOS1_128_enc[i,j])
 									begin
 										@(negedge v_if.gen3_lane_clk);
-										v_if.lane_0_rx = SLOS1_128[i][131 - j];		
-										v_if.lane_1_rx = SLOS1_128[i][131 - j];		
+										v_if.lane_0_rx = TS_Symbols.SLOS1_128_enc[i][j];		
+										v_if.lane_1_rx = TS_Symbols.SLOS1_128_enc[i][j];	
+										//$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_128_enc[i][j]);		
 									end
 									
 								end
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
-								
+								//$stop();
 							end
 
 
@@ -293,11 +377,12 @@
 								if (elec_tr.gen_speed == gen2)
 								begin
 	
-									foreach (SLOS2_64[i,j])
+									foreach (TS_Symbols.SLOS2_64_enc[i,j])
 									begin
 										@(negedge v_if.gen2_lane_clk);
-										v_if.lane_0_rx = SLOS2_64[i][65 - j];		
-										v_if.lane_1_rx = SLOS2_64[i][65 - j];		
+										v_if.lane_0_rx = TS_Symbols.SLOS2_64_enc[i][j];		
+										v_if.lane_1_rx = TS_Symbols.SLOS2_64_enc[i][j];
+										//$display("[ELEC DRIVER] SLOS2 BITS: [%0b]",TS_Symbols.SLOS2_64_enc[i][j]);		
 									end
 										
 								end
@@ -305,11 +390,12 @@
 								else if (elec_tr.gen_speed == gen3)
 								begin
 									
-									foreach (SLOS2_128[i,j])
+									foreach (TS_Symbols.SLOS2_128_enc[i,j])
 									begin
 										@(negedge v_if.gen3_lane_clk);
-										v_if.lane_0_rx = SLOS2_128[i][131 - j];		
-										v_if.lane_1_rx = SLOS2_128[i][131 - j];		
+										v_if.lane_0_rx = TS_Symbols.SLOS2_128_enc[i][j];		
+										v_if.lane_1_rx = TS_Symbols.SLOS2_128_enc[i][j];	
+										//$display("[ELEC DRIVER] SLOS2 BITS: [%0b]",TS_Symbols.SLOS2_128_enc[i][j]);		
 									end
 										
 								end
@@ -331,16 +417,56 @@
 								TS1_GEN_2_3_lane0 = {5'b0, lane_bonding_target, lane_number_0, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS1, SCR};
 								TS1_GEN_2_3_lane1 = {5'b0, lane_bonding_target, lane_number_1, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS1, SCR};
 
-								$display("[ELEC DRIVER] TS1_GEN2_3 is being SENT for BOTH LANES ");
+								//Encoding TS1
+								
+								TS1_GEN_2_3_lane0 = {<<8{{<<{TS1_GEN_2_3_lane0}}}};
+								TS1_GEN_2_3_lane1 = {<<8{{<<{TS1_GEN_2_3_lane1}}}};
+
+
+
+								if(elec_tr.gen_speed == gen2)
+									begin
+
+										$display("[ELEC DRIVER] TS1_GEN 2 is being SENT for BOTH LANES ");
+										SYNC = {1,0};
+										//$display("SYNC %p",SYNC);
+									end
+								else if(elec_tr.gen_speed == gen3)
+									begin
+
+										$display("[ELEC DRIVER] TS1_GEN 3 is being SENT for BOTH LANES ");										
+										SYNC = {1,0,1,0};
+										//$display("SYNC %p",SYNC);
+									end
+										
+
+								foreach (SYNC[i]) begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.lane_0_rx = SYNC[i];
+									v_if.lane_1_rx = SYNC[i];
+									//$display("Element [%0d] SYNC bits: %0b", i, SYNC[i]);
+								end
 
 								foreach (TS1_GEN_2_3_lane0[i])
 								begin
 									wait_negedge (elec_tr.gen_speed);
-									v_if.lane_0_rx = TS1_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
-									v_if.lane_1_rx = TS1_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];	
+									v_if.lane_0_rx = TS1_GEN_2_3_lane0[i];		
+									v_if.lane_1_rx = TS1_GEN_2_3_lane1[i];	
 									//$display("Element [%0d] in TS1_GEN_2_3_lane0: %0b", i, TS1_GEN_2_3_lane0[i]);	
 								end
 
+								// Duplicating TS1 for the gen3 128/132 encoding 
+								if (elec_tr.gen_speed == gen3)
+								begin
+									foreach (TS1_GEN_2_3_lane0[i])
+									begin
+										wait_negedge (elec_tr.gen_speed);
+										v_if.lane_0_rx = TS1_GEN_2_3_lane0[i];		
+										v_if.lane_1_rx = TS1_GEN_2_3_lane1[i];	
+										//$display("Element [%0d] in TS1_GEN_2_3_lane0: %0b", i, TS1_GEN_2_3_lane0[i]);	
+									end
+								end
+								
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
 								
@@ -358,13 +484,48 @@
 								TS2_GEN_2_3_lane0 = {5'b0, lane_bonding_target, lane_number_0, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS2, SCR};
 								TS2_GEN_2_3_lane1 = {5'b0, lane_bonding_target, lane_number_1, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS2, SCR};
 
+								TS2_GEN_2_3_lane0 = {<<8{{<<{TS2_GEN_2_3_lane0}}}};
+								TS2_GEN_2_3_lane1 = {<<8{{<<{TS2_GEN_2_3_lane1}}}};
+
+								if(elec_tr.gen_speed == gen2)
+								begin
+									SYNC = {1,0};
+									//$display("SYNC %p",SYNC);
+								end
+								else if(elec_tr.gen_speed == gen3)
+								begin
+									SYNC = {1,0,1,0};
+									//$display("SYNC %p",SYNC);
+								end
+
 								$display("[ELEC DRIVER] TS2_GEN2_3 is being SENT for BOTH LANES");
+
+								foreach (SYNC[i]) 
+								begin
+									wait_negedge (elec_tr.gen_speed);
+									v_if.lane_0_rx = SYNC[i];
+									v_if.lane_1_rx = SYNC[i];
+									//$display("Element [%0d] SYNC bits: %0b", i, SYNC[i]);
+								end
 
 								foreach (TS2_GEN_2_3_lane0[i])
 								begin
 									wait_negedge (elec_tr.gen_speed);
-									v_if.lane_0_rx = TS2_GEN_2_3_lane0[(TS_GEN_2_3_SIZE - 1) - i];		
-									v_if.lane_1_rx = TS2_GEN_2_3_lane1[(TS_GEN_2_3_SIZE - 1) - i];		
+									v_if.lane_0_rx = TS2_GEN_2_3_lane0[i];		
+									v_if.lane_1_rx = TS2_GEN_2_3_lane1[i];	
+									//$display("Element [%0d] in TS2_GEN_2_3_lane0: %0b", i, TS2_GEN_2_3_lane0[i]);	
+								end
+
+								// Duplicating TS2 for the gen3 128/132 encoding 
+								if (elec_tr.gen_speed == gen3)
+								begin
+									foreach (TS2_GEN_2_3_lane0[i])
+									begin
+										wait_negedge (elec_tr.gen_speed);
+										v_if.lane_0_rx = TS2_GEN_2_3_lane0[i];		
+										v_if.lane_1_rx = TS2_GEN_2_3_lane1[i];	
+										//$display("Element [%0d] in TS2_GEN_2_3_lane0: %0b", i, TS2_GEN_2_3_lane0[i]);	
+									end
 								end
 
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator

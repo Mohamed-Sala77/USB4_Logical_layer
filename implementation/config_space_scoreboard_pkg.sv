@@ -35,12 +35,14 @@
 
 				//* Getting first from the model since model will block in case we aren't in phase 1 
 				mb_model.get(transaction_model);
-				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p at %t ",transaction_model ,$time);
+				$display("[CONFIG SCOREBOARD] MODEL Transaction: %p",transaction_model);
+				//$display("[CONFIG SCOREBOARD] MODEL Transaction: %p at %t ",transaction_model ,$time);
+
 
 				mb_mon.get(transaction_mon);
 				event_trigger();
-				$display("[CONFIG SCOREBOARD] DUT Transaction: %p at %t",transaction_mon ,$time);
-
+				$display("[CONFIG SCOREBOARD] DUT Transaction: %p",transaction_mon);
+				//$display("[CONFIG SCOREBOARD] DUT Transaction: %p at %t",transaction_mon ,$time);
 
 
 				

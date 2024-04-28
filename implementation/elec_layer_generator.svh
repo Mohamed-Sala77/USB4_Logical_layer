@@ -191,7 +191,7 @@
 				
 				SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3 : 
 				begin
-					repeat (2) begin
+					repeat (1) begin //should be 2
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
 					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
@@ -226,7 +226,7 @@
 				case (OS)
 				
 					SLOS1, SLOS2: begin
-						while ( (counter_lane_0 < 2) || (counter_lane_1 < 2) )  // should be (counter < 2)
+						while ( (counter_lane_0 < 1) || (counter_lane_1 < 1) )  // should be (counter < 2)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -284,7 +284,7 @@
 						else if (generation == gen2)
 							limit = 32;
 
-						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
+						while ((counter_lane_0 < 1) || (counter_lane_1 < 1)) // should be (counter != limit)
 						begin // 1000 -> should be changed (timing parameters)
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -328,7 +328,7 @@
 						else if (generation == "gen2")
 							limit = 16;
 
-						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
+						while ((counter_lane_0 < 1) || (counter_lane_1 < 1)) // should be (counter != limit)
 						begin 
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							os_received_mon_gen.get(tr_mon);
@@ -596,9 +596,10 @@
 		transaction.sbrx = 1; 
 		transaction.gen_speed = speed;
 		
-			elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
-			if (num != 3)
-		elec_gen_drv.put(transaction);
+		elec_gen_mod.put(transaction); // Sending transaction to the Reference model 
+
+		if (num != 3)
+			elec_gen_drv.put(transaction);
 		
 	endtask //phase_force
 

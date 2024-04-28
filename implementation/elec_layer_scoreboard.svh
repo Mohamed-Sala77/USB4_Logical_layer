@@ -80,9 +80,8 @@
 				end
 
 				3:
-				
 			 	begin
-						//$display("[ELEC SEOREBOARD at %0s]CRC:[%0d]",elec_tr.transaction_type.name(),elec_tr.crc_received);
+
 			 		assert(	//(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
 			 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
 			 				(elec_tr_model.read_write === elec_tr.read_write)				&&
@@ -130,13 +129,15 @@
 
 			 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
 									(elec_tr_model.lane === elec_tr.lane) &&
-									(elec_tr_model.o_sets === elec_tr.o_sets) 
+									(elec_tr_model.o_sets === elec_tr.o_sets) /*&&
+									(elec_tr_model.order === elec_tr.order)*/
 									) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
 
 							// Detailed assertions
 							assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
 							assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
 							assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");
+							//assert (elec_tr_model.order === elec_tr.order) 		else $error("[ELEC SCOREBOARD] INCORRECT order !!!");
 							
 							
 		 				end

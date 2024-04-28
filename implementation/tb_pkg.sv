@@ -1,5 +1,6 @@
 package tb_pkg;
 	
+
 	// Transactions
 	`include "elec_layer_tr.svh"
 	`include "upper_layer_tr.svh"
@@ -56,9 +57,10 @@ package tb_pkg;
 	`include "config_space_agent_pkg.sv"
 
 	// ENVIRONMENT FILE
-	`include "Testenv.svh"
+	`include "Environment.svh"
 	
-	
+	// TEST FILE
+	`include "Test.svh"
 
 
 
