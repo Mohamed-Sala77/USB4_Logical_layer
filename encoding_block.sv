@@ -2,7 +2,7 @@
 
 Author: Ahmed Tarek Shafik Mohamed
 Date: 29/2/2024
-Block: Transactions FSM
+Block: encoding block
 Project: USB4 Logical layer Human based VS AI based code
 sponsered by: Siemens EDA
 
@@ -180,8 +180,8 @@ module encoding_block
 
 
 					end else if (d_sel_reg != 8 && gen_speed==1) begin 
-						lane_0_tx_enc_old <= {4'b1010,data_0[127:0]};
-						lane_1_tx_enc_old <= {4'b1010,data_1[127:0]};
+						lane_0_tx_enc_old <= {data_0[127:0],4'b1010};
+						lane_1_tx_enc_old <= {data_1[127:0],4'b1010};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
