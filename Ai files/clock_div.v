@@ -27,6 +27,7 @@ always @(posedge local_clk or negedge rst) begin
         ser_clk <= 1'b0;
         enc_clk <= 1'b0;
         fsm_clk <= 1'b0;
+        ms_clk <= 1'b0;
         fsm_counter <= 7'b0;
         factor_counter <= 6'b0;
 
