@@ -51,7 +51,8 @@ module control_fsm
   output reg  [7:0]  s_data_o,
   output reg  [7:0]  s_address_o,
   output reg         s_read_o,
-  output reg         s_write_o
+  output reg         s_write_o,
+  output wire        cl0_s
 );
 
 localparam DISABLED              = 'b0000, //DISABLED state
@@ -651,7 +652,8 @@ always @ (posedge fsm_clk or negedge reset_n)
         endcase
       end
   end
- 
+
+assign cl0_s <= (cs == CL0); 
 
 ////////////////////////////// Transactions ////////////////////////////////////
 always @ (posedge fsm_clk or negedge reset_n)
