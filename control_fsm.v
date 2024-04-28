@@ -96,7 +96,6 @@ reg [1:0]  gen_speed_reg,
 
 reg        is_usb4,
            c_address_sent_flag,
-	       c_data_received_flag,
 	       AT_req_trans_send_flag,
 		   AT_req_trans_sent_flag;
 
@@ -331,8 +330,7 @@ always @ (posedge fsm_clk or negedge reset_n)
         c_address <= 'h0;
         c_read <= 0;   
         c_write <= 0;   
-        c_address_sent_flag <= 0;
-        c_data_received_flag <= 0;		
+        c_address_sent_flag <= 0;		
 	    os_sent_cnt <= 'h0;
         os_rec_cnt_l0 <= 0;
         os_rec_cnt_l1 <= 0;
@@ -351,6 +349,7 @@ always @ (posedge fsm_clk or negedge reset_n)
         fsm_training <= 0;
         ts1_gen4_s <= 0;
         ts2_gen4_s <= 0;
+		c_data_out <= 'h0;
 		
         case (cs)
         DISABLED : 
@@ -360,8 +359,7 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address <= 'h0;
             c_read <= 0;	
             c_write <= 0;	
-            c_address_sent_flag <= 0;
-            c_data_received_flag <= 0;			
+            c_address_sent_flag <= 0;		
 	        os_sent_cnt <= 'h0;
             os_rec_cnt_l0 <= 0;
             os_rec_cnt_l1 <= 0;
@@ -385,14 +383,12 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns != CLD_CABLE_PROP)
 			  begin
 			    c_address_sent_flag <= 0;
-				c_data_received_flag <= 0;
 				c_read <= 0;
 			  end
 			else
 			  begin
                 c_address_sent_flag <= 1; //raised after entering this state by 1 clk cycle indicating address reached the cng spaces
-                c_data_received_flag <= c_address_sent_flag; //if address is sent --> data rec next clock cycle
-				c_read <= !c_address_sent_flag; //read
+				c_read <= 1; //read
 			  end
 			  
             is_usb4 <= (c_data_in[7:0] == 'h40);
@@ -647,8 +643,7 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address <= 'h0;
             c_read <= 0;	
             c_write <= 0;	
-            c_address_sent_flag <= 0;
-            c_data_received_flag <= 0;			
+            c_address_sent_flag <= 0;		
 	        os_sent_cnt <= 'h0;
             os_rec_cnt_l0 <= 0;
             os_rec_cnt_l1 <= 0;
