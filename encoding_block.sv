@@ -2,7 +2,7 @@
 
 Author: Ahmed Tarek Shafik Mohamed
 Date: 29/2/2024
-Block: Transactions FSM
+Block: encoding_block
 Project: USB4 Logical layer Human based VS AI based code
 sponsered by: Siemens EDA
 
