@@ -180,16 +180,16 @@ module encoding_block
 
 
 					end else if (d_sel_reg != 8 && gen_speed==1) begin 
-						lane_0_tx_enc_old <= {data_0[127:0],4'b1010};
-						lane_1_tx_enc_old <= {data_1[127:0],4'b1010};
+						lane_0_tx_enc_old <= {data_0[127:0],4'b0101};
+						lane_1_tx_enc_old <= {data_1[127:0],4'b0101};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
 						mem_1 [0] <= lane_1_tx;
 
 					end else if (d_sel_reg == 8 && gen_speed==1) begin 
-						lane_0_tx_enc_old <= {data_0[127:0],4'b0101};
-						lane_1_tx_enc_old <= {data_1[127:0],4'b0101};
+						lane_0_tx_enc_old <= {data_0[127:0],4'b1010};
+						lane_1_tx_enc_old <= {data_1[127:0],4'b1010};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
