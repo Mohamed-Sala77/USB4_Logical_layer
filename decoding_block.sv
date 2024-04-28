@@ -156,7 +156,7 @@ reg flag;
 
 				GEN2: begin 
 					
-					case (mem_0 [8][1:0])
+					case (mem_0 [0][1:0])
 
 							'b10: begin 
 								data_os <= 0;
@@ -174,7 +174,7 @@ reg flag;
 
 				GEN3: begin 
 
-						case (mem_0 [16][3:0])
+						case (mem_0 [0][3:0])
 
 							'b1010: begin 
 								data_os <= 0;
