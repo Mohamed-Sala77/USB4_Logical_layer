@@ -287,7 +287,6 @@ endtask
         case (E_transaction.gen_speed)
             gen2: begin
                 E_transaction = new();
-                E_transaction.sbtx = 1;
 
                 $display("we are in gen2"); 
                 case (packet)
@@ -299,7 +298,6 @@ endtask
             end
             gen3: begin
                 E_transaction = new();
-                E_transaction.sbtx = 1;
                 $display("we are in gen3");
                 case (packet)
                     SLOS1: send_SLOS1(packet);               // send SLOS1 packet 2 times
@@ -310,7 +308,6 @@ endtask
             end
             gen4: begin
                 E_transaction = new();
-                E_transaction.sbtx = 1;
                 $display("we are in gen4");
                 case (packet)
                     TS1_G4: send_TS1_G4(packet);          // send TS1_G4 packet 16 times 
@@ -339,6 +336,7 @@ endtask
     task put_transactions ();
 
         E_transaction.lane= lane_0 ;
+        E_transaction.sbtx = 1;
         // here we use ""shallow copy""" , not to share the same memory for both transactions
         temp_elec_lane = new E_transaction ;        // this temp transaction for not make all handels point to same object for E_transaction 
         elec_ag_Tx.put(E_transaction);      //* send in lane 0
