@@ -57,8 +57,8 @@ class config_scoreboard;
 
     // Function to get transactions from both mailboxes
     task get_transactions();
-        //ref_mbox.get(ref_trans);
-        //$display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+        ref_mbox.get(ref_trans);
+        $display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
            
         mon_mbox.get(mon_trans);
         $display("[Config Scoreboard] received at time (%0t) data of : %p", $time ,mon_trans);

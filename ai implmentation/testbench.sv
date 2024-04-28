@@ -7,6 +7,10 @@
 `include "env_cfg_class.sv"
 
 // REFERENCE MODEL
+	`include "configuration_space_reference.sv"
+	`include "elec_reference.sv"
+	`include "upper_reference.sv"
+	`include"Reference_model_wrapper.sv"
 	/*`include "int_packet.sv"
 	`include "R_Mod_extentions.sv"
 	`include "my_memory.sv"

@@ -10,6 +10,7 @@ logic c_read, c_write;
 logic [7:0] c_address;	
 logic [31:0] c_data_out;
 
+rand var [2:0]phase;
 
 
 constraint DISABLE{

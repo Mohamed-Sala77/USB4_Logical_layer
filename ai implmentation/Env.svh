@@ -59,7 +59,7 @@ class env;
 
 
         //--------Declare the referance model -----------//
-        //ref_model model ;
+        reference_model_AI model ;
 
 
 
@@ -81,9 +81,12 @@ class env;
             up_mon_scr = new();
             up_drv_gen = new();
             up_mod_gen = new();
+            up_mod_scr = new();
+            cfg_mod_scr =new();
 
         //--------Initialize the ref_model-----------//  
            // model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
+              model  =new( up_mod_scr, up_mod_gen, elec_model_2_sboard, elec_gen_2_model, cfg_mod_scr, cfg_mod_gen);
 
         //--------Initialize the components -----------//
         // memory
@@ -106,6 +109,9 @@ class env;
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard);
         cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
         up_gen = new(up_mod_gen, up_drv_gen, up_driveDone);
+
+       
+
         
         // Virtual Sequence connections
         virtual_seq.virtual_elec_gen = elec_gen;
@@ -197,7 +203,7 @@ class env;
                 virtual_seq.run();
 
                 //ref_model
-               // model.run_phase();
+                model.run();
                 
             join
         endtask 
