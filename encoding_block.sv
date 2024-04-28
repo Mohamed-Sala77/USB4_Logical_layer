@@ -150,16 +150,16 @@ module encoding_block
 						mem_1 [byte_numb] <= lane_1_tx;
 
 					end else if (d_sel_reg != 8 && gen_speed==2) begin 
-						lane_0_tx_enc_old <= {2'b10,data_0[63:0]};
-						lane_1_tx_enc_old <= {2'b10,data_1[63:0]};
+						lane_0_tx_enc_old <= {2'b10,data_0[0:63]};
+						lane_1_tx_enc_old <= {2'b10,data_1[0:63]};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
 						mem_1 [0] <= lane_1_tx;
 
 					end else if (d_sel_reg == 8 && gen_speed==2) begin 
-						lane_0_tx_enc_old <= {2'b01,data_0[63:0]};
-						lane_1_tx_enc_old <= {2'b01,data_1[63:0]};
+						lane_0_tx_enc_old <= {2'b01,data_0[0:63]};
+						lane_1_tx_enc_old <= {2'b01,data_1[0:63]};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
@@ -180,16 +180,16 @@ module encoding_block
 
 
 					end else if (d_sel_reg != 8 && gen_speed==1) begin 
-						lane_0_tx_enc_old <= {4'b1010,data_0[127:0]};
-						lane_1_tx_enc_old <= {4'b1010,data_1[127:0]};
+						lane_0_tx_enc_old <= {4'b1010,data_0[0:127]};
+						lane_1_tx_enc_old <= {4'b1010,data_1[0:127]};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
 						mem_1 [0] <= lane_1_tx;
 
 					end else if (d_sel_reg == 8 && gen_speed==1) begin 
-						lane_0_tx_enc_old <= {4'b0101,data_0[127:0]};
-						lane_1_tx_enc_old <= {4'b0101,data_1[127:0]};
+						lane_0_tx_enc_old <= {4'b0101,data_0[0:127]};
+						lane_1_tx_enc_old <= {4'b0101,data_1[0:127]};
 						enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
