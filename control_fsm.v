@@ -35,8 +35,7 @@ module control_fsm
   input  wire        tgen4_ts1_timeout,
   input  wire        tgen4_ts2_timeout, 
   input  wire        trans_sent, 
-  input  wire        new_sym, 
-  input  wire        host, 
+  input  wire        new_sym,
   output reg  [2:0]  trans_sel,
   output reg         disconnect_sbtx, //send zeros in sbtx to complete disconnection
   output reg         fsm_disabled, //indicating fsm is DISABLED
@@ -52,8 +51,7 @@ module control_fsm
   output reg  [7:0]  s_data_o,
   output reg  [7:0]  s_address_o,
   output reg         s_read_o,
-  output reg         s_write_o,
-  output wire [3:0]  fsm_state
+  output reg         s_write_o
 );
 
 localparam DISABLED              = 'b0000, //DISABLED state
@@ -112,7 +110,6 @@ always @(posedge fsm_clk or negedge reset_n)
       end
   end
 
-assign fsm_state = cs;
 
 always @(*)
   begin
@@ -142,7 +139,7 @@ always @(*)
         if (lane_disable) 
 		  ns = DISABLED;
         else if (!disconnect_sbrx) 
-		  ns = (host)? CLD_PARAMETERS_1 : CLD_PARAMETERS_2;
+		  ns = CLD_PARAMETERS_1;
         else 
 		  ns = CLD_DET_DEVICE; 
       end
@@ -154,7 +151,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
         else if (t_valid && !trans_error) //AT response received with no errors
-		  ns = (host)? CLD_PARAMETERS_2 : CLD_CLK_SWITCH;
+		  ns = CLD_PARAMETERS_2;
         else 
 		  ns = CLD_PARAMETERS_1; 
       end
@@ -166,7 +163,7 @@ always @(*)
         else if (disconnect_sbrx) 
 		  ns = CLD_DET_DEVICE;
         else if (trans_sent) //AT response sent
-		  ns = (host)? CLD_CLK_SWITCH : CLD_PARAMETERS_1;
+		  ns = CLD_CLK_SWITCH;
         else 
 		  ns = CLD_PARAMETERS_2; 
       end
@@ -388,7 +385,7 @@ always @ (posedge fsm_clk or negedge reset_n)
 			else
 			  begin
                 c_address_sent_flag <= 1; //raised after entering this state by 1 clk cycle indicating address reached the cng spaces
-				c_read <= 1; //read
+				c_read <= !c_address_sent_flag; //read
 			  end
 			  
             is_usb4 <= (c_data_in[7:0] == 'h40);
