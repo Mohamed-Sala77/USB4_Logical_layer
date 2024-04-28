@@ -265,7 +265,7 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS1;
         else 
 		  ns = TRAINING_GEN2_3_SLOS2; 
@@ -279,9 +279,9 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (gen_speed==GEN2 && os_sent_cnt==32 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (gen_speed==GEN2 && os_sent_cnt==32 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS2;
-        else if (gen_speed==GEN3 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (gen_speed==GEN3 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS2;
         else 
 		  ns = TRAINING_GEN2_3_TS1; 
