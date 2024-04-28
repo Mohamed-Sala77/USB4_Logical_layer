@@ -22,13 +22,12 @@ task run;
 
     ///phase 1///
     virtual_cfg_gen.generate_stimulus() ;
-    
+    $display("[virtual_sequence]:waiting for sbtx_transition_high event");
    ///phase 2///
    @(sbtx_transition_high); // Blocking with the event sbtx_transition_high 
-   $display("[virtual_sequence]: sbtx_transition_high event triggered");
    ->sbtx_response;
-   virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
     
+   virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
    ///phase 3///
     @(recieved_on_elec_sboard); // wait first AT_cmd fro dut to trigger 
     $stop;

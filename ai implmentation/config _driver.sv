@@ -24,10 +24,10 @@ class config_driver;
             mb_drv_gen.get(cfg_trans);
             vif.lane_disable  <= cfg_trans.lane_disable;
             vif.c_data_in       <= cfg_trans.c_data_in;
-            $display("[Config Driver] send data at time (%0t) ", $time );
+            
             // Trigger the driver_done event.
             ->driver_done;          //* note that : generator should out first transaction without waiting for any event
-        
+            $display("[config driver] done");
         end
     endtask : run
 

@@ -710,7 +710,7 @@ endtask:recieved_TS1_gen4
 		  forever
 		   begin
            wait(env_cfg_mem.data_income == 1)
-		   //$display("[ELEC_MONITOR]the value of env_cfg_mem.data_income=%0d and the value of env_cfg_mem.phase=%0d ",env_cfg_mem.data_income,env_cfg_mem.phase); //active on simulation
+		   $display("[ELEC_MONITOR]the value of env_cfg_mem.data_income=%0d and the value of env_cfg_mem.phase=%0d ",env_cfg_mem.data_income,env_cfg_mem.phase); //active on simulation
 		   env_cfg_mem.data_income=0;
 			case (env_cfg_mem.phase)
 			3'd2: //wait AT_Cmd transaction with size=8 symbols

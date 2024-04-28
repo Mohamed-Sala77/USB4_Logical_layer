@@ -6,6 +6,11 @@
 //include the memory classes
 `include "env_cfg_class.sv"
 
+//include the driver classes
+`include "elec_layer_driver.svh"
+`include "config _driver.sv"
+`include "up_driver.sv"
+
 // REFERENCE MODEL
 	`include "configuration_space_reference.sv"
 	`include "elec_reference.sv"
@@ -29,11 +34,6 @@
 `include "elec_layer_generator.svh"
 `include "up_stimulus_generator.sv"
 `include "config_generator.sv"
-
-//include the driver classes
-`include "elec_layer_driver.svh"
-`include "config _driver.sv"
-`include "up_driver.sv"
 
 //include the monitor classes
 `include "elec_layer_monitor.svh"

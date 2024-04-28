@@ -40,8 +40,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	initial begin
 
 		$timeformat(-9 , 2 , " ns", 10);
-
-
+		
 		SystemClock = 0 ;
 		Rx_Clock = 0;
 		local_clk = 0;
@@ -59,7 +58,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	end
 
 	//Instantiate the logical layer
-logical_layer_no_scr NOT_AI_l_layer(
+logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -75,7 +74,7 @@ logical_layer_no_scr NOT_AI_l_layer(
 									.lane_1_rx_i(e_if.lane_1_rx),
                                     .sbtx(e_if.sbtx),
 									// .control_unit_data(0),
-									.data_incoming(e_if.data_incoming),
+									.enable_deser(e_if.data_incoming),
 									.sbrx(e_if.sbrx),		
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
@@ -96,11 +95,7 @@ logical_layer_no_scr NOT_AI_l_layer(
 
 
 		//-------for test model only ----------//
-<<<<<<< HEAD
-		//enviro.test_model();
-=======
 	   //enviro.test_model();
->>>>>>> c166525a07f18984f22fdb8022e3f8f77d798fe7
 		
 	end
 
@@ -145,27 +140,3 @@ logical_layer_no_scr NOT_AI_l_layer(
 	//always #(Rx_clock_cycle/2) Rx_Clock = ~Rx_Clock;
 
 endmodule
-
-/*
-module dynamic_array_example;
-  // Declare the dynamic array
-  logic [9:0] recieved_transaction_data_symb[$];
-
-  initial begin
-    // Add elements to the dynamic array
-    recieved_transaction_data_symb.push_back(10'b1010101010);
-    recieved_transaction_data_symb.push_back(10'b1111000011);
-
-    // Access elements in the dynamic array
-    $display("Element 0: %b", recieved_transaction_data_symb[0]);
-    $display("Element 1: %b", recieved_transaction_data_symb[1]);
-
-    // Modify elements in the dynamic array
-    recieved_transaction_data_symb[0] = 10'b0000111100;
-    recieved_transaction_data_symb[1] = 10'b1100110011;
-
-    // Display the modified elements
-    $display("Modified Element 0: %b", recieved_transaction_data_symb[0]);
-    $display("Modified Element 1: %b", recieved_transaction_data_symb[1]);
-  end
-endmodule*/

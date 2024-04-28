@@ -1,7 +1,9 @@
 class elec_ref_AI;
 
-parameter [7:0] STX_cmd = 8'b00000101;		//Start Transaction (STX) Symbol – defines the operation of the Transaction. 
+
+  parameter [7:0] STX_cmd = 8'b00000101;		//Start Transaction (STX) Symbol – defines the operation of the Transaction. 
 	parameter [7:0] STX_rsp = 8'b00000100;		//Start Transaction (STX) Symbol – defines the operation of the Transaction. 
+
   elec_layer_tr elec_layer_inst;
   upper_layer_tr upper_layer_inst;
 

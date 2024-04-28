@@ -30,8 +30,8 @@ class elec_scoreboard;
          fork
             begin
                 elec_mon_sboard.get(monitor_tr);
-                elec_mod_sboard.get(model_tr);
-                $display("[scoreboard]model transaction=%0p",model_tr);
+                //elec_mod_sboard.get(model_tr);
+                //$display("[scoreboard]model transaction=%0p",model_tr);
                 $display("[scoreboard]monitor transaction=%0p",monitor_tr);
                 case (monitor_tr.phase)
                 3'd0: begin

@@ -670,7 +670,6 @@ endtask: send_data_2_DUT
       3'b010:begin  //indecate the phase 2 of the transaction
          @(negedge ELEC_vif.SB_clock);
          ELEC_vif.sbrx <=transaction.sbrx;
-         $display("[ELEC DRIVER] the value of sbrx is %b",transaction.sbrx); //test
          #(tConnectRx);          // Wait for the time required for the connection to be established
         end
 
