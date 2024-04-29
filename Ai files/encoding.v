@@ -80,16 +80,16 @@ always @(posedge enc_clk or negedge rst) begin
                     // Encoding
                     if (d_sel != 8) begin
                         // ordered sets data
-                        lane_0_tx_enc_old <= {4'b1010,data_0[127:0]};
-                        lane_1_tx_enc_old <= {4'b1010,data_1[127:0]};
+                        lane_0_tx_enc_old <= {data_0[127:0],4'b0101};
+                        lane_1_tx_enc_old <= {data_1[127:0],4'b0101};
                         enable_ser <= 1;
                          // Store lane_0_tx and lane_1_tx in mem_0[0] and mem_1[0]
                     mem_0[0] <= lane_0_tx;
                     mem_1[0] <= lane_1_tx;
                     end else if (d_sel == 8)begin
                         // Encoding transport data 
-                        lane_0_tx_enc_old <= {4'b0101,data_0[127:0]};
-                        lane_1_tx_enc_old <= {4'b0101,data_1[127:0]};
+                        lane_0_tx_enc_old <= {data_0[127:0],4'b1010};
+                        lane_1_tx_enc_old <= {data_1[127:0],4'b1010};
                     end
                     enable_ser <= 1;
                     // Store lane_0_tx and lane_1_tx in mem_0[0] and mem_1[0]
@@ -105,8 +105,8 @@ always @(posedge enc_clk or negedge rst) begin
                   
                 end else if (d_sel != 8) begin
                   //ordered set
-                        lane_0_tx_enc_old <= {2'b10,data_0[63:0]};
-						            lane_1_tx_enc_old <= {2'b10,data_1[63:0]};
+                        lane_0_tx_enc_old <= {data_0[63:0],2'b01};
+						            lane_1_tx_enc_old <= {data_1[63:0],2'b01]};
 						             enable_ser <= 1;
 						             mem_0 [0] <= lane_0_tx;
 					              	mem_1 [0] <= lane_1_tx;
@@ -115,8 +115,8 @@ always @(posedge enc_clk or negedge rst) begin
                     
                     else if (d_sel == 8) begin
                         // Transport layer data
-                        lane_0_tx_enc_old <= {2'b01,data_0[63:0]};
-					         	   lane_1_tx_enc_old <= {2'b01,data_1[63:0]};
+                        lane_0_tx_enc_old <= {data_0[63:0],2'b10};
+					         	   lane_1_tx_enc_old <= {data_1[63:0],2'b10};
 						           enable_ser <= 1;
 
 						mem_0 [0] <= lane_0_tx;
@@ -135,7 +135,7 @@ end
 always @(posedge enc_clk or negedge rst) begin
     if (~rst) begin
         mem_index <= 0;
-    end else if (enable && ((gen_speed == 2 && mem_index <= 7) || (gen_speed == 1 && mem_index <= 15 && d_sel != 9))) begin
+    end else if (enable && ((gen_speed == 2 && mem_index <= 8 && d_sel != 9) || (gen_speed == 1 && mem_index <= 16 && d_sel != 9))) begin
         mem_index <= mem_index + 1;
     end else if (d_sel != 9) begin
         mem_index <= 1;
@@ -146,9 +146,11 @@ end
 
 // Continuous assignment of new_sym
 always @(*) begin
-    if (gen_speed == 2 && mem_index == 8) begin
+	if(d_sel == 'h9) begin
+		new_sym <= enc_clk; end
+	if (gen_speed == 'h2 && mem_index == 7) begin
         new_sym <= 1'b1;
-    end else if (gen_speed == 3 && mem_index == 16) begin
+	end else if (gen_speed == 'h1 && mem_index == 15) begin
         new_sym <= 1'b1;
     end else begin
         new_sym <= enc_clk;
