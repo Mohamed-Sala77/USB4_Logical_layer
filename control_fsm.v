@@ -251,7 +251,7 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_SLOS2;
         else 
 		  ns = TRAINING_GEN2_3_SLOS1; 
