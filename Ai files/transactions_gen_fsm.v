@@ -82,6 +82,11 @@ reg disconnected_s_reg;
 
 reg [2:0] trans_sel_pulse;
 
+//delay for sending trans for training sync
+reg trans_sent_1;
+reg trans_sent_2;
+reg trans_sent_3;
+
 
 always @(posedge sb_clk) begin 
 
@@ -179,32 +184,23 @@ always @* begin
                 if (trans_sel_pulse == 3'b010) begin // If trans_sel is 2
                     ns = STX_COMMAND; // Transition to STX_COMMAND state
                     trans_reg = {1'b1, STX_COMMAND_SYMBOL, 1'b0}; // Set trans_reg output to STX_COMMAND_SYMBOL
-                    crc_en_reg = 1'b1; // Enable CRC
+                    crc_en_reg = 1'b0; // Enable CRC
                     sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                     disconnected_s_reg =1'b0;
                 end else if (trans_sel_pulse == 3'b011) begin // If trans_sel is 3
                     ns = STX_RESPONSE; // Transition to STX_RESPONSE state
                     trans_reg = {1'b1, STX_RESPONSE_SYMBOL, 1'b0}; // Set trans_reg output to STX_RESPONSE_SYMBOL
-                    crc_en_reg = 1'b1; // Enable CRC
+                    crc_en_reg = 1'b0; // Enable CRC
                     sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                     disconnected_s_reg =1'b0;
                 end else if (trans_sel_pulse == 3'b100) begin // If trans_sel is 4
                     ns = LSE; // Transition to LSE state
                     trans_reg = {1'b1, LSE_SYMBOL, 1'b0}; // Set trans_reg output to LSE_SYMBOL
-                    crc_en_reg = 1'b1; // Enable CRC
+                    crc_en_reg = 1'b0; // Enable CRC
                     sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                     disconnected_s_reg =1'b0;
                 end
-            end else begin // If symbol_count is not 9
-                // Stay in DLE1 state
-                ns = DLE1;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
         LSE: begin
@@ -227,6 +223,7 @@ always @* begin
                 disconnected_s_reg =1'b0;
             end
         end
+	    
         CLSE: begin
             if (symbol_count == 9 && trans_sel_pulse == 3'b100) begin // If symbol_count reaches 9 and trans_sel is 4
                 ns = IDLE; // Transition to IDLE state
@@ -234,16 +231,7 @@ always @* begin
                 crc_en_reg = 1'b0; // Disable CRC
                 sbtx_sel_reg = 1'b0; // Enable sbtx_sel_reg
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 4
-                // Stay in CLSE state
-                ns = CLSE;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
         STX_COMMAND: begin
@@ -273,36 +261,18 @@ always @* begin
                 crc_en_reg = 1'b1; // Enable CRC
                 sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 2
-                // Stay in DATA_READ_COMMAND_ADDRESS state
-                ns = DATA_READ_COMMAND_ADDRESS;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
         
        DATA_READ_COMMAND_LENGTH: begin
             if (symbol_count == 9 && trans_sel == 3'b010) begin // If symbol_count is 9 and trans_sel is 2
                 ns = CRC_LOW; // Transition to CRC_LOW state
-                trans_reg = 10'b0; // Set trans_reg output to 0
+                trans_reg = 0; // Set trans_reg output to 0
                 crc_en_reg = 1'b1; // Enable CRC
                 sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 2
-                // Stay in DATA_READ_COMMAND_LENGTH state
-                ns = DATA_READ_COMMAND_LENGTH;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
               STX_RESPONSE: begin
@@ -313,16 +283,7 @@ always @* begin
                 crc_en_reg = 1'b1; // Enable CRC
                 sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 3
-                // Stay in STX_RESPONSE state
-                ns = STX_RESPONSE;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
         DATA_READ_RESPONSE_ADDRESS: begin
@@ -332,16 +293,7 @@ always @* begin
                 crc_en_reg = 1'b1; // Enable CRC
                 sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 3
-                // Stay in DATA_READ_RESPONSE_ADDRESS state
-                ns = DATA_READ_RESPONSE_ADDRESS;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         DATA_READ_RESPONSE_LENGTH: begin
             if (symbol_count == 9 && trans_sel_pulse == 3'b011) begin // If symbol_count is 9 and trans_sel is 3
@@ -350,16 +302,7 @@ always @* begin
                 crc_en_reg = 1'b1; // Enable CRC
                 sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                 disconnected_s_reg =1'b0;
-            end else begin // If symbol_count is not 9 or trans_sel is not 2
-                // Stay in DATA_READ_RESPONSE_LENGTH state
-                ns = DATA_READ_RESPONSE_LENGTH;
-                // Hold the current value of trans_reg output
-                trans_reg = trans_reg;
-                // Disable CRC and sbtx_sel_reg
-                crc_en_reg = 1'b0;
-                sbtx_sel_reg = 1'b0;
-                disconnected_s_reg =1'b0;
-            end
+            end 
         end
         
         DATA_READ_RESPONSE_DATA: begin
@@ -368,7 +311,7 @@ always @* begin
                     ns = CRC_LOW; // Transition to CRC_LOW state
                     trans_reg = 'b0; // Set trans_reg output to 0
                     crc_en_reg = 1'b1; // Enable CRC
-                    sbtx_sel_reg = 1'b1; // Set sbtx_sel_reg to 1
+                    sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 1
                     disconnected_s_reg =1'b0;
                 end else if (data_count == 3'b000) begin // If symbol_count is 9 and data_count is 1
                     ns = DATA_READ_RESPONSE_DATA; // Stay in DATA_READ_RESPONSE_DATA state
@@ -424,16 +367,7 @@ always @* begin
                     sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                     disconnected_s_reg =1'b0;
                 end 
-                 else begin
-                    // Stay in DLE2 state
-                    ns = DLE2;
-                    // Hold the current value of trans_reg output
-                    trans_reg = trans_reg;
-                    // Disable CRC and sbtx_sel_reg
-                    crc_en_reg = 1'b0;
-                    sbtx_sel_reg = 1'b0;
-                    disconnected_s_reg =1'b0;
-                end
+                 
                     end
                   end
         ETX: begin
@@ -550,20 +484,33 @@ end
 always @(posedge sb_clk or negedge rst) begin
     if (!rst) begin
         trans_sel_pulse <= 3'b0;    // Initialize to zero on reset
-        trans_sent <= 1'b0;         // Initialize to zero on reset
+        trans_sent <= 1'b0;  
+	trans_sent_1 <= 0;
+	trans_sent_2 <= 0;
+	trans_sent_3 <= 0;
+	    
     end else if (trans_sel_pulse != 3'b000) begin
         // Hold previous value of trans_sel_pulse unless in disconnect state
             trans_sel_pulse <= trans_sel;
-            trans_sent<=1'b0;
+	    trans_sent_1 <= 0;
+            trans_sent_2 <= trans_sent_1;
+	     trans_sent_3 <= trans_sent_2;
+	      trans_sent <= trans_sent_3;
         end 
 
         // Determine if transaction is sent
       else if ((cs == CLSE || cs == ETX) && symbol_count == 9) begin
             trans_sent <= 1'b1;
-            trans_sel_pulse<= 1'b0; // Set trans_sent when in CLSE or ETX and symbol_count = 9
+            trans_sel_pulse<= 1'b0; 
+	      trans_sent_2 <= trans_sent_1;
+		trans_sent_3 <= trans_sent_2;
+		trans_sent <= trans_sent_3; // Set trans_sent when in CLSE or ETX and symbol_count = 9
         end else begin
             trans_sent <= 1'b0; // Reset trans_sent otherwise
             trans_sel_pulse <= trans_sel_pulse;
+		trans_sent_2 <= trans_sent_1;
+		trans_sent_3 <= trans_sent_2;
+		trans_sent <= trans_sent_3;
         end
     end
 
