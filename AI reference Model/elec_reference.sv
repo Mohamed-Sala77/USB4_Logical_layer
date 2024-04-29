@@ -23,7 +23,7 @@ class elec_ref_AI;
           elec_layer_inst = new();
 
           elec_G.get(elec_layer_inst);
-          // CONDITION TO BE ADDED HERE TO SAVE THE GEN SPEED TO BE USED (AS REQUESTED BY KIMO)
+          // CONDITION TO BE ADDED HERE TO SAVE THE GEN SPEED TO BE USED (AS REQUESTED BY KARIM)
           // CONDTION WILL CHECK THE CMD_RSP_DATA TO SAVE THE GEN SPEED IN A LOCALLY CREATED VARIABLE
           case (elec_layer_inst.phase)
 
@@ -47,9 +47,11 @@ class elec_ref_AI;
                 elec_layer_inst.len = 3;
                 elec_layer_inst.read_write = 0;
                 elec_layer_inst.crc_received = 0;
-                CRC_generator(STX_cmd, {8'd78,7'd3,1'h0},3);// ALIIIIIIIIIIIIIIIIIIIIIIIII
+                CRC_generator(STX_cmd, {8'd78,7'd3,1'h0},3);
                 elec_layer_inst.cmd_rsp_data = 0;
+
                 elec_S.put(elec_layer_inst);
+
                 elec_layer_inst = new();
                 elec_G.get(elec_layer_inst);
                 
@@ -61,9 +63,9 @@ class elec_ref_AI;
                     elec_layer_inst.len = 3;
                     elec_layer_inst.read_write = 0;
                     elec_layer_inst.crc_received = 0;
-                    elec_layer_inst.cmd_rsp_data = 24'h053303; // WRONG INPUT FROM ME (6'h053303) should be 24'h053303
-                    CRC_generator(STX_rsp, {8'd78,7'd3,1'b0,24'h033305},6); // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-                    $display("ALIIIIIIIIIIII");
+                    elec_layer_inst.cmd_rsp_data = 24'h053303; 
+                    CRC_generator(STX_rsp, {8'd78,7'd3,1'b0,24'h033305},6); 
+                    
                     elec_S.put(elec_layer_inst);
                     elec_layer_inst = new();
                 end
@@ -97,7 +99,7 @@ class elec_ref_AI;
   endtask
 
   /****************************
-   * CRC TASK generated using AI but Heavily Edited by ME (Ali Ahmed)
+   * CRC TASK generated using AI 
    * data: 31/3/2024
    * works correctly for the given example in the standard
    * 
@@ -143,8 +145,8 @@ class elec_ref_AI;
     elec_layer_inst.crc_received = crc ^ 16'h0000;
 
     // Print the output
-    //$display("CRC ALI: %b", elec_layer_inst.crc_received);
-    //$display("CRC ALI: %h", elec_layer_inst.crc_received);
+    //$display("CRC: %b", elec_layer_inst.crc_received);
+    //$display("CRC: %h", elec_layer_inst.crc_received);
   endtask
 
 

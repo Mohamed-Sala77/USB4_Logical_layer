@@ -294,7 +294,7 @@
 					TS1_gen2_3: begin
 
 						if(generation == gen3) 
-							limit = 16;
+							limit = 8; // should be 16 !!!!
 						else if (generation == gen2)
 							limit = 32;
 
@@ -350,18 +350,19 @@
 					end
 
 					TS2_gen2_3: begin
-
-						if(generation == "gen3") // string should be changed
-							limit = 8;
-						else if (generation == "gen2")
+						
+						if(generation == gen3) 
+							limit = 4; // should be 8 !!!!!
+						else if (generation == gen2)
 							limit = 16;
-
+						
 						while ((counter_lane_0 < limit) || (counter_lane_1 < limit)) // should be (counter != limit)
 						begin 
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
-
-							if((counter_lane_0 == 1) && (counter_lane_1 == 1)) // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII (15-4-2024)
+							
+							if((counter_lane_0 == 1) || (counter_lane_1 == 1)) // should be &&
 								begin
+									
 									transaction.o_sets = OS;
 									repeat (2)
 									begin

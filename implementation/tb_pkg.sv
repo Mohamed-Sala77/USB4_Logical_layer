@@ -1,4 +1,4 @@
-package tb_pkg;
+//package tb_pkg;
 	
 
 	// Transactions
@@ -62,7 +62,11 @@ package tb_pkg;
 	// TEST FILE
 	`include "Test.svh"
 
+	// Interfaces
+	`include "config_space_if.sv"
+	`include "electrical_layer_if.sv"
+	`include "upper_layer_if.sv"
 
 
 
-endpackage
+//endpackage

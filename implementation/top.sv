@@ -1,12 +1,8 @@
 `timescale 1fs/1fs
 
 `include "tb_pkg.sv"
-import tb_pkg::*;
+//import tb_pkg::*;
 
-
-`include "config_space_if.sv"
-`include "electrical_layer_if.sv"
-`include "upper_layer_if.sv"
 
 
 module top;
@@ -91,9 +87,6 @@ module top;
 		gen4_fsm_clk = 0;
 		SB_clock = 0;
 		
-		//$display("freq_10: %0d", freq_10);
-		//$display("period: %0d", ((10**12)/freq_10));
-	
 	end
 
 
@@ -124,52 +117,16 @@ module top;
 
 	// TEST 
 	initial begin 
-		//$timeformat(-9 , 2 , " ns", 10);
-		/*Testenv t_env;
-		t_env = new(UL_if, elec_if, config_if);*/
+		
 		Test test;
 		test = new (UL_if, elec_if, config_if);
 		reset();
-		//t_env.build();
-
-
-		test.run("normal_scenario_gen_3");
+		test.run("normal_scenario_gen_4");
 		
 	end
 
 
-	/*
-	initial begin
-		#(1000) elec_if.sbtx = 1;
-		#(1000) elec_if.sbtx = 0;
-	end
-	initial begin
-		#(15000) elec_if.sbtx = 1;
-		#(1000) elec_if.sbtx = 0;
-	end
-	initial begin
-		#(22000) elec_if.sbtx = 1;
-		#(2000) elec_if.sbtx = 0;
-	end
-	initial begin
-		#(36000) elec_if.sbtx = 1;
-		#(2000) elec_if.sbtx = 1;
-	end
-	*/
-
-	initial begin
-		//elec_if.sbtx = 0;
-		//#(500000000 + tConnectRx - 1000000000) elec_if.sbtx = 1;
-		//#(500000000 + tConnectRx) elec_if.sbtx = 1;
-		/*
-		//Testing while the DUT is Host router
-		#(500000000 + tConnectRx) elec_if.sbtx = 1;
-		#(tConnectRx) elec_if.sbtx = 0;
-		#(500000000 + tConnectRx) elec_if.sbtx = 1;
-		*/
-		
-		//#(2000) elec_if.sbtx = 1;
-	end
+	
 
 
 endmodule : top

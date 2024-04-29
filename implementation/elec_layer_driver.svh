@@ -344,6 +344,7 @@
 									foreach (TS_Symbols.SLOS1_64_enc[i,j])
 									begin
 										@(negedge v_if.gen2_lane_clk);
+										v_if.data_incoming = 1'b1;
 										v_if.lane_0_rx = TS_Symbols.SLOS1_64_enc[i][j];		
 										v_if.lane_1_rx = TS_Symbols.SLOS1_64_enc[i][j];
 										$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_64_enc[i][j]);		
@@ -357,6 +358,7 @@
 									foreach (TS_Symbols.SLOS1_128_enc[i,j])
 									begin
 										@(negedge v_if.gen3_lane_clk);
+										v_if.data_incoming = 1'b1;
 										v_if.lane_0_rx = TS_Symbols.SLOS1_128_enc[i][j];		
 										v_if.lane_1_rx = TS_Symbols.SLOS1_128_enc[i][j];	
 										//$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_128_enc[i][j]);		
@@ -480,7 +482,7 @@
 								lane_bonding_target = 3'b001;
 								///////////////////////////////////
 
-
+													
 								TS2_GEN_2_3_lane0 = {5'b0, lane_bonding_target, lane_number_0, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS2, SCR};
 								TS2_GEN_2_3_lane1 = {5'b0, lane_bonding_target, lane_number_1, 16'b0, 3'b0, lane_bonding_target, 10'b0, TSID_TS2, SCR};
 

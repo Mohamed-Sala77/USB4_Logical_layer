@@ -35,7 +35,7 @@ module control_fsm
   input  wire        tgen4_ts1_timeout,
   input  wire        tgen4_ts2_timeout, 
   input  wire        trans_sent, 
-  input  wire        new_sym, 
+  input  wire        new_sym,
   output reg  [2:0]  trans_sel,
   output reg         disconnect_sbtx, //send zeros in sbtx to complete disconnection
   output reg         fsm_disabled, //indicating fsm is DISABLED
@@ -51,7 +51,8 @@ module control_fsm
   output reg  [7:0]  s_data_o,
   output reg  [7:0]  s_address_o,
   output reg         s_read_o,
-  output reg         s_write_o
+  output reg         s_write_o,
+  output wire        cl0_s
 );
 
 localparam DISABLED              = 'b0000, //DISABLED state
@@ -94,7 +95,6 @@ reg [1:0]  gen_speed_reg,
 
 reg        is_usb4,
            c_address_sent_flag,
-	       c_data_received_flag,
 	       AT_req_trans_send_flag,
 		   AT_req_trans_sent_flag;
 
@@ -251,7 +251,7 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_SLOS2;
         else 
 		  ns = TRAINING_GEN2_3_SLOS1; 
@@ -265,7 +265,7 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (os_sent_cnt==2 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS1;
         else 
 		  ns = TRAINING_GEN2_3_SLOS2; 
@@ -279,9 +279,9 @@ always @(*)
 		  ns = CLD_DET_DEVICE;
 		else if (ttraining_error_timeout)
 		  ns = CLD_PARAMETERS_1;
-        else if (gen_speed==GEN2 && os_sent_cnt==32 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (gen_speed==GEN2 && os_sent_cnt==32 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS2;
-        else if (gen_speed==GEN3 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2) 
+        else if (gen_speed==GEN3 && os_sent_cnt==16 && os_rec_cnt_l0==2 && os_rec_cnt_l1==2 && new_sym) 
 		  ns = TRAINING_GEN2_3_TS2;
         else 
 		  ns = TRAINING_GEN2_3_TS1; 
@@ -328,8 +328,7 @@ always @ (posedge fsm_clk or negedge reset_n)
         c_address <= 'h0;
         c_read <= 0;   
         c_write <= 0;   
-        c_address_sent_flag <= 0;
-        c_data_received_flag <= 0;		
+        c_address_sent_flag <= 0;		
 	    os_sent_cnt <= 'h0;
         os_rec_cnt_l0 <= 0;
         os_rec_cnt_l1 <= 0;
@@ -348,6 +347,7 @@ always @ (posedge fsm_clk or negedge reset_n)
         fsm_training <= 0;
         ts1_gen4_s <= 0;
         ts2_gen4_s <= 0;
+		c_data_out <= 'h0;
 		
         case (cs)
         DISABLED : 
@@ -357,8 +357,7 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address <= 'h0;
             c_read <= 0;	
             c_write <= 0;	
-            c_address_sent_flag <= 0;
-            c_data_received_flag <= 0;			
+            c_address_sent_flag <= 0;		
 	        os_sent_cnt <= 'h0;
             os_rec_cnt_l0 <= 0;
             os_rec_cnt_l1 <= 0;
@@ -382,18 +381,16 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns != CLD_CABLE_PROP)
 			  begin
 			    c_address_sent_flag <= 0;
-				c_data_received_flag <= 0;
 				c_read <= 0;
 			  end
 			else
 			  begin
                 c_address_sent_flag <= 1; //raised after entering this state by 1 clk cycle indicating address reached the cng spaces
-                c_data_received_flag <= c_address_sent_flag; //if address is sent --> data rec next clock cycle
-				c_read <= 1; //read
+				c_read <= !c_address_sent_flag; //read
 			  end
 			  
             is_usb4 <= (c_data_in[7:0] == 'h40);
-			if(c_data_in[21] == 1)
+			if(c_data_in[21] == 1) 
 			  cable_gen <= GEN4;
 			else if(c_data_in[20] == 1)
 			  cable_gen <= GEN3;
@@ -457,11 +454,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 	        if (ns == TRAINING_GEN4_TS1)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h4)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==1)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h4)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==1)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -480,11 +477,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN4_TS2)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h5)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==1)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h5)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==1)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -502,11 +499,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN4_TS3)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h6)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==1)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h6)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==1)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -524,11 +521,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN4_TS4)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h7)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==1)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h7)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==1)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -546,11 +543,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN2_3_SLOS1)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==2)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h0)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==2)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h0)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==2)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -568,11 +565,11 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN2_3_SLOS2)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  os_sent_cnt <= (os_sent_cnt==2)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h1)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==2)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h1)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==2)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -590,11 +587,14 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN2_3_TS1)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  if(gen_speed==GEN3)
+				    os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
+				  else
+				    os_sent_cnt <= (os_sent_cnt==32)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h2)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==2)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h2)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==2)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -612,11 +612,14 @@ always @ (posedge fsm_clk or negedge reset_n)
 			if (ns == TRAINING_GEN2_3_TS2)
 			  begin
 				if (os_sent)
-				  os_sent_cnt <= os_sent_cnt + 1;
+				  if(gen_speed==GEN3)
+				    os_sent_cnt <= (os_sent_cnt==8)? os_sent_cnt : os_sent_cnt + 1;
+				  else
+				    os_sent_cnt <= (os_sent_cnt==16)? os_sent_cnt : os_sent_cnt + 1;
 				if (os_in_l0 == 'h3)
-				  os_rec_cnt_l0 <= os_rec_cnt_l0 + 1;
+				  os_rec_cnt_l0 <= (os_rec_cnt_l0==2)? os_rec_cnt_l0 : os_rec_cnt_l0 + 1;
 				if (os_in_l1 == 'h3)
-				  os_rec_cnt_l1 <= os_rec_cnt_l1 + 1;
+				  os_rec_cnt_l1 <= (os_rec_cnt_l1==2)? os_rec_cnt_l1 : os_rec_cnt_l1 + 1;
 			  end
 			else 
 			  begin
@@ -638,8 +641,7 @@ always @ (posedge fsm_clk or negedge reset_n)
             c_address <= 'h0;
             c_read <= 0;	
             c_write <= 0;	
-            c_address_sent_flag <= 0;
-            c_data_received_flag <= 0;			
+            c_address_sent_flag <= 0;		
 	        os_sent_cnt <= 'h0;
             os_rec_cnt_l0 <= 0;
             os_rec_cnt_l1 <= 0;
@@ -650,7 +652,8 @@ always @ (posedge fsm_clk or negedge reset_n)
         endcase
       end
   end
- 
+
+assign cl0_s = (cs == CL0); 
 
 ////////////////////////////// Transactions ////////////////////////////////////
 always @ (posedge fsm_clk or negedge reset_n)

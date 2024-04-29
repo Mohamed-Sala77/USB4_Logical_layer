@@ -54,9 +54,6 @@ reg [3:0] max_byte_num;
 reg flag;
 
 
-reg [3:0] sync_bits;
-
-assign sync_bits = mem_0 [16];
 
 
 
@@ -134,14 +131,14 @@ assign sync_bits = mem_0 [16];
                 mem_0 [16] <= lane_0_rx_enc[1 : 0];
                 
                 
-                mem_1 [0] <= lane_0_rx_enc[9 : 2];
-                mem_1 [1] <= lane_0_rx_enc[17 : 10];
-                mem_1 [2] <= lane_0_rx_enc[25 : 18];
-                mem_1 [3] <= lane_0_rx_enc[33 : 26];
-                mem_1 [4] <= lane_0_rx_enc[41 : 34];
-                mem_1 [5] <= lane_0_rx_enc[49 : 42];
-                mem_1 [6] <= lane_0_rx_enc[57 : 50];
-                mem_1 [7] <= lane_0_rx_enc[65 : 58];
+                mem_1 [0] <= lane_1_rx_enc[9 : 2];
+                mem_1 [1] <= lane_1_rx_enc[17 : 10];
+                mem_1 [2] <= lane_1_rx_enc[25 : 18];
+                mem_1 [3] <= lane_1_rx_enc[33 : 26];
+                mem_1 [4] <= lane_1_rx_enc[41 : 34];
+                mem_1 [5] <= lane_1_rx_enc[49 : 42];
+                mem_1 [6] <= lane_1_rx_enc[57 : 50];
+                mem_1 [7] <= lane_1_rx_enc[65 : 58];
                 mem_1 [16] <= lane_1_rx_enc[1 : 0];
                 
 				
@@ -151,23 +148,23 @@ assign sync_bits = mem_0 [16];
 
 			  	GEN3: begin 
 
-			  	mem_0 [0] <= lane_1_rx_enc[11 : 4];
-				mem_0 [1] <= lane_1_rx_enc[19 : 12];
-				mem_0 [2] <= lane_1_rx_enc[27 : 20];
-				mem_0 [3] <= lane_1_rx_enc[35 : 28];
-				mem_0 [4] <= lane_1_rx_enc[43 : 36];
-				mem_0 [5] <= lane_1_rx_enc[51 : 44];
-				mem_0 [6] <= lane_1_rx_enc[59 : 52];
-				mem_0 [7] <= lane_1_rx_enc[67 : 60];
-				mem_0 [8] <= lane_1_rx_enc[75 : 68];
-				mem_0 [9] <= lane_1_rx_enc[83 : 76];
-				mem_0 [10] <= lane_1_rx_enc[91 : 84];
-				mem_0 [11] <= lane_1_rx_enc[99 : 92];
-				mem_0 [12] <= lane_1_rx_enc[107 : 100];
-				mem_0 [13] <= lane_1_rx_enc[115 : 108];
-				mem_0 [14] <= lane_1_rx_enc[123 : 116];
-				mem_0 [15] <= lane_1_rx_enc[131 : 124];
-				mem_0 [16] <= lane_1_rx_enc[3 : 0];
+			  	mem_0 [0] <= lane_0_rx_enc[11 : 4];
+				mem_0 [1] <= lane_0_rx_enc[19 : 12];
+				mem_0 [2] <= lane_0_rx_enc[27 : 20];
+				mem_0 [3] <= lane_0_rx_enc[35 : 28];
+				mem_0 [4] <= lane_0_rx_enc[43 : 36];
+				mem_0 [5] <= lane_0_rx_enc[51 : 44];
+				mem_0 [6] <= lane_0_rx_enc[59 : 52];
+				mem_0 [7] <= lane_0_rx_enc[67 : 60];
+				mem_0 [8] <= lane_0_rx_enc[75 : 68];
+				mem_0 [9] <= lane_0_rx_enc[83 : 76];
+				mem_0 [10] <= lane_0_rx_enc[91 : 84];
+				mem_0 [11] <= lane_0_rx_enc[99 : 92];
+				mem_0 [12] <= lane_0_rx_enc[107 : 100];
+				mem_0 [13] <= lane_0_rx_enc[115 : 108];
+				mem_0 [14] <= lane_0_rx_enc[123 : 116];
+				mem_0 [15] <= lane_0_rx_enc[131 : 124];
+				mem_0 [16] <= lane_0_rx_enc[3 : 0];
 
 
 			  	mem_1 [0] <= lane_1_rx_enc[11 : 4];
@@ -237,7 +234,7 @@ assign sync_bits = mem_0 [16];
 
 				GEN2: begin 
 					
-					case (sync_bits [1:0])
+					case (mem_0[16][1:0])
 
 							'b01: begin 
 								data_os <= 0;
@@ -255,7 +252,7 @@ assign sync_bits = mem_0 [16];
 
 				GEN3: begin 
 
-						case (sync_bits)
+						case (mem_0[16][3:0])
 
 							'b0101: begin 
 								data_os <= 0;
