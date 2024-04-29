@@ -147,7 +147,7 @@ always @* begin
                 sbtx_sel_reg = 1'b0;
                 disconnected_s_reg =1'b0; */
 			
-		end else if (trans_sel ==2) begin // If trans_sel is 2
+		end else if (trans_sel_pulse ==2) begin // If trans_sel is 2
                 ns = DLE1;
                 trans_reg = {1'b1, DLE_SYMBOL, 1'b0};
                 crc_en_reg = 1'b0;
@@ -155,7 +155,7 @@ always @* begin
                 trans_state_reg = START;
                 disconnected_s_reg =1'b0;
                 
-		end else if (trans_sel == 3) begin // If trans_sel is 3
+		end else if (trans_sel_pulse == 3) begin // If trans_sel is 3
                 ns = DLE1;
                 trans_reg = {1'b1, DLE_SYMBOL, 1'b0};
                 crc_en_reg = 1'b0;
@@ -163,7 +163,7 @@ always @* begin
                 trans_state_reg = START;
                 disconnected_s_reg =1'b0;
                 
-		end else if (trans_sel == 4) begin // If trans_sel is 4
+		end else if (trans_sel_pulse == 4) begin // If trans_sel is 4
                 ns = DLE1;
                 trans_reg = {1'b1, DLE_SYMBOL, 1'b0};
                 crc_en_reg = 1'b0;
@@ -344,7 +344,7 @@ always @* begin
                     crc_en_reg = 1'b0; // Disable CRC
                     sbtx_sel_reg = 1'b0; // Set sbtx_sel_reg to 0
                     disconnected_s_reg =1'b0;
-		    end else if (trans_sel == 3) begin // If symbol_count is 9 and trans_sel is 3
+		    end else if (trans_sel_pulse == 3) begin // If symbol_count is 9 and trans_sel is 3
                     ns = ETX; // Transition to ETX state
                     trans_reg = {1'b1, ETX_SYMBOL, 1'b0}; // Set trans_reg output to ETX symbol
                     crc_en_reg = 1'b0; // Disable CRC
@@ -357,7 +357,7 @@ always @* begin
 		    
         ETX: begin
             if (symbol_count == 9) begin
-                if (trans_sel_pulse == 3'b010 || trans_sel == 3'b011 || trans_sel == 3'b100) begin // If symbol_count is 9 and trans_sel is 2, 3, or 4
+		    if (trans_sel_pulse == 2 || trans_sel_pulse == 3 ) begin // If symbol_count is 9 and trans_sel is 2, 3, or 4
                     ns = IDLE; // Transition to IDLE state
                     trans_reg = 10'b1111111111; // Set trans_reg output to all ones
                     crc_en_reg = 1'b0; // Disable CRC
