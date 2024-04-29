@@ -14,12 +14,12 @@ class config_monitor;
     function new(virtual config_space_if cfg_if, mailbox #(config_transaction) cfg_mbox);
         this.cfg_if = cfg_if;
         this.cfg_mbox = cfg_mbox;
-        cfg_trans = new();
     endfunction
 
     // Task to monitor the config space interface and send transactions
     task run();
         forever begin
+            cfg_trans = new();
             // Wait for the negative edge of the gen_speed signal
            @(negedge cfg_if.gen4_fsm_clk);    //* in our design we work with gen4 only here
 

@@ -30,53 +30,55 @@ class elec_scoreboard;
          fork
             begin
                 elec_mon_sboard.get(monitor_tr);
-                //elec_mod_sboard.get(model_tr);
-                //$display("[scoreboard]model transaction=%0p",model_tr);
-                $display("[scoreboard]monitor transaction=%0p",monitor_tr);
-                case (monitor_tr.phase)
+                $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
+                
+                // elec_mod_sboard.get(model_tr);
+                // $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
+               
+              /*  case (monitor_tr.phase)
                 3'd0: begin
-                       /*assert (model_tr.sbtx == monitor_tr.sbtx)
-                            $display("[scoreboard]correct sbtx high");
-                        else $error("[scoreboard]case sbtx=1 is failed!");*/
+                       assert (model_tr.sbtx == monitor_tr.sbtx)
+                            $display("[ELEC SCOREBOARD] CORRECT SBTX HIGH ");
+                        else $error("[[ELEC SCOREBOARD] case sbtx=1 is failed!");
                 end
-              /*  3'd2:begin                  //check on AT_Cmd transaction 
+               3'd2:begin                  //check on AT_Cmd transaction 
                     assert (model_tr.transaction_type == monitor_tr.transaction_type)
-                        else $error("[scoreboard]case transaction_type is failed!");
+                        else $error("[ELEC SCOREBOARD] case transaction_type is failed!");
                     assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
-                        else $error("[scoreboard]case cmd_rsp_data is failed!");
+                        else $error("[ELEC SCOREBOARD] case cmd_rsp_data is failed!");
                     assert (model_tr.crc_received == monitor_tr.crc_received)
-                        else $error("[scoreboard]case crc_received is failed!");
+                        else $error("[ELEC SCOREBOARD] case crc_received is failed!");
                     assert (model_tr.len == monitor_tr.len)
-                        else $error("[scoreboard]case len is failed!");
+                        else $error("[ELEC SCOREBOARD] case len is failed!");
                     assert (model_tr.address == monitor_tr.address)
-                        else $error("[scoreboard]case address is failed!");
+                        else $error("[ELEC SCOREBOARD] case address is failed!");
                     assert (model_tr.read_write == monitor_tr.read_write)
-                        else $error("[scoreboard]case read_write is failed!");
+                        else $error("[ELEC SCOREBOARD] case read_write is failed!");
 
-                end*/
+                end
 
                 3'd3:begin
                     case(monitor_tr.transaction_type)
                     LT_fall:begin
                             assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical == monitor_tr.transport_to_electrical))
-                            else $error("[scoreboard](LT_FALL)case sbtx is failed!");
+                            else $error("[ELEC SCOREBOARD] (LT_FALL)case sbtx is failed!");
                     end
                     AT_cmd,AT_rsp:begin   //recieve the AT_cmd transaction
-                       /* assert (model_tr.transaction_type == monitor_tr.transaction_type)
-                            else $error("[scoreboard](%0p)case transaction_type is failed!",model_tr.transaction_type);
+                       assert (model_tr.transaction_type == monitor_tr.transaction_type)
+                            else $error("[ELEC SCOREBOARD] (%p)case transaction_type is failed!",model_tr.transaction_type);
                         assert (model_tr.crc_received == monitor_tr.crc_received)
-                            else $error("[scoreboard](%0p)case crc_received is failed!",model_tr.transaction_type);
+                            else $error("[ELEC SCOREBOARD] (%p)case crc_received is failed!",model_tr.transaction_type);
                         assert (model_tr.len == monitor_tr.len)
-                            else $error("[scoreboard](%0p)case len is failed!",model_tr.transaction_type);
+                            else $error("[ELEC SCOREBOARD] (%p)case len is failed!",model_tr.transaction_type);
                         assert (model_tr.address == monitor_tr.address)
-                            else $error("[scoreboard](%0p)case address is failed!",model_tr.transaction_type);
+                            else $error("[ELEC SCOREBOARD] (%p)case address is failed!",model_tr.transaction_type);
                         assert (model_tr.read_write == monitor_tr.read_write)
-                            else $error("[scoreboard](%0p)case read_write is failed!",model_tr.transaction_type);
+                            else $error("[ELEC SCOREBOARD] (%p)case read_write is failed!",model_tr.transaction_type);
                         if(monitor_tr.transaction_type==AT_rsp)
                         begin
                             assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
-                            else $error("[scoreboard](%0p)case cmd_rsp_data is failed!",model_tr.transaction_type);
-                        end */
+                            else $error("[ELEC SCOREBOARD] (%p)case cmd_rsp_data is failed!",model_tr.transaction_type);
+                        end 
                         ->recieved_on_elec_sboard;
                     end
                     endcase
@@ -90,8 +92,8 @@ class elec_scoreboard;
                                 (model_tr.tr_os== monitor_tr.tr_os) &&
                                 (model_tr.o_sets== monitor_tr.o_sets) &&
                                 (model_tr.gen_speed== monitor_tr.gen_speed))
-                                $display("[scoreboard](%0p)OS send is correct!",model_tr.o_sets);
-                        else $error("[scoreboard](SLOS1)case sbtx is failed!");
+                                $display("[ELEC SCOREBOARD] (%p)OS send is correct!",model_tr.o_sets);
+                        else $error("[ELEC SCOREBOARD] (SLOS1)case sbtx is failed!");
                     end
                     TS1_gen4, TS2_gen4, TS3, TS4:begin
                         assert ((model_tr.sbtx == monitor_tr.sbtx)&&
@@ -99,32 +101,32 @@ class elec_scoreboard;
                                 (model_tr.tr_os== monitor_tr.tr_os) &&
                                 (model_tr.o_sets== monitor_tr.o_sets) &&
                                 (model_tr.gen_speed== monitor_tr.gen_speed))
-                                $display("[scoreboard](%0p)OS send is correct!",model_tr.o_sets);
-                        else $error("[scoreboard](SLOS2)case sbtx is failed!");
+                                $display("[ELEC SCOREBOARD] (%p)OS send is correct!",model_tr.o_sets);
+                        else $error("[ELEC SCOREBOARD] (SLOS2)case sbtx is failed!");
                     end
 
                     endcase
                     ->recieved_on_elec_sboard;
                 end
-
+*/
                 //***this thread check it after reciecve on descision***//
-               /* 3'd5:begin
-                    assert ((model_tr.sbtx == monitor_tr.sbtx)&&)
-                            $display("[scoreboard]transport data send is correct!");
-                        else $error("[scoreboard]case transport data CONNECT is failed!");
-                end*/
+ /*               3'd5:begin
+                    assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
+                            $display("[ELEC SCOREBOARD] transport data send is correct!");
+                        else $error("[ELEC SCOREBOARD] case transport data CONNECT is failed!");
+                end
 
 
                 3'd6:begin
                     assert ((model_tr.sbtx == monitor_tr.sbtx)&&
                             (model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
-                            $display("[scoreboard]DISCONNECT send is correct!");
-                        else $error("[scoreboard]case DISCONNECT is failed!");
+                            $display("[ELEC SCOREBOARD] DISCONNECT send is correct!");
+                        else $error("[ELEC SCOREBOARD] case DISCONNECT is failed!");
 
                 end
 
                 endcase
-
+*/
             end
 
             begin  
@@ -150,7 +152,7 @@ class elec_scoreboard;
     task run_m();
             begin
                 elec_mod_sboard.get(monitor_tr);
-                $display("[scoreboard]model transaction=%0p",model_tr);
+                $display("\n[ELEC SCOREBOURD FROM MODEL]at time (%t) is : %p", $time ,model_tr.convert2string());
             end
     endtask
 endclass

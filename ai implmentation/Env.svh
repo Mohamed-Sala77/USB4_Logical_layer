@@ -67,7 +67,7 @@ class env;
         function new(virtual electrical_layer_if ELEC_vif ,virtual config_space_if cfg_if, virtual upper_layer_if up_if);
 
         //--------Initialize the interfaces -----------//
-            this.ELEC_vif = ELEC_vif;  
+            //this.ELEC_vif = ELEC_vif;  
 
         //--------Initialize the mailboxes -----------//
             elec_gen_2_driver = new();
@@ -150,11 +150,11 @@ class env;
 
 
         // for test the dut coming data only
-        task test_dut();
-            fork
+     //   task test_dut();
+       //     fork
 
             //**********Run the components**********//
-                //ELEC_components
+          /*      //ELEC_components
                 elec_agent.run();
                 elec_sboard.run();
 
@@ -176,7 +176,7 @@ class env;
                 //model.run_phase();
                 
             join
-        endtask
+        endtask*/
 
 
         // for compare the performance of the dut with the model

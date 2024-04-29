@@ -148,7 +148,7 @@ class elec_ref_AI;
 
     // Print the output
     //$display("CRC ALI: %b", elec_layer_inst.crc_received);
-    //$display("CRC ALI: %h", elec_layer_inst.crc_received);
+    //$display("CRC ALI: %d", elec_layer_inst.crc_received);
   endtask
 
 

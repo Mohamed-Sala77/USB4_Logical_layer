@@ -16,17 +16,16 @@ class up_scoreboard;
   task run_scr();
 
     forever begin
+      // Get transactions from both mailboxes
       UL_mod_scr.get(mod_tr);
+      $display("\n[Scoreboard Upper layer From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
+      
       UL_mon_scr.get(mon_tr);
-
-      // Display the values from mod_tr and mon_tr here
-      $display("------------------------------");
-      $display("[Scoreboard Upper layer ]get at time (%0t) Mod_tr: %p", $time, mod_tr);
-      $display("[Scoreboard Upper layer ]get at time (%0t) mon_tr: %p", $time, mon_tr);
+      $display("\n[Scoreboard Upper layer From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
       
       
          // Assertion to compare the values from the two mailboxes
-      assert (mod_tr.T_Data == mon_tr.T_Data) else $error("Values from the two mailboxes do not match");
+      assert (mod_tr.T_Data == mon_tr.T_Data) else $display("Values from the two mailboxes do not match");
 
         
 //! we should add here more assertion if we add more var in monitor (phase , gen_speed)

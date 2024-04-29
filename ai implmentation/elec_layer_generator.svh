@@ -61,7 +61,7 @@ class electrical_layer_generator;
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
-    $display("[ELEC GENERATOR] : SENT sbrx is high SUCCESSFULLY");
+    $display("[ELEC GENERATOR] : SENDING SBRX  high IS SUCCESSFUL");
    endtask
 
 
@@ -80,7 +80,7 @@ class electrical_layer_generator;
           transaction.address = address;
           transaction.len = len;
           transaction.cmd_rsp_data = cmd_rsp_data;
-          $display("[ELEC GENERATOR] sending [%0p] Transaction", trans_type);
+          $display("[ELEC GENERATOR] sending [%p] Transaction", trans_type);
         end
         LT_fall: begin
           //transaction.sbrx = 0;  knew it from trans_type
@@ -97,9 +97,9 @@ class electrical_layer_generator;
 
      //task to send ordered sets
     task electrical_layer_generator::Send_OS(input OS_type OS, input GEN generation);
-      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%0p] ", OS);
+      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%p] ", OS);
       @correct_OS; // Blocking with the correct_OS event "this event on sboard"
-      $display("[ELEC GENERATOR] correct recieved order_sets from type [%0p] ", OS);
+      $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
       
       repeat (1) begin        
         transaction = new();                 // Instantiate a new transaction object
@@ -111,9 +111,9 @@ class electrical_layer_generator;
         elec_gen_drv.put(transaction);        // Sending transaction to the Driver
         elec_gen_mod.put(transaction);        // Sending transaction to the Reference model
          elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-        $display("[ELEC GENERATOR] SENDING [%0p]", OS);
+        $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
-        $display("[ELEC GENERATOR] [%0p] SENT SUCCESSFULLY ", OS);
+        $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
       end
     endtask
 
@@ -186,9 +186,9 @@ class electrical_layer_generator;
 
      //task to send ordered sets
     task electrical_layer_generator::Send_OS_m(input OS_type OS, input GEN generation);
-      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%0p] ", OS);
+      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%p] ", OS);
       @correct_OS; // Blocking with the correct_OS event "this event on sboard"
-      $display("[ELEC GENERATOR] correct recieved order_sets from type [%0p] ", OS);
+      $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
       
       repeat (1) begin        
         transaction = new();                 // Instantiate a new transaction object
@@ -199,7 +199,7 @@ class electrical_layer_generator;
 	    	transaction.phase ='d4;
         elec_gen_mod.put(transaction);        // Sending transaction to the Reference model
          elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-        $display("[ELEC GENERATOR] SENDING [%0p]", OS);
+        $display("[ELEC GENERATOR] SENDING [%p]", OS);
       end
     endtask
 
@@ -217,7 +217,7 @@ class electrical_layer_generator;
           transaction.address = address;
           transaction.len = len;
           transaction.cmd_rsp_data = cmd_rsp_data;
-          $display("[ELEC GENERATOR] sending [%0p] Transaction", trans_type);
+          $display("[ELEC GENERATOR] sending [%p] Transaction", trans_type);
         end
         LT_fall: begin
           //transaction.sbrx = 0;  knew it from trans_type

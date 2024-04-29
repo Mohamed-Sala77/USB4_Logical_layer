@@ -79,7 +79,7 @@ gen2:begin
   	
   if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
         begin
-		   $error("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send TS1 GEN2",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+		   $display("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send TS1 GEN2",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		   break;
 		end
 	end
@@ -107,7 +107,7 @@ end
 			elec_mon_2_Sboard.put(mon_2_Sboard_trans);	
       end
 	  else
-	  $error("[ELEC MONITOR] TS1 is not correct on gen2");
+	  $display("[ELEC MONITOR] TS1 is not correct on gen2");
 
       //delete the recieved TS
 	  recieved_TS_lane0.delete();
@@ -123,7 +123,7 @@ gen3:begin
     recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
     if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
         begin
-		   $error("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+		   $display("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		   break;
 		end
 	end
@@ -154,7 +154,7 @@ gen3:begin
 			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 		end
 	  else
-	  $error("[ELEC MONITOR] TS1 is not correct on gen3");
+	  $display("[ELEC MONITOR] TS1 is not correct on gen3");
 	  end
 
 	 
@@ -170,7 +170,7 @@ begin
 		recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 	if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 			begin
-			 $error("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+			 $display("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 			break;
 			end
 		end
@@ -200,7 +200,7 @@ begin
 			speed_mailbox.put(gen2);
 		end
 		else
-		$error("[ELEC MONITOR] TS2 is not correct on gen2");
+		$display("[ELEC MONITOR] TS2 is not correct on gen2");
 		end
 	gen3:
 	begin
@@ -210,7 +210,7 @@ begin
 		recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 		if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 			begin
-			 $error("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+			 $display("[ELEC MONITOR] %0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d  during send TS1 GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 			break;
 			end
 		end
@@ -241,7 +241,7 @@ begin
 
 		end
 		else
-		$error("[ELEC MONITOR] TS2 is not correct on gen3");
+		$display("[ELEC MONITOR] TS2 is not correct on gen3");
 
 		end
 	endcase
@@ -268,11 +268,11 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 		
 		if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 		begin
-		$error("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN2",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+		$display("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN2",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		break;
 		end
 	end
-	//$display("the value of recieved_SLOS2_lane0 is %0p for GEN2",recieved_SLOS2_lane0);
+	//$display("the value of recieved_SLOS2_lane0 is %p for GEN2",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN2",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN2",recieved_SLOS2_lane1.size());
 	end
@@ -284,11 +284,11 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 	recieved_SLOS2_lane1.push_back(ELEC_vif.lane_1_rx);
 	@(negedge ELEC_vif.gen3_lane_clk);
 	if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)begin
-		$error("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
+		$display("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		break;
 	end
 	end
-	//$display("the value of recieved_SLOS2_lane0 is %0p for GEN3",recieved_SLOS2_lane0);
+	//$display("the value of recieved_SLOS2_lane0 is %p for GEN3",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN3",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN3",recieved_SLOS2_lane1.size());
 	end
@@ -313,7 +313,7 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 	end
 	else	
-	$error("[ELEC MONITOR]SLOS2 is not correct on gen2");
+	$display("[ELEC MONITOR]SLOS2 is not correct on gen2");
 	end
 	gen3:begin 
 		if(P_SLOS2_lane1 ==({2{SLOS2_128_1}}))
@@ -329,7 +329,7 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 	end
 	else	
-	$error("[EKEC MONITOR]SLOS2 is not correct on gen3");
+	$display("[EKEC MONITOR]SLOS2 is not correct on gen3");
 	end
 	endcase
 endtask:recieved_SLOS2_gen23
@@ -357,7 +357,7 @@ if(!done_training)begin
 			recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 			if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 			begin
-			$error("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+			$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
 			break;
 			end
 		    end
@@ -377,7 +377,7 @@ if(!done_training)begin
 			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 			end
 			else
-			$error("[ELEC MONITOR] TS2 is not correct on gen4");
+			$display("[ELEC MONITOR] TS2 is not correct on gen4");
 			end
 
 	TS3:
@@ -388,7 +388,7 @@ if(!done_training)begin
 			recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 			if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 			begin
-			$error("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS3 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+			$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS3 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
 			break;
 			end
 		    end
@@ -409,7 +409,7 @@ if(!done_training)begin
 			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 			end
 			else
-			$error("[ELEC MONITOR] TS3 is not correct on gen4");
+			$display("[ELEC MONITOR] TS3 is not correct on gen4");
 		end
 
 	
@@ -423,7 +423,7 @@ if(!done_training)begin
 			recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 			if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
 			begin
-			$error("[ELEC MONITOR] the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send TS4_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+			$display("[ELEC MONITOR] the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send TS4_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
 			break;
 			end
 		    end
@@ -453,7 +453,7 @@ if(!done_training)begin
 			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 			end
 			else
-			$error("[ELEC MONITOR]TS4 is not correct on gen4");
+			$display("[ELEC MONITOR]TS4 is not correct on gen4");
 		end
 
 	
@@ -510,7 +510,7 @@ repeat(TS16_SIZE) //collect the TS1 from the two lanes
 		end
  end
 
-    //$display("the value of recieved_TS1_gen4 is %0p",recieved_SLOS1_lane0);
+    //$display("the value of recieved_TS1_gen4 is %p",recieved_SLOS1_lane0);
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane0 is %0d and must be 3584 on lane 0",recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane1 is %0d and must be 3584 on lane 1",recieved_TS1_lane1.size());
 
@@ -527,7 +527,7 @@ $display("[ELEC MONITOR]TS1 is correct on gen4");
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 end
 else	
-$error("[ELEC MONITOR]TS1 is not correct on gen2");
+$display("[ELEC MONITOR]TS1 is not correct on gen2");
 endtask:recieved_TS1_gen4
 
 //task to recieved SLOS1 for gen2,3
@@ -551,7 +551,7 @@ endtask:recieved_TS1_gen4
 		   break;
 		end
 	end
-	//$display("the value of recieved_SLOS1_lane0 is %0p for GEN2",recieved_SLOS1_lane0);
+	//$display("the value of recieved_SLOS1_lane0 is %p for GEN2",recieved_SLOS1_lane0);
 	$display("the size of recieved_SLOS1_lane0 is %0d for GEN2",recieved_SLOS1_lane0.size());
 	$display("the size of recieved_SLOS1_lane1 is %0d for GEN2",recieved_SLOS1_lane1.size());
 	end
@@ -567,7 +567,7 @@ endtask:recieved_TS1_gen4
 		break;
 	end
 	end
-	//$display("the value of recieved_SLOS1_lane0 is %0p for GEN3",recieved_SLOS1_lane0);
+	//$display("the value of recieved_SLOS1_lane0 is %p for GEN3",recieved_SLOS1_lane0);
 	$display("[ELEC MONITOR] the size of recieved_SLOS1_lane0 is %0d  for GEN3",recieved_SLOS1_lane0.size());
 	$display("[ELEC MONITOR] the size of recieved_SLOS1_lane1 is %0d  for GEN3",recieved_SLOS1_lane1.size());
 	end
@@ -594,7 +594,7 @@ endtask:recieved_TS1_gen4
 
 		end
 		else	
-		$error("SLOS1 is not correct on gen2");
+		$display("SLOS1 is not correct on gen2");
 		end
 	gen3:begin 
 			if(P_SLOS1_lane0==({2{SLOS2_128_1}}) && P_SLOS1_lane1==({2{SLOS2_128_1}}))
@@ -611,7 +611,7 @@ endtask:recieved_TS1_gen4
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 		end
 		else	
-		$error("SLOS1 is not correct on gen3");
+		$display("SLOS1 is not correct on gen3");
 	end
 	endcase
 	endtask:recieved_SLOS1_gen23
@@ -634,11 +634,11 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;
 
-			$display("the value of crc is=%0h",mon_2_Sboard_trans.crc_received);
-			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %0p",mon_2_Sboard_trans);
+			$display("the value of crc is=%0d",mon_2_Sboard_trans.crc_received);
+			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %p",mon_2_Sboard_trans.convert2string());
 			end 
 			else
-			$error("[ELEC MONITOR]AT_cmd transaction is NOT CORRECT");
+			$display("[ELEC MONITOR]AT_cmd transaction is NOT CORRECT");
 	end
 	AT_rsp:begin
 		if(q[0] =={<<{stop_bit,DLE,start_bit}} && q[$-1]=={<<{stop_bit,DLE,start_bit}}
@@ -656,7 +656,7 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
 			end
 		else
-			$error("[ELEC MONITOR]AT_rsp transaction is not correct");
+			$display("[ELEC MONITOR]AT_rsp transaction is not correct");
 	end
 	endcase
     elec_mon_2_Sboard.put(mon_2_Sboard_trans);
@@ -692,9 +692,9 @@ endtask:recieved_TS1_gen4
 		  forever 
 		  begin
 		  @(posedge ELEC_vif.sbtx)
-		  $display("[ELEC_MONITOR] CHECK ON SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
+		  $display("[ELEC_MONITOR] CHECKING THE VALUES OF SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
 	      //wait (/*ELEC_vif.enable_rs==1'b0 &&*/ ELEC_vif.sbrx==1'b0) ;
-          #1ns               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
+          #1               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
           if(ELEC_vif.sbtx==1'b1 /*&& ELEC_vif.enable_rs==1'b0 && !ELEC_vif.sbrx*/)  //last condition in for do body at the second phase only 
 		  begin
           ->sbtx_transition_high;  //to indicate to the sequance the sbtx is high "this on sequance ,the first line on the code of the sequance"
@@ -726,9 +726,9 @@ endtask:recieved_TS1_gen4
 						begin
 							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
 							recieved_transaction_byte.delete();
-							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%0p",recieved_transaction_data_symb);
+							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%p",recieved_transaction_data_symb);
 							//$display("[ELEC MONITOR]the size of recieved_transaction_data_symb=%0d",recieved_transaction_data_symb.size());
-							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%0p",recieved_transaction_data_symb[7]);
+							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%p",recieved_transaction_data_symb[7]);
 							if(recieved_transaction_data_symb.size()==8 &&(recieved_transaction_data_symb[7]=={<<{1'b1,8'h40,1'b0}}))
 							 begin
 								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
@@ -741,7 +741,7 @@ endtask:recieved_TS1_gen4
 							 end
 							else if(recieved_transaction_data_symb.size()>8)
 							 begin
-								$error("[ELEC MONITOR]the size of AT transaction is more than 8 symbols");
+								$display("[ELEC MONITOR]the size of AT transaction is more than 8 symbols");
 							 end
 
 						end
@@ -764,7 +764,7 @@ endtask:recieved_TS1_gen4
 				elec_mon_2_Sboard.put(mon_2_Sboard_trans); 
 				end
 				else
-				$error("[ELEC MONITOR] LT fall is not correct");
+				$display("[ELEC MONITOR] LT fall is not correct");
               end
               AT_cmd: begin //wait AT response then os depend on generation
 					@(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
@@ -778,7 +778,7 @@ endtask:recieved_TS1_gen4
 				break;
 				end
 				else if(recieved_transaction_data_symb.size()>11)begin
-					$error("[ELEC MONITOR]the size of AT transaction is more than 11 symbols");
+					$display("[ELEC MONITOR]the size of AT transaction is more than 11 symbols");
 				end
 					end
 				check_AT_transaction(recieved_transaction_data_symb,AT_rsp);

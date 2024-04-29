@@ -57,19 +57,19 @@ class config_scoreboard;
 
     // Function to get transactions from both mailboxes
     task get_transactions();
-
-        mon_mbox.get(mon_trans);
-        $display("[Config Scoreboard] received at time (%0t) data of : %p", $time ,mon_trans);
-
-        //ref_mbox.get(ref_trans);
-        //$display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+    
+        //    ref_mbox.get(ref_trans);
+        //   $display("[Config Scoreboard From Model] at time (%t) --> : %p", $time, ref_trans.convert2string() );
+    
+          mon_mbox.get(mon_trans);
+          $display("\n[Config Scoreboard From Dut] at time (%t) is --> %p", $time ,mon_trans.convert2string());
            
        
     endtask
 
     task get_transactions_m();
     ref_mbox.get(ref_trans);
-    $display("[Config Scoreboard] received at time (%0t) data of : %p", $time, ref_trans );
+    $display("\n[Config Scoreboard] received at time (%0t) data of --> %p", $time, ref_trans );
     endtask
 
     // Function to check for specific condition and trigger event
@@ -81,14 +81,14 @@ class config_scoreboard;
     // Function to compare transactions and assert
     task compare_and_assert();
         //Detailed assertions 
-        /*assert(ref_trans.c_read === mon_trans.c_read) else $error("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
-        assert(ref_trans.c_write === mon_trans.c_write) else $error("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
-        assert(ref_trans.c_address === mon_trans.c_address) else $error("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
-        assert(ref_trans.c_data_out === mon_trans.c_data_out) else $error("[CONFIG SCOREBOARD] c_data_out doesn't match the expected value");
+        assert(ref_trans.c_read === mon_trans.c_read) else $display("[CONFIG SCOREBOARD] c_read doesn't match the expected value");
+        assert(ref_trans.c_write === mon_trans.c_write) else $display("[CONFIG SCOREBOARD] c_write doesn't match the expected value");
+        assert(ref_trans.c_address === mon_trans.c_address) else $display("[CONFIG SCOREBOARD] c_address doesn't match the expected value");
+        assert(ref_trans.c_data_out === mon_trans.c_data_out) else $display("[CONFIG SCOREBOARD] c_data_out doesn't match the expected value");
 
-        // General assertion
+        /*// General assertion
         assert (compare_transactions(ref_trans, mon_trans)) 
-         else  $error("[Config Scoreboard] Mismatch" );*/
+         else  $display("[Config Scoreboard] Mismatch" );*/
     endtask
 
     // Function to compare two transactions

@@ -10,15 +10,15 @@ class up_driver;
     upper_layer_tr tr;
 
     // Mailbox for communication between monitor and scoreboard
-    mailbox #(upper_layer_tr) DriverGeneratorMailbox;
+    mailbox #(upper_layer_tr) drv_gen_mbx;
 
     // Event to signal when driving is done
     event driveDone;
 
     // Constructor
-    function new(virtual upper_layer_if vif, mailbox #(upper_layer_tr) DriverGeneratorMailbox, event doneEvent);
+    function new(virtual upper_layer_if vif, mailbox #(upper_layer_tr) drv_gen_mbx, event doneEvent);
         this.vif = vif;
-        this.DriverGeneratorMailbox = DriverGeneratorMailbox;
+        this.drv_gen_mbx = drv_gen_mbx;
         this.driveDone = doneEvent;
     endfunction
 
@@ -26,10 +26,10 @@ class up_driver;
     task run();
         forever begin
             // Get the transaction from the mailbox
-            DriverGeneratorMailbox.get(tr);
+            drv_gen_mbx.get(tr);
 
             // Wait for the next clock edge
-            @(posedge vif.clk);
+            @(negedge vif.clk);
 
             // If data is valid, drive the data and signal that driving is done
             if (/*vif.dataValidIn ==*/ 1) begin

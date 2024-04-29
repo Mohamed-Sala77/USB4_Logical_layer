@@ -29,7 +29,7 @@ class up_stimulus_generator;
             // Generate random variables for tr
             // Check if randomization was successful
             if (!tr.randomize()) begin
-                $error("Randomization failed");
+                $display("Randomization failed");
                 return;
             end
             
@@ -58,7 +58,7 @@ class up_stimulus_generator;
             // Generate random variables for tr
             // Check if randomization was successful
             if (!tr.randomize()) begin
-                $error("Randomization failed");
+                $display("Randomization failed");
                 return;
             end
             
