@@ -31,7 +31,8 @@ module logical_layer_no_scr
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
   output wire        enable_scr,
-  output wire        cl0_s
+  output wire        cl0_s,
+  output wire        transport_data_flag
 );
 
 
@@ -191,23 +192,24 @@ data_bus bus
 												     
 lane_distributer lane_dist                           
 (                                                    
-  .clk                     ( fsm_clk                 ),             
-  .rst                     ( rst                     ),                   
-  .enable_t                ( tx_lanes_on             ),           
-  .enable_r                ( enable_deskew           ),         
-  .data_os_i               ( data_os                 ),         
-  .data_os_o               ( data_os_bus             ),         
-  .d_sel                   ( d_sel                   ),         
-  .lane_0_tx_in            ( lane_0_tx_bus_dis       ), 
-  .lane_1_tx_in            ( lane_1_tx_bus_dis       ), 
-  .lane_0_rx_in            ( lane_0_rx_dis_enc       ), 
-  .lane_1_rx_in            ( lane_1_rx_dis_enc       ), 
-  .lane_0_tx_out           ( lane_0_tx_dis_enc       ), 
-  .lane_1_tx_out           ( lane_1_tx_dis_enc       ), 
-  .lane_0_rx_out           ( lane_0_rx_bus_dis       ),
-  .lane_1_rx_out           ( lane_1_rx_bus_dis       ),
-  .enable_enc              ( enable_enc              ),
-  .rx_lanes_on             ( rx_lanes_on             )
+  .clk                     ( fsm_clk                     ),             
+  .rst                     ( rst                         ),                   
+  .enable_t                ( tx_lanes_on                 ),           
+  .enable_r                ( enable_deskew               ),         
+  .data_os_i               ( data_os                     ),         
+  .data_os_o               ( data_os_bus                 ),         
+  .d_sel                   ( d_sel                       ),         
+  .lane_0_tx_in            ( lane_0_tx_bus_dis           ), 
+  .lane_1_tx_in            ( lane_1_tx_bus_dis           ), 
+  .lane_0_rx_in            ( lane_0_rx_dis_enc           ), 
+  .lane_1_rx_in            ( lane_1_rx_dis_enc           ), 
+  .lane_0_tx_out           ( lane_0_tx_dis_enc           ), 
+  .lane_1_tx_out           ( lane_1_tx_dis_enc           ), 
+  .lane_0_rx_out           ( lane_0_rx_bus_dis           ),
+  .lane_1_rx_out           ( lane_1_rx_bus_dis           ),
+  .enable_enc              ( enable_enc                  ),
+  .rx_lanes_on             ( rx_lanes_on                 ),
+  .transport_data_flag     ( transport_data_flag         )
 );
 
 encoding_block enc_block
