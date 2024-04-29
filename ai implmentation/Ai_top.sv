@@ -111,19 +111,17 @@ logical_layer_no_scr logical_layer (
 
 
 // TEST 
-	initial begin 
-		env enviro;
-		enviro = new(e_if, c_if ,u_if); 
-		reset();
+initial begin 
+    TEST test_instance;
+    test_instance = new(e_if, c_if ,u_if); 
+    reset();
 
-		//-------main test----------//
-		enviro.run();
+    //-------main test----------//
+    test_instance.run();
 
-
-		//-------for test model only ----------//
-	   //enviro.test_model();
-		
-	end
+    //-------for test model only ----------//
+    //test_instance.test_model();
+end
 
 
 

@@ -57,6 +57,9 @@
 //include the test environment classes
 `include "Env.svh"
 
+//include the test classes
+`include "TEST.sv"
+
 
 //include innterfaces
 `include "config_space_if.sv"

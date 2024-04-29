@@ -67,7 +67,7 @@ class env;
         function new(virtual electrical_layer_if ELEC_vif ,virtual config_space_if cfg_if, virtual upper_layer_if up_if);
 
         //--------Initialize the interfaces -----------//
-            this.ELEC_vif = ELEC_vif;  
+            //this.ELEC_vif = ELEC_vif;  
 
         //--------Initialize the mailboxes -----------//
             elec_gen_2_driver = new();
