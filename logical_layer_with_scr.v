@@ -31,7 +31,8 @@ module logical_layer_with_scr
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
   output wire        enable_rs,
-  output wire        cl0_s
+  output wire        cl0_s,
+  output wire        transport_data_flag
 );
 
 
@@ -212,7 +213,8 @@ lane_distributer lane_dist
   .lane_0_rx_out           ( lane_0_rx_bus_dis       ),
   .lane_1_rx_out           ( lane_1_rx_bus_dis       ),
   .enable_enc              ( enable_enc              ),
-  .rx_lanes_on             ( rx_lanes_on             )
+  .rx_lanes_on             ( rx_lanes_on             ),
+  .transport_data_flag     ( transport_data_flag     )
 );
 
 encoding_block enc_block
