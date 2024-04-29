@@ -20,7 +20,7 @@ constraint DISABLE{
 } 
 
 virtual function string convert2string();
-return $sformatf("\nTransaction:\tlane_disable = %0b   ,\tc_data_in = %0h   ,\tc_read = %0b   ,\tc_write = %0b   ,\tc_address = %0h   ,\tc_data_out = %0h   ,\tphase = %0d  \n\n", 
+return $sformatf("\nTransaction:\tlane_disable = %0b   ,\tc_data_in = %0d   ,\tc_read = %0b   ,\tc_write = %0b   ,\tc_address = %0d   ,\tc_data_out = %0d   ,\tphase = %0d  \n\n", 
 	lane_disable, c_data_in, c_read, c_write, c_address, c_data_out, phase);
 endfunction
 
