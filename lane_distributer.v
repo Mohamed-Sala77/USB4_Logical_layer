@@ -27,7 +27,8 @@ module lane_distributer
   output reg  [7:0] lane_1_rx_out, //data output to data bus
   output reg        enable_enc, //enable encoder next stage
   output reg        rx_lanes_on, //enable data bus rx side
-  output reg        data_os_o 
+  output reg        data_os_o, 
+  output reg        transport_data_flag 
 );
  
 reg flag1, flag2;
@@ -45,6 +46,7 @@ always@(posedge clk or negedge rst)
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 0;
 		counter1 <= 'h0;
+		transport_data_flag <= 1'b0;
 	  end
 	else if (!enable_r) 
       begin
@@ -54,6 +56,7 @@ always@(posedge clk or negedge rst)
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 0;
 		counter1 <= 'h0;
+		transport_data_flag <= 1'b0;
 	  end
 	else if (data_os_i == 0) //ordered sets received
       begin
@@ -63,6 +66,7 @@ always@(posedge clk or negedge rst)
 		lane_1_rx_out <= lane_1_rx_in;
 		rx_lanes_on <= 1;
 		counter1 <= 'h0;
+		transport_data_flag <= 1'b0;
 	  end
 	else //transport layer data received
 	  begin
@@ -72,6 +76,7 @@ always@(posedge clk or negedge rst)
 		lane_1_rx_out <= 'h0;
 		rx_lanes_on <= 1;
 		counter1 <= (counter1 == 'h3)? 'h0 : counter1 + 1;
+		transport_data_flag <= (counter1 == 'h2);
 	  end
   end
 
