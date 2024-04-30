@@ -79,13 +79,13 @@ reg disconnect_reg;
 
 typedef enum logic [2:0] {
 
-DISCONNECT='b000,
+DISCONNECT=3'b000,
 
-IDLE = 'b001,
-DLE1 = 'b010,
-AT = 'b011,
-LT = 'b100,
-DLE2 = 'b101
+IDLE = 3'b001,
+DLE1 = 3'b010,
+AT = 3'b011,
+LT = 3'b100,
+DLE2 = 3'b101
 
 } state;
 
@@ -115,7 +115,35 @@ reg [3:0] des_count;
 //registers to store the upcoming symbols in case of a success transmission
 
 
-reg [7:0] storing_symbols [72];
+reg [7:0] storing_symbols [10];
+
+reg [7:0] prevent_latches_0;
+reg [7:0] prevent_latches_1;
+reg [7:0] prevent_latches_2;
+reg [7:0] prevent_latches_3;
+reg [7:0] prevent_latches_4;
+reg [7:0] prevent_latches_5;
+reg [7:0] prevent_latches_6;
+reg [7:0] prevent_latches_7;
+reg [7:0] prevent_latches_8;
+reg [7:0] prevent_latches_9;
+
+
+
+always @(posedge sb_clk) begin 
+		prevent_latches_0 <= storing_symbols [0];
+		prevent_latches_1 <= storing_symbols [1];
+		prevent_latches_2 <= storing_symbols [2];
+		prevent_latches_3 <= storing_symbols [3];
+		prevent_latches_4 <= storing_symbols [4];
+		prevent_latches_5 <= storing_symbols [5];
+		prevent_latches_6 <= storing_symbols [6];
+		prevent_latches_7 <= storing_symbols [7];
+		prevent_latches_8 <= storing_symbols [8];
+		prevent_latches_9 <= storing_symbols [9];
+end
+
+
 
 
 assign read_write = storing_symbols[3];
@@ -140,6 +168,8 @@ end
 
 
 always @(*) begin 
+
+	ns=cs;
 
 	case (cs)
 
@@ -298,6 +328,12 @@ end
 
 always @(*) begin 
 
+	valid_reg = t_valid;
+
+	trans_error_reg = trans_error;
+
+	disconnect_reg = disconnect;
+
 
 	case (cs)
 
@@ -305,10 +341,6 @@ always @(*) begin
 
 			valid_reg = 0;
 			trans_error_reg = 0;
-			payload_in_reg = 1;
-			s_read_reg = 0;
-			s_write_reg = 0;
-			s_address_reg = 0;
 			disconnect_reg = 1;
 			crc_det_en = 0;
 			trans_error_reg=0;
@@ -323,17 +355,12 @@ always @(*) begin
 
 			valid_reg = 0;
 			trans_error_reg = 0;
-			payload_in_reg = 1;
-			s_read_reg = 0;
-			s_write_reg = 0;
-			s_address_reg = 0;
 			disconnect_reg = 0;
 			crc_det_en = 0;
 
 			if (error) begin
 				trans_error_reg=1;
 			end else if (sbrx [8:1] == DLE_SYMBOL) begin
-				storing_symbols[0] = sbrx [8:1];
 				trans_error_reg=0;
 				disconnect_reg=0;
 				crc_det_en=1;
@@ -348,8 +375,6 @@ always @(*) begin
 
 			valid_reg = 0;
 			disconnect_reg = 0;
-			payload_in_reg=1;
-			s_address_reg=0;
 			crc_det_en = 1;
 
 
@@ -362,25 +387,8 @@ always @(*) begin
 
 				case (sbrx [8:1])
 
-					LSE_SYMBOL: begin 
-
-						storing_symbols[1] = sbrx [8:1]; 
+					LSE_SYMBOL: begin 						
 						crc_det_en = 0;
-
-
-					end
-
-					STX_RESPONSE_SYMBOL: begin
-
-						storing_symbols[1] = sbrx [8:1]; 
-
-
-					end
-
-					STX_COMMAND_SYMBOL: begin 
-
-						storing_symbols[1] = sbrx [8:1];
-
 					end
 
 
@@ -404,22 +412,10 @@ always @(*) begin
 			end else begin
 
 				trans_error_reg=0;
-
-
-				case (sbrx [8:1])
-
-					DLE_SYMBOL: begin 
-
-						storing_symbols[1]=0;
-
-
-					end
+				case (sbrx [8:1])		
 
 					CLSE_SYMBOL: begin 
-
-						storing_symbols[2]=CLSE_SYMBOL;
 						disconnect_reg = 1;
-
 					end
 
 
@@ -445,15 +441,11 @@ always @(*) begin
 
 				case (sbrx [8:1])
 
-					DLE_SYMBOL: begin 
-						storing_symbols [2+max_data_counts] = sbrx [8:1];
-					end
-
 
 					default : begin 
 
 						if (max_data_counts < 69) begin
-							storing_symbols[2+max_data_counts]=sbrx [8:1];
+							
 							case (storing_symbols[1])
 
 								STX_COMMAND_SYMBOL: begin 
@@ -476,8 +468,6 @@ always @(*) begin
 								end
 
 								default: begin 
-
-									storing_symbols[72]=0;
 									crc_det_en=0;
 
 								end
@@ -516,30 +506,21 @@ always @(*) begin
 				case (sbrx [8:1])
 
 					ETX_SYMBOL: begin 
-						storing_symbols[2+max_data_counts] =sbrx [8:1];
+						
 						valid_reg = 1;
 					end
 
-					DLE_SYMBOL: begin 
-
-						if (max_data_counts < 69) begin
-							storing_symbols[2+max_data_counts]=sbrx [8:1];
-						end else begin 
-							storing_symbols[72]=0;
-						end
-
-					end
 
 					STX_COMMAND_SYMBOL: begin 
 
-						storing_symbols[2]=sbrx [8:1];
+						
 						crc_det_en = 1;
 
 					end
 
 					STX_RESPONSE_SYMBOL: begin 
 
-						storing_symbols[2]=sbrx [8:1];
+						
 						crc_det_en = 1;
 
 					end
@@ -558,23 +539,198 @@ always @(*) begin
 
 end
 
-
+/////////////////////////////////////////////////////////////////////////
 always @(*) begin
 
-	s_address_reg = storing_symbols [2];
 
-	payload_in_reg =  {storing_symbols[6],storing_symbols[5],storing_symbols[4]};
+ storing_symbols [0] = prevent_latches_0;
+ storing_symbols [1] = prevent_latches_1;
+ storing_symbols [2] = prevent_latches_2;
+ storing_symbols [3] = prevent_latches_3;
+ storing_symbols [4] = prevent_latches_4;
+ storing_symbols [5] = prevent_latches_5;
+ storing_symbols [6] = prevent_latches_6;
+ storing_symbols [7] = prevent_latches_7;
+ storing_symbols [8] = prevent_latches_8;
+ storing_symbols [9] = prevent_latches_9;
 
-	if (storing_symbols[1] == STX_RESPONSE_SYMBOL) begin
-		s_write_reg=0;
-		s_read_reg=0;
-	end else if (read_write[7]==1) begin
-		s_write_reg=1;
-		s_read_reg=0;
-	end else if (read_write[7]==0) begin 
-		s_write_reg=0;
-		s_read_reg=1;
-	end
+
+	case (cs)
+
+
+		IDLE: begin 
+
+			if (sbrx [8:1] == DLE_SYMBOL) begin
+				storing_symbols[0] = sbrx [8:1];
+			end 
+
+		end
+
+
+		DLE1: begin 
+
+			
+
+			case (sbrx [8:1])
+
+				LSE_SYMBOL: begin 
+
+					storing_symbols[1] = sbrx [8:1]; 
+				end
+
+				STX_RESPONSE_SYMBOL: begin
+
+					storing_symbols[1] = sbrx [8:1]; 
+				end
+
+				STX_COMMAND_SYMBOL: begin 
+
+					storing_symbols[1] = sbrx [8:1];
+
+				end
+
+				
+			endcase
+
+		end
+
+
+
+		LT: begin 
+
+			
+
+
+			case (sbrx [8:1])
+
+
+				CLSE_SYMBOL: begin 
+
+					storing_symbols[2]=CLSE_SYMBOL;
+				end
+
+			
+
+			endcase
+			
+
+		end
+
+
+		AT: begin
+
+			case (sbrx [8:1])
+
+				DLE_SYMBOL: begin 
+					storing_symbols [2+max_data_counts] = sbrx [8:1];
+				end
+
+
+				default : begin 
+
+					if (max_data_counts < 69) begin
+						storing_symbols[2+max_data_counts]=sbrx [8:1];
+				end
+			end
+
+			endcase
+		end
+
+
+
+		DLE2: begin
+
+			
+			
+			case (sbrx [8:1])
+
+				ETX_SYMBOL: begin 
+					storing_symbols[2+max_data_counts] =sbrx [8:1];
+
+				end
+
+				DLE_SYMBOL: begin 
+
+					if (max_data_counts < 69) begin
+						storing_symbols[2+max_data_counts]=sbrx [8:1];
+					end 
+
+				end
+
+				STX_COMMAND_SYMBOL: begin 
+
+					storing_symbols[2]=sbrx [8:1];
+
+				end
+
+				STX_RESPONSE_SYMBOL: begin 
+
+					storing_symbols[2]=sbrx [8:1];
+
+
+				end
+
+				
+			endcase
+
+		end
+
+	endcase
+
+
+
+
+	case (cs)
+
+		DISCONNECT: begin
+
+			payload_in_reg = 1;
+			s_read_reg = 0;
+			s_write_reg = 0;
+			s_address_reg = 0;
+
+		end
+
+		IDLE: begin
+
+			payload_in_reg = 1;
+			s_read_reg = 0;
+			s_write_reg = 0;
+			s_address_reg = 0;
+
+		end
+
+		DLE1: begin 
+
+			payload_in_reg = 1;
+			s_read_reg = 0;
+			s_write_reg = 0;
+			s_address_reg = 0;
+
+		end
+
+		default : begin
+
+			s_address_reg = storing_symbols [2];
+
+			payload_in_reg =  {storing_symbols[6],storing_symbols[5],storing_symbols[4]};
+
+			if (storing_symbols[1] == STX_RESPONSE_SYMBOL) begin
+				s_write_reg=0;
+				s_read_reg=0;
+			end else if (read_write[7]==1) begin
+				s_write_reg=1;
+				s_read_reg=0;
+			end else if (read_write[7]==0) begin 
+				s_write_reg=0;
+				s_read_reg=1;
+			end else begin 
+				s_write_reg=0;
+				s_read_reg=0;
+			end
+			
+		end
+	endcase
 
 end
 
@@ -636,3 +792,7 @@ always @(posedge sb_clk) begin
 end
 
 endmodule 
+
+
+
+
