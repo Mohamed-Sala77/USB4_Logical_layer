@@ -2,7 +2,7 @@
 class phase4 extends primary_steps ;
 mailbox #(mem)    mem_ag ;      // internal memory agent
 mem        m_transaction;   // memory transaction
-elec_layer_tr   temp_elec_tr1, temp_elec_tr2 , temp_elec_tr3 , temp_elec_lane ;  // temporary electrical transaction
+elec_layer_tr    temp_elec_tr2 , temp_elec_tr3 , temp_elec_lane ;  // temporary electrical transaction
 bit check_equlity ;             // check if the received two transaction are the same   
 
 
@@ -60,21 +60,23 @@ parameter        SLOS1   = 4'b1000,
         begin           //` ---------the generator should send the same order set 2 times //
             if (next_order != n_SLOS1) 
             begin
-                elec_ag_Rx.get (temp_elec_tr1);          // first get
+                elec_ag_Rx.get (E_transaction);          // first get
+                $display ("E_transaction = %p",E_transaction);
                 elec_ag_Rx.get (temp_elec_tr2);          // second get
-                check_equlity = ((temp_elec_tr3.o_sets == temp_elec_tr1.o_sets) && (temp_elec_tr3.o_sets == temp_elec_tr2.o_sets)) ? 1 : 0 ;     //! here we should do the check cond. 
+                $display ("temp_elec_tr2 = %p",temp_elec_tr2);
+                check_equlity = ((temp_elec_tr3.o_sets == E_transaction.o_sets) && (temp_elec_tr3.o_sets == temp_elec_tr2.o_sets)) ? 1 : 0 ;     //! here we should do the check cond. 
                 if (check_equlity) gen2_3_OS();
 
-                else if ((temp_elec_tr1.o_sets == SLOS1 ) && (temp_elec_tr2.o_sets == SLOS1))
+                else if ((E_transaction.o_sets == SLOS1 ) && (temp_elec_tr2.o_sets == SLOS1))
                     begin
                         send_packet(SLOS2, n_TS1);
                     end
-                else if ((temp_elec_tr1.o_sets == SLOS2 ) && (temp_elec_tr2.o_sets == SLOS2) && (temp_elec_tr3.o_sets == TS2_G2 ))
+                else if ((E_transaction.o_sets == SLOS2 ) && (temp_elec_tr2.o_sets == SLOS2) && (temp_elec_tr3.o_sets == TS2_G2 ))
                     begin
                         send_packet(SLOS2, n_TS1);
                     end
 
-                else $error ( "the received order sets are not like we wait we recieve %p not %p" , temp_elec_tr1.o_sets , temp_elec_tr3.o_sets);
+                else $error ( "the received order sets are not like we wait we recieve %p not %p" , E_transaction.o_sets , temp_elec_tr3.o_sets);
             end
             else
                 begin
@@ -115,17 +117,19 @@ endtask
                             
             task  gen2_3_OS();
             begin
-            //$display("we are in gen2_3_OS");
+                $display ("the value of next_order = %p",next_order);
+                $display ("the value of temp_elec_tr3.o_sets = %p",temp_elec_tr3.o_sets);
+            $display("we are in gen2_3_OS");
             if(E_transaction.phase==4) begin
                 if (next_order == n_SLOS1) 
                     send_packet(SLOS1, n_SLOS2);
-                 else if ((E_transaction.o_sets ==SLOS1 )&&(next_order == n_SLOS2)) 
+                 else if ((temp_elec_tr3.o_sets ==SLOS1 )&&(next_order == n_SLOS2)) 
                     send_packet(SLOS2, n_TS1);
-                 else if ((E_transaction.o_sets ==SLOS2 )&&(next_order == n_TS1)) 
+                 else if ((temp_elec_tr3.o_sets ==SLOS2 )&&(next_order == n_TS1)) 
                     send_packet(TS1_G2, n_TS2);
-                 else if ((E_transaction.o_sets ==TS1_G2 )&&(next_order == n_TS2)) 
+                 else if ((temp_elec_tr3.o_sets ==TS1_G2 )&&(next_order == n_TS2)) 
                     send_packet(TS2_G2, n_done);
-                 else if ((E_transaction.o_sets ==TS2_G2 )&&(next_order == n_done)) 
+                 else if ((temp_elec_tr3.o_sets ==TS2_G2 )&&(next_order == n_done)) 
                     begin
                     status=right ;
                     $display ("done training phase");
