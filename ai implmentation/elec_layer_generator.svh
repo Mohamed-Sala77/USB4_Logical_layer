@@ -61,7 +61,7 @@ class electrical_layer_generator;
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
-    $display("[ELEC GENERATOR] : SENDING SBRX  high IS SUCCESSFUL");
+    $display("[ELEC GENERATOR] : SENDING SBRX  high IS SUCCESSFUL 😘😘");
    endtask
 
 

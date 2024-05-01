@@ -60,14 +60,8 @@
 //include the test classes
 `include "TEST.sv"
 
-
 //include innterfaces
 `include "config_space_if.sv"
 `include "upper_layer_if.sv"
 `include "electrical_layer_if.sv"
-
-
-
-
-
 

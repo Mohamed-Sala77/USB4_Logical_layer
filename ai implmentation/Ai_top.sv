@@ -1,9 +1,83 @@
 `timescale 1fs/1fs
-`include "testbench.sv"
+
+
+//`include "testbench.sv"
+//import testbench::*;
+
+//include the transaction classes
+`include "elec_layer_tr.svh"
+`include "config_space_pkg.sv"
+`include "upper_layer_tr.svh"
+
+//include the memory classes
+`include "env_cfg_class.sv"
+
+//include the driver classes
+`include "elec_layer_driver.svh"
+`include "config _driver.sv"
+`include "up_driver.sv"
+
+// REFERENCE MODEL
+	`include "configuration_space_reference.sv"
+	`include "elec_reference.sv"
+	`include "upper_reference.sv"
+	`include"Reference_model_wrapper.sv"
+	/*`include "int_packet.sv"
+	`include "R_Mod_extentions.sv"
+	`include "my_memory.sv"
+	`include "primary_steps.sv"
+
+	`include "phase1.sv"
+	`include "phase2.sv"
+	`include "phase3.sv"
+	`include "phase4.sv"
+	`include "phase5.sv"
+
+	`include "ref_model.sv"*/
+
+
+//include the generator classes
+`include "elec_layer_generator.svh"
+`include "up_stimulus_generator.sv"
+`include "config_generator.sv"
+
+//include the monitor classes
+`include "elec_layer_monitor.svh"
+`include "up_monitor.sv"
+`include "config_monitor.sv"
+
+//include the agent classes
+`include "elec_layer_agent.svh"
+`include "up_agent.sv"
+`include "config_agent.sv"
+
+//include the scoreboard classes
+`include "elec_layer_scoreboard.svh"
+`include "up_scoreboard.sv"
+`include "config_scoreboard.sv"
+
+//include the virtual sequence classes
+`include "virtual_sequence.sv"
+
+
+//include the test environment classes
+`include "Env.svh"
+
+//include the test classes
+`include "TEST.sv"
+
+//include innterfaces
+`include "config_space_if.sv"
+`include "upper_layer_if.sv"
+`include "electrical_layer_if.sv"
+
+
+
+
 
 module Ai_top;
 
-	logic SystemClock; logic Rx_Clock;
+	logic SystemClock; logic Rx_Clock;  //
 	logic local_clk;
 	logic SB_clock;
 	logic gen2_lane_clk, gen3_lane_clk, gen4_lane_clk;
@@ -58,7 +132,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	end
 
 	//Instantiate the logical layer
-/*	logical_layer l_layer(
+	logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -79,9 +153,9 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
 									.enable_scr(enable_rs)
-);    */
+);    
 
-
+/*
 								//--for old dut files --//
 								//Instantiate the logical layer
 logical_layer_no_scr logical_layer (
@@ -107,20 +181,20 @@ logical_layer_no_scr logical_layer (
 	.enable_scr(enable_rs_dummy)
 );
 
-
+*/
 
 
 // TEST 
 initial begin 
-    TEST test_instance;
-    test_instance = new(e_if, c_if ,u_if); 
+    TEST USB3_test;
+    USB3_test = new(e_if, c_if ,u_if); 
     reset();
 
     //-------main test----------//
-    test_instance.run();
+    USB3_test.run();
 
     //-------for test model only ----------//
-    //test_instance.test_model();
+    //USB3_test.test_model();
 end
 
 

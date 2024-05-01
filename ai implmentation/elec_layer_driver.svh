@@ -353,22 +353,31 @@ bit [7:0] CRC_DATA_Q[$];
 bit [7:0] L_CRC,H_CRC;
 bit [9:0] send_data_symb[$];
 bit [0:9] actual_send_data_symb[$];
+bit [7:0] data_rsp[2:0];
 bit [7:0] conn;
-int k;  //counter
+int i;  //counter
 
 conn={read_write,len};
 //choose send command or response
-if(trans_type==AT_cmd)begin
-data_symb ={DLE,STX_cmd,address,conn,DLE,ETX};
-CRC_DATA_Q=data_symb[1:$-2]; 
-CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
-end
-else if (trans_type==AT_rsp) begin
-  data_symb ={DLE,STX_rsp,address,conn,cmd_rsp_data,DLE,ETX};
-  CRC_DATA_Q=data_symb[1:$-2];   
-  CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
-end
-$display("CRC_DATA_Q size= %d", CRC_DATA_Q.size());  
+if(trans_type==AT_cmd)
+  begin
+    data_symb ={DLE,STX_cmd,address,conn,DLE,ETX};
+    CRC_DATA_Q=data_symb[1:$-2]; 
+    CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
+    $display("[ELEC DRIVER] the value of size data_symb ",data_symb.size());
+  end
+
+else if (trans_type==AT_rsp) 
+  begin
+    data_rsp={>>{cmd_rsp_data}};
+    data_symb ={DLE,STX_rsp,address,data_rsp[0],data_rsp[1],data_rsp[2],conn,,DLE,ETX};
+    CRC_DATA_Q=data_symb[1:$-2];   
+    CALC_CRC(CRC_DATA_Q,{H_CRC,L_CRC});
+  end
+
+$display("[ELEC DEIVER]the size of data_symb is %0d in case (%p)",data_symb.size(),trans_type);
+$display("[ELEC DEIVER]the values of data_symb is%p in case (%p)",data_symb,trans_type);
+$display("[ELEC DEIVER]CRC_DATA_Q size= %0d", CRC_DATA_Q.size());  
 data_symb.delete();
 
 //choose send command or response
@@ -381,6 +390,8 @@ begin
   data_symb ={DLE,STX_rsp,address,conn,cmd_rsp_data,{L_CRC,H_CRC},DLE,ETX};   
 end
      
+     $display("[ELEC DRIVER] data_symb[%0h]",data_symb[4]);
+
         // Add start and end bits to each data symbol and store in send_data_symb
         foreach(data_symb[i]) begin
           send_data_symb[i] = {stop_bit, data_symb[i],start_bit};   ///ERROR///
@@ -393,6 +404,7 @@ end
         // Send bit to DUT
         ELEC_vif.sbrx <= send_data_symb[i][j];
         end
+
 endtask: send_AT_cmd_OR_res_2_DUT
 
 task electrical_layer_driver::send_LT_fall_2_DUT(); //correct send no need to flip

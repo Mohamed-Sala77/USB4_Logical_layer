@@ -15,6 +15,4 @@ interface electrical_layer_if(input clk,
 	logic lane_0_tx;
 	logic lane_1_tx;
 	logic enable_rs;
-	
-
-endinterface : electrical_layer_if
+endinterface 

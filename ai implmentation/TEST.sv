@@ -1,9 +1,9 @@
 class TEST;
     // Declare the components
     env environment;
-    //virtual electrical_layer_if ELEC_vif;
-    //virtual config_space_if CFG_if;
-    //virtual upper_layer_if UP_if;
+    virtual electrical_layer_if ELEC_vif;
+    virtual config_space_if CFG_if;
+    virtual upper_layer_if UP_if;
 
     // Declare the constructor
     function new(virtual electrical_layer_if ELEC_vif,virtual config_space_if cfg_if,virtual upper_layer_if up_if);
