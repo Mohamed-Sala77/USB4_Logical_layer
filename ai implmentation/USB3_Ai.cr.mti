@@ -11,19 +11,32 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_monitor.sv(11): (vlog-2730) Undefined variable: 'config_transaction'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_monitor.sv(22): (vlog-2730) Undefined variable: 'cfg_trans'.
 
-} {3.0 6.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/scrambler.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/scrambler.v}
+} {3.0 6.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling interface config_space_if
+
+Top level modules:
+	--none--
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/scrambler.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/scrambler.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module scrambler
 
 Top level modules:
 	scrambler
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_space_if.sv}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling interface config_space_if
+-- Compiling package testbench_sv_unit
+** Fatal: Unexpected signal: 11.
+C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv(68): Verilog Compiler exiting
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module sb_registers
 
 Top level modules:
-	--none--
+	sb_registers
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_stimulus_generator.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_stimulus_generator.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -32,18 +45,12 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_stimulus_generator.sv(27): (vlog-2730) Undefined variable: 'tr'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_stimulus_generator.sv(56): (vlog-2730) Undefined variable: 'tr'.
 
-} {3.0 7.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v}
+} {3.0 7.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module sb_registers
+-- Compiling module lanes_deserializer
 
 Top level modules:
-	sb_registers
-
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling package testbench_sv_unit
-** Fatal: Unexpected signal: 11.
-C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv(68): Verilog Compiler exiting
+	lanes_deserializer
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Env.svh} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Env.svh}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -74,12 +81,12 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Env.svh(110): (vlog-2730) Undefined variable: 'cfg_gen'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Env.svh(111): (vlog-2730) Undefined variable: 'up_gen'.
 
-} {3.0 29.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v}
+} {3.0 29.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/deserializer.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/deserializer.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module lanes_deserializer
+-- Compiling module deserializer
 
 Top level modules:
-	lanes_deserializer
+	deserializer
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/upper_reference.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/upper_reference.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -91,14 +98,7 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/upper_reference.sv(45): (vlog-2730) Undefined variable: 'elec_layer_tr_inst'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/upper_reference.sv(46): (vlog-2730) Undefined variable: 'upper_layer_tr_inst'.
 
-} {3.0 10.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/deserializer.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/deserializer.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module deserializer
-
-Top level modules:
-	deserializer
-
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v}
+} {3.0 10.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module pulse_generator
 
@@ -303,9 +303,8 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	bus_deserializer
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv} {0 {vlog -work work -vopt -sv -stats=none {C:\Users\Wello\Desktop\material\GP\GP_code\GIT_Code\USB4_Logical_layer\ai implmentation\Ai_top.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Warning: elec_layer_tr.svh(1): (vlog-13233) Design unit "Ai_top_sv_unit" already exists and will be overwritten. Overwriting SystemVerilog $unit with different source files.
 -- Compiling package Ai_top_sv_unit
 ** Fatal: Unexpected signal: 11.
 electrical_layer_if.sv(21): Verilog Compiler exiting
@@ -384,18 +383,6 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	lanes_ser_deser
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak} {0 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak(1): near "electrical_layer_transaction_pkg": syntax error, unexpected IDENTIFIER.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak(1): (vlog-13205) Syntax error found in the scope following 'package'. Is there a missing '::'?
-
-} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sbtx_mux.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sbtx_mux.v}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module sbtx_mux
-
-Top level modules:
-	sbtx_mux
-
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module slos_send
@@ -403,24 +390,24 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	slos_send
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sbtx_mux.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sbtx_mux.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module test_electrical_layer_driver
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh(47): (vlog-13282) 'dut' already declared in this scope.
+-- Compiling module sbtx_mux
 
-} {4.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv}
+Top level modules:
+	sbtx_mux
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak} {0 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(11): (vlog-2730) Undefined variable: 'upper_layer_tr'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(14): (vlog-2730) Undefined variable: 'elec_layer_tr'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(17): (vlog-2730) Undefined variable: 'config_transaction'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(27): Invalid type 'upper_ref_AI'. Please check the type of the variable 'upper_ref_AI_inst'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(28): Invalid type 'elec_ref_AI'. Please check the type of the variable 'elec_ref_AI_inst'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(29): Invalid type 'ConfigurationSpacesModel'. Please check the type of the variable 'config_ref_AI_inst'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(48): (vlog-2730) Undefined variable: 'upper_ref_AI_inst'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(49): (vlog-2730) Undefined variable: 'elec_ref_AI_inst'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(50): (vlog-2730) Undefined variable: 'config_ref_AI_inst'.
+** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak(1): near "electrical_layer_transaction_pkg": syntax error, unexpected IDENTIFIER.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh.bak(1): (vlog-13205) Syntax error found in the scope following 'package'. Is there a missing '::'?
 
-} {3.0 12.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv}
+} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak} {0 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak(2): near "electrical_layer_generator_pkg": syntax error, unexpected IDENTIFIER.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak(2): (vlog-13205) Syntax error found in the scope following 'package'. Is there a missing '::'?
+
+} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling package top_elec
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv(3): Cannot find `include file "path_to_your_file/elec_layer_tr.sv" in directories:
@@ -432,12 +419,24 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/packet_file.sv(6): Cannot find `include file "elec_layer_monitor.sv" in directories:
     C:/questasim64_10.7c/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, C:/questasim64_10.7c/uvm-1.1d/../verilog_src/uvm-1.1d/src
 
-} {4.0 5.0 6.0 7.0 8.0 9.0 10.0 11.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak} {0 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak}
+} {4.0 5.0 6.0 7.0 8.0 9.0 10.0 11.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak(2): near "electrical_layer_generator_pkg": syntax error, unexpected IDENTIFIER.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_generator.svh.bak(2): (vlog-13205) Syntax error found in the scope following 'package'. Is there a missing '::'?
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(11): (vlog-2730) Undefined variable: 'upper_layer_tr'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(14): (vlog-2730) Undefined variable: 'elec_layer_tr'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(17): (vlog-2730) Undefined variable: 'config_transaction'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(27): Invalid type 'upper_ref_AI'. Please check the type of the variable 'upper_ref_AI_inst'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(28): Invalid type 'elec_ref_AI'. Please check the type of the variable 'elec_ref_AI_inst'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(29): Invalid type 'ConfigurationSpacesModel'. Please check the type of the variable 'config_ref_AI_inst'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(48): (vlog-2730) Undefined variable: 'upper_ref_AI_inst'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(49): (vlog-2730) Undefined variable: 'elec_ref_AI_inst'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Reference_model_wrapper.sv(50): (vlog-2730) Undefined variable: 'config_ref_AI_inst'.
 
-} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv}
+} {3.0 12.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module test_electrical_layer_driver
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/test_elec_layer_driver.svh(47): (vlog-13282) 'dut' already declared in this scope.
+
+} {4.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv(10): Invalid type 'upper_layer_tr'. Please check the type of the variable 'tr'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_driver.sv(13): (vlog-2730) Undefined variable: 'upper_layer_tr'.
@@ -449,6 +448,13 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	bus_serializer
 
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/encoding.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/encoding.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module encoding_block
+
+Top level modules:
+	encoding_block
+
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_agent.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_agent.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_agent.sv(8): (vlog-2730) Undefined variable: 'upper_layer_tr'.
@@ -457,27 +463,6 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_agent.sv(31): (vlog-2730) Undefined variable: 'up_drv'.
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_agent.sv(32): (vlog-2730) Undefined variable: 'up_mon'.
 
-} {3.0 8.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/encoding.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/encoding.v}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module encoding_block
-
-Top level modules:
-	encoding_block
-
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(6): Invalid type 'upper_layer_tr'. Please check the type of the variable 'tr'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(7): (vlog-2730) Undefined variable: 'upper_layer_tr'.
-** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(29): near "gen_speed": syntax error, unexpected IDENTIFIER, expecting ')'.
-
-} {3.0 6.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(7): (vlog-2730) Undefined variable: 'config_transaction'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(11): Invalid type 'config_driver'. Please check the type of the variable 'cfg_drv'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(12): Invalid type 'config_monitor'. Please check the type of the variable 'cfg_mon'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(32): (vlog-2730) Undefined variable: 'cfg_drv'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(33): (vlog-2730) Undefined variable: 'cfg_mon'.
-
 } {3.0 8.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/data_bus_receive.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/data_bus_receive.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module data_bus_receive
@@ -485,7 +470,21 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	data_bus_receive
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pul_gen.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pul_gen.v}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(7): (vlog-2730) Undefined variable: 'config_transaction'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(11): Invalid type 'config_driver'. Please check the type of the variable 'cfg_drv'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(12): Invalid type 'config_monitor'. Please check the type of the variable 'cfg_mon'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(32): (vlog-2730) Undefined variable: 'cfg_drv'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config_agent.sv(33): (vlog-2730) Undefined variable: 'cfg_mon'.
+
+} {3.0 8.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(6): Invalid type 'upper_layer_tr'. Please check the type of the variable 'tr'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(7): (vlog-2730) Undefined variable: 'upper_layer_tr'.
+** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/up_monitor.sv(29): near "gen_speed": syntax error, unexpected IDENTIFIER, expecting ')'.
+
+} {3.0 6.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pul_gen.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/pul_gen.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module pul_gen
 
@@ -499,12 +498,7 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: (vlog-13032) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv.bak(94): near ";": Syntax error.
 ** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv.bak(96): near ";": syntax error, unexpected ';', expecting '('.
 
-} {4.0 7.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv(6): (vlog-2730) Undefined variable: 'config_transaction'.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv(10): Invalid type 'config_transaction'. Please check the type of the variable 'cfg_trans'.
-
-} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv}
+} {4.0 7.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv(4): (vlog-2730) Undefined variable: 'config_transaction'.
 ** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv(23): near ";": syntax error, unexpected ';', expecting '('.
@@ -515,12 +509,17 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 ** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv(50): (vlog-2730) Undefined variable: 'request'.
 ** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/configuration_space_reference.sv(62): near ";": syntax error, unexpected ';', expecting '('.
 
-} {3.0 11.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/clock_div.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/clock_div.v}
+} {3.0 11.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module clock_div
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv(6): (vlog-2730) Undefined variable: 'config_transaction'.
+** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/config _driver.sv(10): Invalid type 'config_transaction'. Please check the type of the variable 'cfg_trans'.
+
+} {3.0 5.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module transactions_fsm
 
 Top level modules:
-	clock_div
+	transactions_fsm
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_tr.svh}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -528,12 +527,12 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	--none--
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/clock_div.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/clock_div.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module transactions_fsm
+-- Compiling module clock_div
 
 Top level modules:
-	transactions_fsm
+	clock_div
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv.bak} {0 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv.bak}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018

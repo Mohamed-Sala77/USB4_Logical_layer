@@ -159,6 +159,17 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	bus_deserializer
 
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling package Ai_top_sv_unit
+-- Compiling interface config_space_if
+-- Compiling interface upper_layer_if
+-- Compiling interface electrical_layer_if
+-- Compiling module Ai_top
+
+Top level modules:
+	Ai_top
+
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module prbs11_rec
