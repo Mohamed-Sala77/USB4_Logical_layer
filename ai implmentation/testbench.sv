@@ -1,4 +1,5 @@
-//include the transaction classes
+package testbench;
+	//include the transaction classes
 `include "elec_layer_tr.svh"
 `include "config_space_pkg.sv"
 `include "upper_layer_tr.svh"
@@ -8,7 +9,7 @@
 
 //include the driver classes
 `include "elec_layer_driver.svh"
-`include "config _driver.sv"
+`include "config_driver.sv"
 `include "up_driver.sv"
 
 // REFERENCE MODEL
@@ -60,8 +61,6 @@
 //include the test classes
 `include "TEST.sv"
 
-//include innterfaces
-`include "config_space_if.sv"
-`include "upper_layer_if.sv"
-`include "electrical_layer_if.sv"
+
+endpackage
 
