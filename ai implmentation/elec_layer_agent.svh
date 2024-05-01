@@ -22,20 +22,17 @@ class electrical_layer_agent;
 
     // Constructor
     function new(virtual electrical_layer_if vif,mailbox #(elec_layer_tr) elec_gen_2_driver,elec_mon_2_Sboard
-                ,event elec_gen_driver_done,sbtx_transition_high,correct_OS,sbtx_response, 
+                ,event elec_gen_driver_done,correct_OS, 
                 env_cfg_class env_cfg_mem);
         this.vif = vif;
         this.elec_gen_2_driver = elec_gen_2_driver;
         this.elec_gen_driver_done = elec_gen_driver_done;
         this.elec_mon_2_Sboard = elec_mon_2_Sboard;
-        this.sbtx_transition_high = sbtx_transition_high;
-        this.correct_OS = correct_OS;
-        this.sbtx_response = sbtx_response;
+        this.correct_OS = correct_OS;     
         this.env_cfg_mem = env_cfg_mem;
         // handle the components
         driver = new(elec_gen_driver_done, elec_gen_2_driver, vif); 
-        monitor = new(elec_mon_2_Sboard,vif, sbtx_transition_high, correct_OS,
-                      sbtx_response, env_cfg_mem);              
+        monitor = new(elec_mon_2_Sboard,vif, correct_OS,env_cfg_mem);              
     endfunction: new
 
     // Method to run the components

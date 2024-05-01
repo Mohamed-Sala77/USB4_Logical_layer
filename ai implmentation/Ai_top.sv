@@ -6,6 +6,7 @@
 `include "config_space_if.sv"
 `include "upper_layer_if.sv"
 `include "electrical_layer_if.sv"
+
 module Ai_top;
 
 	logic SystemClock; logic Rx_Clock;  //
@@ -117,12 +118,12 @@ logical_layer_no_scr logical_layer (
 
 // TEST 
 initial begin 
-    TEST USB3_test;
-    USB3_test = new(e_if, c_if ,u_if); 
+    TEST logical_layer_test;
+    logical_layer_test = new(e_if, c_if ,u_if); 
     reset();
 
     //-------main test----------//
-    USB3_test.run();
+    logical_layer_test.run();
 
     //-------for test model only ----------//
     //USB3_test.test_model();

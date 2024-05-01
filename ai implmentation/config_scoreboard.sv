@@ -5,14 +5,16 @@ class config_scoreboard;
 
     config_transaction ref_trans;
     config_transaction mon_trans;
+    env_cfg_class env_cfg_mem;
 
     event next_stimulus;
 
     // Constructor
-    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox , event next_stimulus);
+    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox , event next_stimulus, env_cfg_class env_cfg_mem);
         this.ref_mbox = ref_mbox;
         this.mon_mbox = mon_mbox;
         this.next_stimulus = next_stimulus;
+        this.env_cfg_mem=env_cfg_mem;
         ref_trans = new();
         mon_trans = new();
 
@@ -75,7 +77,10 @@ class config_scoreboard;
     // Function to check for specific condition and trigger event
     task check_condition();
         if ((mon_trans.c_address == 'd18) && (mon_trans.c_read))
+        begin
             ->next_stimulus;
+            env_cfg_mem.ready_phase2=1;
+        end
     endtask
 
     // Function to compare transactions and assert

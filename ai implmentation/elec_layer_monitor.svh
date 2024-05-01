@@ -30,7 +30,7 @@ class electrical_layer_monitor  extends parent;
     virtual electrical_layer_if ELEC_vif;
     // Constructor
   function new(mailbox #(elec_layer_tr) elec_mon_2_Sboard,virtual electrical_layer_if ELEC_vif
-               ,event sbtx_transition_high ,correct_OS,sbtx_response,env_cfg_class env_cfg_mem );
+               ,event correct_OS ,env_cfg_class env_cfg_mem );
     this.elec_mon_2_Sboard=elec_mon_2_Sboard;
     this.ELEC_vif=ELEC_vif;
     this.sbtx_transition_high=sbtx_transition_high;
@@ -692,13 +692,12 @@ endtask:recieved_TS1_gen4
 		  forever 
 		  begin
 		  @(posedge ELEC_vif.sbtx)
-		  $display("[ELEC_MONITOR] CHECKING THE VALUES OF SBRX AND ENABLE_RS AT PHASE 2"); //active on simulation
-	      //wait (/*ELEC_vif.enable_rs==1'b0 &&*/ ELEC_vif.sbrx==1'b0) ;
-          #1               //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
-          if(ELEC_vif.sbtx==1'b1 /*&& ELEC_vif.enable_rs==1'b0 && !ELEC_vif.sbrx*/)  //last condition in for do body at the second phase only 
+		  wait(env_cfg_mem.ready_phase2==1) //wait for the ready_phase2 from the sequance
+		  env_cfg_mem.ready_phase2=2;
+		  $display("[ELEC MONITOR] CHECKING THE VALUES OF SBTX AT PHASE 2"); //active on simulation
+          //#1                      //to make sure that the sbtx is high not pulse only(must wait 25us after the sbtx is high check the spec)
+          if(ELEC_vif.sbtx==1'b1 )  //last condition in for do body at the second phase only 
 		  begin
-          ->sbtx_transition_high;  //to indicate to the sequance the sbtx is high "this on sequance ,the first line on the code of the sequance"
-		  @(sbtx_response)  //wait for the response from the sequance
 		  mon_2_Sboard_trans.phase=3'd0;
 		  mon_2_Sboard_trans.sbtx =1'b1;
 		  elec_mon_2_Sboard.put(mon_2_Sboard_trans);

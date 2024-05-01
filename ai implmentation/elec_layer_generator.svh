@@ -9,19 +9,22 @@ class electrical_layer_generator;
     elec_layer_tr transaction;
     //elec_layer_tr tr_mon;
 
+    env_cfg_class env_cfg_mem;
+
     // Declare mailboxes of type elec_layer_tr
     mailbox #(elec_layer_tr) elec_gen_drv,
                              elec_gen_mod,
                              elec_gen_2_scoreboard; 
 
     // Constructor
-    function new(event elec_gen_driver_done, correct_OS,mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard);
+    function new(event elec_gen_driver_done, correct_OS,mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard,env_cfg_class env_cfg_mem);
       //this.sbrx_transition_high = sbrx_transition_high;
       this.elec_gen_driver_done = elec_gen_driver_done;
       //this.sbtx_transition_high = sbtx_transition_high;
       this.correct_OS = correct_OS; // Assign the correct_OS event
       this.elec_gen_drv = elec_gen_drv;
       this.elec_gen_mod = elec_gen_mod;
+      this.env_cfg_mem  = env_cfg_mem;
       this.elec_gen_2_scoreboard = elec_gen_2_scoreboard; // Assign the elec_gen_2_scoreboard mailbox
     endfunction
 
@@ -51,7 +54,8 @@ class electrical_layer_generator;
          /////*** Define the task outside the class***/////
 
    task electrical_layer_generator::sbrx_after_sbtx_high();
-   // @(sbtx_transition_high); // Blocking with the event sbtx_transition_high (do it on sequance)
+    wait(env_cfg_mem.ready_phase2 ==2) // Blocking with the event sbtx_transition_high (do it on sequance)
+    env_cfg_mem.ready_phase2=0;
     //$display("[ELEC GENERATOR] : sbtx is high");
     transaction = new();                    // Construct the transaction
     transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
@@ -92,7 +96,7 @@ class electrical_layer_generator;
       elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
-      $display("[ELEC DRIVER] driver received");
+      $display("[ELEC GENERATOR] SUCCESSFULLY SENT ******>>>> [%p]",trans_type);
     endtask
 
      //task to send ordered sets
@@ -114,6 +118,7 @@ class electrical_layer_generator;
         $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
+        
       end
     endtask
 

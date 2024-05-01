@@ -9,17 +9,17 @@ class env;
         // Declare the generators
         electrical_layer_generator elec_gen;
         config_generator cfg_gen; 
-        up_stimulus_generator up_gen;
+        up_transport_generator up_gen;
         
         // Declare the agents
         electrical_layer_agent elec_agent;
         config_agent cfg_agent;
-        ub_agent up_agent;
+        up_transport_agent up_agent;
 
         // Declare the scoreboards
         elec_scoreboard elec_sboard;
         config_scoreboard cfg_scoreboard ;
-        up_scoreboard up_scoreboard ;
+        up_transport_scoreboard up_scoreboard ;
 
         // Declare memory
         env_cfg_class env_cfg_mem;
@@ -93,20 +93,20 @@ class env;
         this.env_cfg_mem = new();
 
         // Agents
-        elec_agent =new(ELEC_vif,elec_gen_2_driver,elec_monitor_2_Sboard,elec_gen_driver_done,sbtx_transition_high,correct_OS,sbtx_response,env_cfg_mem);
+        elec_agent =new(ELEC_vif,elec_gen_2_driver,elec_monitor_2_Sboard,elec_gen_driver_done,correct_OS,env_cfg_mem);
         cfg_agent = new(cfg_if, cfg_mon_scr, cfg_drv_gen, cfg_driverDone, cfg_next_stimulus);
         up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone);
                       
         //Sequences
-        virtual_seq =new(sbtx_transition_high,sbtx_response,recieved_on_elec_sboard);
+        virtual_seq =new(recieved_on_elec_sboard);
 
         // Scoreboards
         elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,recieved_on_elec_sboard);
-        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus);
+        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem);
         up_scoreboard  = new(up_mod_scr, up_mon_scr);
         
         // Generators
-        elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard);
+        elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard,env_cfg_mem);
         cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
         up_gen = new(up_mod_gen, up_drv_gen, up_driveDone);
 

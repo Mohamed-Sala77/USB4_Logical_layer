@@ -12,6 +12,12 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	scrambler
 
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling package testbench
+** Fatal: Unexpected signal: 11.
+C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv(66): Verilog Compiler exiting
+
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module sb_registers
@@ -153,29 +159,7 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	bus_deserializer
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv} {0 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling package testbench
-** Error: ** while parsing file included at C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(2)
-** at testbench.sv(12): Cannot find `include file "config_driver.sv" in directories:
-    C:/questasim64_10.7c/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, C:/questasim64_10.7c/uvm-1.1d/../verilog_src/uvm-1.1d/src
-** Error: ** while parsing file included at C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(2)
-** while parsing file included at testbench.sv(47)
-** at config_agent.sv(11): Invalid type 'config_driver'. Please check the type of the variable 'cfg_drv'.
-** Error: ** while parsing file included at C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(2)
-** while parsing file included at testbench.sv(47)
-** at config_agent.sv(32): (vlog-2730) Undefined variable: 'cfg_drv'.
--- Compiling interface config_space_if
--- Compiling interface upper_layer_if
-** Error: ** while parsing file included at C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(7)
-** at upper_layer_if.sv(14): 'GEN' is an unknown type.
-Or did you omit the '()' for an instantiation?
--- Compiling interface electrical_layer_if
--- Compiling module Ai_top
-** Error: (vlog-13069) C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(120): near ";": syntax error, unexpected ';', expecting '('.
-** Error: C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv(121): (vlog-2730) Undefined variable: 'USB3_test'.
-
-} {4.0 5.0 7.0 8.0 10.0 11.0 15.0 16.0 20.0 22.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module prbs11_rec
 
@@ -224,7 +208,13 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	sbtx_mux
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/bus_serializer.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/bus_serializer.sv}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/elec_layer_driver.sv} {0 {vlog -work work -vopt -sv -stats=none {C:\Users\Wello\Desktop\material\GP\GP_code\GIT_Code\USB4_Logical_layer\ai implmentation\elec_layer_driver.sv}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+** Error: C:\Users\Wello\Desktop\material\GP\GP_code\GIT_Code\USB4_Logical_layer\ai implmentation\elec_layer_driver.sv(242): Invalid type 'elec_layer_tr'. Please check the type of the variable 'transaction'.
+** Error: C:\Users\Wello\Desktop\material\GP\GP_code\GIT_Code\USB4_Logical_layer\ai implmentation\elec_layer_driver.sv(245): (vlog-2730) Undefined variable: 'elec_layer_tr'.
+** Error: C:\Users\Wello\Desktop\material\GP\GP_code\GIT_Code\USB4_Logical_layer\ai implmentation\elec_layer_driver.sv(261): (vlog-2400) Identifier ('tr_type') found where a type or type identifier is required.
+
+} {3.0 6.0} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/bus_serializer.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/bus_serializer.sv}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module bus_serializer
 

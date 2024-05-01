@@ -1,5 +1,9 @@
-package testbench;
-	//include the transaction classes
+//package testbench;
+
+//symbols 
+`include"symbols.sv"
+
+//include the transaction classes
 `include "elec_layer_tr.svh"
 `include "config_space_pkg.sv"
 `include "upper_layer_tr.svh"
@@ -8,15 +12,17 @@ package testbench;
 `include "env_cfg_class.sv"
 
 //include the driver classes
-`include "elec_layer_driver.svh"
 `include "config_driver.sv"
 `include "up_driver.sv"
+`include "elec_layer_driver.svh"
+
 
 // REFERENCE MODEL
 	`include "configuration_space_reference.sv"
 	`include "elec_reference.sv"
 	`include "upper_reference.sv"
 	`include"Reference_model_wrapper.sv"
+
 	/*`include "int_packet.sv"
 	`include "R_Mod_extentions.sv"
 	`include "my_memory.sv"
@@ -62,5 +68,5 @@ package testbench;
 `include "TEST.sv"
 
 
-endpackage
+//endpackage
 
