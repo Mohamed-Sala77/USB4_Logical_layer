@@ -34,8 +34,8 @@ class elec_scoreboard;
                 
                 // elec_mod_sboard.get(model_tr);
                 // $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
-               
-              /*  case (monitor_tr.phase)
+               /*
+                case (monitor_tr.phase)
                 3'd0: begin
                        assert (model_tr.sbtx == monitor_tr.sbtx)
                             $display("[ELEC SCOREBOARD] CORRECT SBTX HIGH ");
@@ -108,8 +108,8 @@ class elec_scoreboard;
                     endcase
                     ->recieved_on_elec_sboard;
                 end
-*/
-                //***this thread check it after reciecve on descision***//
+
+                //***this thread check it after reciecve on descision***/
  /*               3'd5:begin
                     assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
                             $display("[ELEC SCOREBOARD] transport data send is correct!");
@@ -126,7 +126,7 @@ class elec_scoreboard;
                 end
 
                 endcase
-*/
+*/              ->recieved_on_elec_sboard;
             end
 
             begin  

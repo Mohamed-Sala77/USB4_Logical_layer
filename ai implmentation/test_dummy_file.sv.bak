@@ -1,4 +1,4 @@
-/*task check_AT_transaction(input [9:0] q[$]);
+task check_AT_transaction(input [9:0] q[$]);
 parameter  DLE = 8'hFE;	//Data Link Escape (DLE) Symbol – indicates the beginning of a Transaction. 
 parameter  ETX = 8'h40;
 parameter  STX_cmd = 8'b00000101;
@@ -33,7 +33,7 @@ parameter [7:0] STX_cmd = 8'b00000101;
     end
 endmodule
 
-
+/*
 module dummy_tb;
 bit PRBS11_OUT[$];
 bit [7:0]  counter_TS1='h0f;

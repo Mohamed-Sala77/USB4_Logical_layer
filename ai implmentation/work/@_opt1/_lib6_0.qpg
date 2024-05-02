@@ -9,14 +9,15 @@ z2
 cModel Technology
 Z0 dC:/Users/Wello/Desktop/material/GP/AI_BAK
 T_opt
-!s110 1714676673
-Vz>GkI7nHolCFRXmNJOCoK3
+!s110 1714666717
+VcGkHhMhCj`FNd4`A7lK]F1
 04 6 4 work Ai_top fast 0
-=13-a02bb836f9de-6633e3c0-396-48a8
+=5-a02bb836f9de-6633bcdd-7c-85c
 Z1 o-quiet -auto_acc_if_foreign -work work
 Z2 tCvgOpt 0
 n@_opt
 Z3 OL;O;10.7c;67
+R0
 T_opt1
 !s110 1714667652
 V8YHNd[G^jXFl0JTnJ]Kf=3
@@ -26,10 +27,9 @@ R1
 R2
 n@_opt1
 R3
-R0
 vAi_top
 Z4 DXx6 sv_std 3 std 0 22 d=_JfHTnXCN[H5FjiaJJc0
-Z5 DXx4 work 14 Ai_top_sv_unit 0 22 ;P5>;3CU4z;Z`cDV5V?c@1
+Z5 DXx4 work 14 Ai_top_sv_unit 0 22 m:T`Ko7lj]W6^:fL=QVLj2
 Z6 VDg1SIo80bB@j0V0VzS_@n1
 r1
 !s85 0
@@ -45,7 +45,7 @@ Z10 FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai i
 L0 12
 Z11 OL;L;10.7c;67
 31
-Z12 !s108 1714676667.000000
+Z12 !s108 1714666711.000000
 Z13 !s107 electrical_layer_if.sv|upper_layer_if.sv|config_space_if.sv|TEST.sv|Env.svh|virtual_sequence.sv|config_scoreboard.sv|up_scoreboard.sv|elec_layer_scoreboard.svh|config_agent.sv|up_agent.sv|elec_layer_agent.svh|config_monitor.sv|up_monitor.sv|elec_layer_monitor.svh|config_generator.sv|up_stimulus_generator.sv|elec_layer_generator.svh|Reference_model_wrapper.sv|upper_reference.sv|elec_reference.sv|configuration_space_reference.sv|elec_layer_driver.svh|up_driver.sv|config_driver.sv|env_cfg_class.sv|upper_layer_tr.svh|config_space_pkg.sv|elec_layer_tr.svh|symbols.sv|testbench.sv|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv|
 Z14 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv|
 !i113 0
@@ -57,16 +57,16 @@ Z16 !s115 electrical_layer_if
 Z17 !s115 upper_layer_if
 Z18 !s115 config_space_if
 R4
-V;P5>;3CU4z;Z`cDV5V?c@1
+Vm:T`Ko7lj]W6^:fL=QVLj2
 r1
 !s85 0
 !i10b 1
-!s100 i@b2edhXC7CGQnNB=jVkc0
-I;P5>;3CU4z;Z`cDV5V?c@1
+!s100 ^9GOdiC:<A9n`hl@Eg5`d1
+Im:T`Ko7lj]W6^:fL=QVLj2
 !i103 1
 S1
 R8
-w1714676663
+w1714666706
 R9
 R10
 Z19 Ftestbench.sv
@@ -855,268 +855,4 @@ r1
 !s85 0
 31
 R67
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/serializer.sv|
-!s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/serializer.sv|
-!i113 0
-R15
-R2
-vslos_send
-R66
-!i10b 1
-!s100 2iz>ZEnhNBoeLl7Re8?O51
-I3UeLZm2Sn7RidOk`@BT1;3
-R6
-R8
-R51
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v
-L0 3
-R11
-r1
-!s85 0
-31
-R67
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v|
-!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/slos_send.v|
-!i113 0
-R53
-R2
-vtb
-R4
-!s110 1714667646
-!i10b 1
-!s100 D7EGoM9D`JL6Ahb2c];PD2
-I[2G:JH[XXSi4bbgCWKnT[3
-R6
-!s105 dummy_file_sv_unit
-S1
-R8
-w1714667638
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv
-L0 240
-R11
-r1
-!s85 0
-31
-!s108 1714667646.000000
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv|
-!s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv|
-!i113 0
-R15
-R2
-Xtest_dummy_file_sv_unit
-R4
-V>BKU_5;9KP63j]8S@42o[2
-r1
-!s85 0
-!i10b 1
-!s100 I=g6S^J_lEcUl>m99<VT`2
-I>BKU_5;9KP63j]8S@42o[2
-!i103 1
-S1
-R8
-R54
-R59
-R60
-L0 1
-R11
-31
-R61
-R62
-R63
-!i113 0
-R15
-R2
-Xtestbench
-R16
-R17
-R18
-R4
-!s110 1714591513
-!i10b 1
-!s100 ;:fMN;4DQ]GGYmX8mLa[l3
-IjCJ:P0fOEOf>LzU[ezA7I0
-VjCJ:P0fOEOf>LzU[ezA7I0
-S1
-R8
-w1714591510
-R19
-R21
-R22
-R23
-R24
-R25
-R26
-R27
-R28
-R29
-R30
-R31
-R32
-R33
-R34
-R35
-R36
-R37
-R38
-R39
-R40
-R41
-R42
-R43
-R44
-R45
-R46
-L0 1
-R11
-r1
-!s85 0
-31
-!s108 1714591513.000000
-!s107 electrical_layer_if.sv|upper_layer_if.sv|config_space_if.sv|TEST.sv|Env.svh|virtual_sequence.sv|config_scoreboard.sv|up_scoreboard.sv|elec_layer_scoreboard.svh|config_agent.sv|up_agent.sv|elec_layer_agent.svh|config_monitor.sv|up_monitor.sv|elec_layer_monitor.svh|config_generator.sv|up_stimulus_generator.sv|elec_layer_generator.svh|Reference_model_wrapper.sv|upper_reference.sv|elec_reference.sv|configuration_space_reference.sv|elec_layer_driver.svh|up_driver.sv|config_driver.sv|env_cfg_class.sv|upper_layer_tr.svh|config_space_pkg.sv|elec_layer_tr.svh|testbench.sv|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/Ai_top.sv|
-R14
-!i113 0
-R15
-R2
-Xtestbench_sv_unit
-R16
-R17
-R18
-R4
-!s110 1714666087
-!i10b 1
-!s100 L7=ScOeAWM8_H1N0V>oGD2
-I>`eJM@l>Dh81Yb8ad:c_?3
-V>`eJM@l>Dh81Yb8ad:c_?3
-!i103 1
-S1
-R8
-w1714666080
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
-R20
-R21
-R22
-R23
-R24
-R25
-R26
-R27
-R28
-R29
-R30
-R31
-R32
-R33
-R34
-R35
-R36
-R37
-R38
-R39
-R40
-R41
-R42
-R43
-R44
-R45
-R46
-L0 1
-R11
-r1
-!s85 0
-31
-!s108 1714666087.000000
-!s107 TEST.sv|Env.svh|virtual_sequence.sv|config_scoreboard.sv|up_scoreboard.sv|elec_layer_scoreboard.svh|config_agent.sv|up_agent.sv|elec_layer_agent.svh|config_monitor.sv|up_monitor.sv|elec_layer_monitor.svh|config_generator.sv|up_stimulus_generator.sv|elec_layer_generator.svh|Reference_model_wrapper.sv|upper_reference.sv|elec_reference.sv|configuration_space_reference.sv|elec_layer_driver.svh|up_driver.sv|config_driver.sv|env_cfg_class.sv|upper_layer_tr.svh|config_space_pkg.sv|elec_layer_tr.svh|symbols.sv|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
-!s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
-!i113 0
-R15
-R2
-vtimer
-R66
-!i10b 1
-!s100 3Va_:Aec7d8]VJ02TPa]X1
-IDY9jC6>ULfZY^IGJW:]Ti3
-R6
-R8
-R51
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/timer.v
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/timer.v
-L0 3
-R11
-r1
-!s85 0
-31
-R67
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/timer.v|
-!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/timer.v|
-!i113 0
-R53
-R2
-vtransactions_fsm
-R66
-!i10b 1
-!s100 ?26YMnFSjf1<o0T_YK7YP1
-I=<DdWR=<a:n0CnX8kGeh=2
-R6
-R8
-R51
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v
-L0 2
-R11
-r1
-!s85 0
-31
-R67
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v|
-!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v|
-!i113 0
-R53
-R2
-vtransactions_gen_fsm
-R66
-!i10b 1
-!s100 0dfS^Ui5efH8ULKP@8LFk1
-I=nnFU9UV6A_kAPMej6[QR2
-R6
-R8
-R51
-8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v
-FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v
-L0 2
-R11
-r1
-!s85 0
-31
-R67
-!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v|
-!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v|
-!i113 0
-R53
-R2
-Yupper_layer_if
-R4
-R5
-R6
-r1
-!s85 0
-!i10b 1
-!s100 YozhdBjiDak3O>O80Jn``1
-IzWfgY344=0oc2Cg`jfQ1R1
-R7
-S1
-R8
-R54
-8upper_layer_if.sv
-R48
-L0 1
-R11
-31
-R12
-R13
-R14
-!i113 0
-R15
-R2
+!s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_C

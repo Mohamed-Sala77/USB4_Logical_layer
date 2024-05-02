@@ -112,6 +112,7 @@ module names();
     end
   
 endmodule*/
+/*
 module dummy_module;
 
 
@@ -160,7 +161,7 @@ task CALC_CRC(input bit [7:0] STX, input bit [7:0] data_symb[$], output bit [15:
 
 // Define the tr_type enum
 typedef enum {AT_cmd, AT_rsp, None} tr_type;
-  ////****tasks to send transactions to the DUT****////
+  ////****tasks to send transactions to the DUT
 task send_AT_cmd_OR_res_2_DUT(bit read_write = 0, bit [7:0] address = 0,
                                                        bit [6:0] len = 0 , bit [23:0] cmd_rsp_data = 0,
                                                        tr_type trans_type = None);
@@ -174,7 +175,7 @@ int k;  //counter
 
 //choose send command or response
 if(trans_type==AT_cmd)begin
-data_symb ={DLE,STX_cmd,address,len,read_write/*,cmd_rsp_data*/,DLE,ETX}; //zakarian check
+data_symb ={DLE,STX_cmd,address,len,read_write/*,cmd_rsp_data,DLE,ETX}; //zakarian check
 end
 else if (trans_type==AT_rsp) begin
   data_symb ={DLE,STX_rsp,address,len,read_write,cmd_rsp_data,DLE,ETX};   //zakarian check
@@ -188,7 +189,7 @@ data_symb.delete();
 //choose send command or response
 if(trans_type==AT_cmd)
 begin
-data_symb ={DLE,STX_cmd,address,len,read_write/*,cmd_rsp_data*/,{L_CRC,H_CRC},DLE,ETX}; //zakarian check
+data_symb ={DLE,STX_cmd,address,len,read_write/*,cmd_rsp_data,{L_CRC,H_CRC},DLE,ETX}; //zakarian check
 end
 else if (trans_type==AT_rsp) 
 begin
@@ -233,4 +234,58 @@ begin
 
     send_AT_cmd_OR_res_2_DUT(0, address, len, cmd_rsp_data, trans_type);
 end
+endmodule
+*/
+
+module tb;
+
+  // Declare variables for the data and CRC
+  bit [7:0] data_symb[$];
+  bit [15:0] CRC_out;
+
+  // Declare the crc16 task
+  task automatic crc16(input bit [7:0] data_symb[$], output bit [15:0] CRC_out);
+    bit [15:0] crc;
+    bit [15:0] poly;
+    integer i, j;
+    bit [7:0] data;
+
+    // Initialize CRC and polynomial
+    crc = 16'hFFFF;
+    poly = 16'h8005;
+
+    // Process each byte in the data
+    for (i = 0; i < data_symb.size(); i = i + 1) begin
+      data = data_symb[i];
+
+      // Process each bit in the byte
+      for (j = 0; j < 8; j = j + 1) begin
+        if ((crc[15] ^ data[7]) == 1'b1) begin
+          crc = crc << 1;
+          crc = crc ^ poly;
+        end else begin
+          crc = crc << 1;
+        end
+        data = data << 1;
+      end
+    end
+
+    // Reflect the CRC result
+    CRC_out = {<<{crc}};
+  endtask
+
+  // Test the crc16 task
+  initial begin
+    // Generate some random data
+    //{8'hfe,8'h51,8'h80,8'h0a,8'h43,8'h01,8'h0a,8'h05}
+   data_symb={<<{8'h01,8'h0a,8'h05}};
+
+    // Calculate the CRC for the data
+    crc16(data_symb, CRC_out);
+
+    // Print the result
+    $display("Data: %p", data_symb);
+    $display("CRC: %0h", CRC_out);
+  end
+
 endmodule

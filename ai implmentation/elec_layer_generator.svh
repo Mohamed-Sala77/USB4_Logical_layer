@@ -96,7 +96,7 @@ class electrical_layer_generator;
       elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
-      $display("[ELEC GENERATOR] SUCCESSFULLY SENT ******>>>> [%p]",trans_type);
+      $display("at time(%0t)[ELEC GENERATOR] SUCCESSFULLY SENT ******>>>> [%p]",$time,trans_type);
     endtask
 
      //task to send ordered sets

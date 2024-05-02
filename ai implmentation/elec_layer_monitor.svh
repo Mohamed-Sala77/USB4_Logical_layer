@@ -27,7 +27,7 @@ class electrical_layer_monitor  extends parent;
     mailbox #(elec_layer_tr) elec_mon_2_Sboard;   // Mailbox to send transaction to the scoreboard
 	mailbox #(GEN)           speed_mailbox;           // Mailbox to send the generation speed to the scoreboard
     //declare varsual interface
-    virtual electrical_layer_if ELEC_vif;
+    virtual electrical_layer_if ELEC_vif; 
     // Constructor
   function new(mailbox #(elec_layer_tr) elec_mon_2_Sboard,virtual electrical_layer_if ELEC_vif
                ,event correct_OS ,env_cfg_class env_cfg_mem );
@@ -52,6 +52,9 @@ class electrical_layer_monitor  extends parent;
 		 extern task recieved_TS234_gen4(input OS_type os,bit done_training);
 		 extern task recieved_TS1_gen4();
   endclass : electrical_layer_monitor
+
+
+
 
 task electrical_layer_monitor::recieved_TS12_gen23(input GEN speed ,input OS_type os);
 logic      			    recieved_TS_lane0[$],
@@ -633,7 +636,7 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.address = {<<{recieved_transaction_data_symb[2][8:1]}};
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;
-
+			//error warning
 			$display("the value of crc is=%0d",mon_2_Sboard_trans.crc_received);
 			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %p",mon_2_Sboard_trans.convert2string());
 			end 
@@ -656,7 +659,7 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
 			end
 		else
-			$display("[ELEC MONITOR]AT_rsp transaction is not correct");
+			$error("[ELEC MONITOR]AT_rsp transaction is not correct");
 	end
 	endcase
     elec_mon_2_Sboard.put(mon_2_Sboard_trans);
@@ -711,7 +714,7 @@ endtask:recieved_TS1_gen4
            wait(env_cfg_mem.data_income == 1)
 		   $display("[ELEC_MONITOR]the value of env_cfg_mem.data_income=%0d and the value of env_cfg_mem.phase=%0d ",env_cfg_mem.data_income,env_cfg_mem.phase); //active on simulation
 		   env_cfg_mem.data_income=0;
-			case (env_cfg_mem.phase)
+			case (env_cfg_mem.phase)  //enum
 			3'd2: //wait AT_Cmd transaction with size=8 symbols
 			begin
 				@(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
@@ -768,20 +771,67 @@ endtask:recieved_TS1_gen4
               AT_cmd: begin //wait AT response then os depend on generation
 					@(!ELEC_vif.sbtx)  //it will come with sb clk at first posedge clk
 					//case
-					while(1)begin
-					@(negedge ELEC_vif.SB_clock);
-					recieved_transaction_data_symb.push_back(ELEC_vif.sbtx);  //check the corectness of the data.......
+					/*while(1)
+					begin
+						@(negedge ELEC_vif.SB_clock);
+						recieved_transaction_byte.push_back(ELEC_vif.sbtx);  //collect AT from Sideband channel 
 
-				if(recieved_transaction_data_symb.size()==11 &&recieved_transaction_data_symb[10]=={<<{1'b1,ETX,1'b0}}) begin
-					$display("[ELEC MONITOR]reiceved AT_rsp with size of AT 11 symbols");
-				break;
-				end
-				else if(recieved_transaction_data_symb.size()>11)begin
-					$display("[ELEC MONITOR]the size of AT transaction is more than 11 symbols");
-				end
+						if(recieved_transaction_byte.size()==10)
+						begin
+							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
+							recieved_transaction_byte.delete();
+							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%p",recieved_transaction_data_symb);
+							//$display("[ELEC MONITOR]the size of recieved_transaction_data_symb=%0d",recieved_transaction_data_symb.size());
+							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%p",recieved_transaction_data_symb[7]);
+							if(recieved_transaction_data_symb.size()==8 &&(recieved_transaction_data_symb[7]=={<<{1'b1,8'h40,1'b0}}))
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
+							 end
+							///////////////////////////////////////////////////////////////////////////////////////////
+							if(recieved_transaction_data_symb.size()==8 &&recieved_transaction_data_symb[7]=={<<{1'b1,ETX,1'b0}}) 
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
+								break;
+							 end
+							else if(recieved_transaction_data_symb.size()>8)
+							 begin
+								$display("[ELEC MONITOR]the size of AT transaction is more than 8 symbols");
+							 end
+
+						end
+					end*/
+					while(1)
+					begin
+						@(negedge ELEC_vif.SB_clock);
+						recieved_transaction_byte.push_back(ELEC_vif.sbtx);  //collect AT from Sideband channel 
+
+						if(recieved_transaction_byte.size()==10)
+						begin
+							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
+							recieved_transaction_byte.delete();
+							/*$display("[ELEC MONITOR]the value of recieved_transaction_data_symb=%p",recieved_transaction_data_symb);
+							//$display("[ELEC MONITOR]the size of recieved_transaction_data_symb=%0d",recieved_transaction_data_symb.size());
+							//$display("[ELEC MONITOR]the value of recieved_transaction_data_symb[7]=%p",recieved_transaction_data_symb[7]);
+							if(recieved_transaction_data_symb.size()==8 &&(recieved_transaction_data_symb[7]=={<<{1'b1,8'h40,1'b0}}))
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_cmd with size of AT 8 symbols");
+							 end*/
+							///////////////////////////////////////////////////////////////////////////////////////////
+							if(recieved_transaction_data_symb.size()==11 /*&&recieved_transaction_data_symb[10]=={<<{1'b1,ETX,1'b0}}*/) 
+							 begin
+								$display("[ELEC MONITOR]reiceved AT_rsp with size of AT 11 symbols");
+								break;
+							 end
+							else if(recieved_transaction_data_symb.size()>11)
+							 begin
+								$error("[ELEC MONITOR]the size of AT rsp transaction is more than 11 symbols");
+							 end
+
+						end
 					end
 				check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
 
+			$display("[ELEC MONITOR]wait first OS after AT_rsp transaction");
 			 case(env_cfg_mem.gen_speed)  //wait first type of os depend on generation
 			  gen2:begin
 
@@ -903,7 +953,7 @@ endtask:recieved_TS1_gen4
 			//***this thread check it after reciecve on descision***//
           begin  //in case data sent from transport layer to electrical
 		  @(ready_to_recieved_data)  //note forget to put it up
-		  speed_mailbox.get(speed); 
+		  speed_mailbox.get(speed);  //queue to get the speed
 		  while(ELEC_vif.sbtx)begin
           if(ELEC_vif.enable_rs) //defind event 
           begin

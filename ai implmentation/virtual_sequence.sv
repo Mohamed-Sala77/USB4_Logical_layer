@@ -33,9 +33,9 @@ task run;
 	virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4);
       
       
-$stop;
-    @(recieved_on_elec_sboard); //  wait AT_rsp from dut to trigger 
 
+    @(recieved_on_elec_sboard); //  wait AT_rsp from dut to trigger 
+$stop;
    ///phase 4///
    // @(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
     virtual_elec_gen.wake_up(4,gen4);

@@ -2,6 +2,8 @@
 `include "testbench.sv"
 //import testbench::*;
 
+//+define+NO_STATIC_METHODS  vsim before compile
+
 //include innterfaces
 `include "config_space_if.sv"
 `include "upper_layer_if.sv"
