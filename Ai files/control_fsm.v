@@ -171,7 +171,7 @@ always @(posedge fsm_clk or negedge reset_n) begin
         end
 		CLD_EXCHANGE_1: begin
             // Default values for d_sel and counters of ordered sets
-            d_sel <= 4'h0;
+            d_sel <= 4'h9;
             os_sent_count <= 0;
             os_receive_count_l0 <= 0;
             os_receive_count_l1 <= 0;
