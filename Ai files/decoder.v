@@ -14,8 +14,8 @@ module decoding_block (
 );
 
 // Define arrays to store decoded data
-reg [7:0] mem_0 [15:0];
-reg [7:0] mem_1 [15:0];
+reg [7:0] mem_0 [16:0];
+reg [7:0] mem_1 [16:0];
 
 // Index of the current memory location
 reg [3:0] mem_index;
@@ -25,9 +25,9 @@ reg [3:0] max_byte_num;
 
 integer i;
 
-parameter GEN4 = 0;
-parameter GEN2 = 2;
-parameter GEN3 = 1;
+parameter GEN4 = 'b00;
+parameter GEN2 = 'b10;
+parameter GEN3 = 'b01;
 
 
 
@@ -98,23 +98,23 @@ always @(posedge enc_clk or negedge rst) begin
             GEN3: begin // gen_speed = 1
                 if (mem_index == 15) begin
                     // Save lane_0_rx_enc as bytes in mem_0 locations from 0 to 15
-                                mem_0 [0] <= lane_1_rx_enc[11 : 4];
-				mem_0 [1] <= lane_1_rx_enc[19 : 12];
-				mem_0 [2] <= lane_1_rx_enc[27 : 20];
-				mem_0 [3] <= lane_1_rx_enc[35 : 28];
-				mem_0 [4] <= lane_1_rx_enc[43 : 36];
-				mem_0 [5] <= lane_1_rx_enc[51 : 44];
-				mem_0 [6] <= lane_1_rx_enc[59 : 52];
-				mem_0 [7] <= lane_1_rx_enc[67 : 60];
-				mem_0 [8] <= lane_1_rx_enc[75 : 68];
-				mem_0 [9] <= lane_1_rx_enc[83 : 76];
-				mem_0 [10] <= lane_1_rx_enc[91 : 84];
-				mem_0 [11] <= lane_1_rx_enc[99 : 92];
-				mem_0 [12] <= lane_1_rx_enc[107 : 100];
-				mem_0 [13] <= lane_1_rx_enc[115 : 108];
-				mem_0 [14] <= lane_1_rx_enc[123 : 116];
-				mem_0 [15] <= lane_1_rx_enc[131 : 124];
-				mem_0 [16] <= lane_1_rx_enc[3 : 0];
+                                mem_0 [0] <= lane_0_rx_enc[11 : 4];
+				mem_0 [1] <= lane_0_rx_enc[19 : 12];
+				mem_0 [2] <= lane_0_rx_enc[27 : 20];
+				mem_0 [3] <= lane_0_rx_enc[35 : 28];
+				mem_0 [4] <= lane_0_rx_enc[43 : 36];
+				mem_0 [5] <= lane_0_rx_enc[51 : 44];
+				mem_0 [6] <= lane_0_rx_enc[59 : 52];
+				mem_0 [7] <= lane_0_rx_enc[67 : 60];
+				mem_0 [8] <= lane_0_rx_enc[75 : 68];
+				mem_0 [9] <= lane_0_rx_enc[83 : 76];
+				mem_0 [10] <= lane_0_rx_enc[91 : 84];
+				mem_0 [11] <= lane_0_rx_enc[99 : 92];
+				mem_0 [12] <= lane_0_rx_enc[107 : 100];
+				mem_0 [13] <= lane_0_rx_enc[115 : 108];
+				mem_0 [14] <= lane_0_rx_enc[123 : 116];
+				mem_0 [15] <= lane_0_rx_enc[131 : 124];
+				mem_0 [16] <= lane_0_rx_enc[3 : 0];
 
 
 			  	mem_1 [0] <= lane_1_rx_enc[11 : 4];
@@ -134,16 +134,18 @@ always @(posedge enc_clk or negedge rst) begin
 				mem_1 [14] <= lane_1_rx_enc[123 : 116];
 				mem_1 [15] <= lane_1_rx_enc[131 : 124];
 				mem_1 [16] <= lane_1_rx_enc[3 : 0];
-                    end
-		    if (sync_bits[3:0] == 4'b0101) begin
+                end
+                    
+		    if (mem_0[16][3:0] == 4'b0101) begin
                         // Ordered sets
                         data_os <= 0;
-		    end else if (sync_bits[3:0] == 4'b1010) begin
+		    end else if (mem_0[16][3:0] == 4'b1010) begin
                         // Transport layer data
                         data_os <= 1;
                 end
             end
-            end
+       
+            
            GEN2: begin // gen_speed = 2
                 if (mem_index == 7) begin
                     // Save lane_0_rx_enc as bytes in mem_0 locations from 0 to 7
@@ -168,16 +170,15 @@ always @(posedge enc_clk or negedge rst) begin
                 mem_1 [7] <= lane_0_rx_enc[65 : 58];
                 mem_1 [16] <= lane_1_rx_enc[1 : 0];
 
-		end
-				
-		   if (sync_bits [1:0] == 2'b01) begin
+end 	
+		   if (mem_0[16][1:0]== 2'b01) begin
                         // Ordered sets
                         data_os <= 0;
-		   end else if (sync_bits [1:0] == 2'b10) begin
+		   end else if (mem_0[16][1:0] == 2'b10) begin
                         // Transport layer data
                         data_os <= 1;
                 end
-                end
+                
                 end
                 endcase
             end
@@ -199,3 +200,4 @@ always @(posedge enc_clk or negedge rst) begin
 
 endmodule
 `resetall	
+
