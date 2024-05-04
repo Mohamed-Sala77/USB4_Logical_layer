@@ -225,9 +225,15 @@ module encoding_block
 		if(d_sel == 'h9) begin
 			new_sym <= enc_clk;
 		end else if(gen_speed == 'h2) begin
-			new_sym <= (byte_numb == 7);
+			if(d_sel == 'h3)
+			  new_sym <= (byte_numb == 8);
+			else
+			  new_sym <= (byte_numb == 7);
 		end else if(gen_speed == 'h1) begin
-			new_sym <= (byte_numb == 15);
+			if(d_sel == 'h3)
+			  new_sym <= (byte_numb == 16);
+			else
+			  new_sym <= (byte_numb == 15);
 		end else begin
 			new_sym <= enc_clk;
 		end
