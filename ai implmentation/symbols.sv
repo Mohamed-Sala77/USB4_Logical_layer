@@ -201,3 +201,6 @@ parameter [27:0]  HEADER_TS2_GEN4={4'd0,counter_TS2,~(indication_TS2),indication
 parameter [27:0]  HEADER_TS3_GEN4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
 parameter [27:0]  HEADER_TS4_GEN4={4'd0,~(counter_TS4),counter_TS4,indication_TS4,CURSOR};
 
+///------------------------///
+//parameters
+parameter No_TS_GEN4 =16;

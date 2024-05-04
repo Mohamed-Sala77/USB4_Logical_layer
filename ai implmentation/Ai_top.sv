@@ -47,14 +47,14 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	//Clocks' Initialization
 	initial begin
 
-		$timeformat(-9 , 2 , " ns", 10);
+		//$timeformat(-9 , 2 , " ns", 10);
 		
 		SystemClock = 0 ;
 		Rx_Clock = 0;
 		local_clk = 0;
 		gen2_lane_clk = 0;
 		gen3_lane_clk = 0;
-		gen4_lane_clk = 1;
+		gen4_lane_clk = 0;
 		gen2_fsm_clk = 0;
 		gen3_fsm_clk = 0;
 		gen4_fsm_clk = 0;
@@ -88,8 +88,8 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 									.lane_1_tx_o(e_if.lane_1_tx),
 									.enable_scr(e_if.enable_rs)
 );    
-/*
 
+/*
 								//--for old dut files --//
 								//Instantiate the logical layer
 logical_layer_no_scr logical_layer (
@@ -157,11 +157,11 @@ end
 
 	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
-	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
+	always #((10**15)/(freq_10)) gen2_lane_clk = ~gen2_lane_clk;
 	
-	always #((10**15)/(2*freq_20)) gen3_lane_clk = ~gen3_lane_clk;
+	always #((10**15)/(freq_20)) gen3_lane_clk = ~gen3_lane_clk;
 	
-	always #((10**15)/(2*freq_40)) gen4_lane_clk = ~gen4_lane_clk;
+	always #((10**15)/(freq_40)) gen4_lane_clk = ~gen4_lane_clk;
 
 	always #((10**15)/(2*freq_9_697)) gen2_fsm_clk = ~gen2_fsm_clk;
 	

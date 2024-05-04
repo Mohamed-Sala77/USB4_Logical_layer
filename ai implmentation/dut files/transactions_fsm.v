@@ -18,12 +18,13 @@ module transactions_fsm(
 );
 
     // State definitions
-    localparam DISCONNECT = 3'b000;
-    localparam IDLE = 3'b001;
-    localparam DLE1 = 3'b010;
-    localparam AT = 3'b011;
-    localparam LT = 3'b100;
-    localparam DLE2 = 3'b101;
+    localparam DISCONNECT = 3'b000,
+   
+IDLE = 3'b001,
+DLE1 = 3'b010,
+AT = 3'b011,
+LT = 3'b100,
+DLE2 = 3'b101;
 
     // AT
    localparam DLE_SYMBOL = 8'hFE;
@@ -40,19 +41,25 @@ localparam CLSE_SYMBOL = ~LSE_SYMBOL;
     
     // Define maximum data count=69
     reg [6:0] data_count; 
-    
+	
+    reg [3:0] des_count;
     // Define the storing element array
-    reg [7:0] storing_element [71:0]; // Considering DLE and ETX symbols along with data symbols
+    reg [7:0] storing_element [71:0];
+   wire [7:0] read_write;
+    
+    assign read_write = storing_element[3];
+    
     
     
    // Define registers to hold the output values
 reg      t_valid_reg;
+//reg [7:0] read_write;
 reg      trans_error_reg;
 reg [23:0] payload_in_reg;
 reg      s_read_reg, s_write_reg;
 reg [7:0] s_address_reg;
 reg      disconnect_reg;
-reg      crc_det_en_reg;
+//reg      crc_det_en;
 
 
 
@@ -67,7 +74,7 @@ always @(posedge sb_clk) begin
     s_write <= s_write_reg&&t_valid_reg;
     s_address <= s_address_reg;
     disconnect <= disconnect_reg;
-    crc_det_en <= crc_det_en_reg;
+   // crc_det_en <= crc_det_en;
   end
     
     
@@ -81,6 +88,8 @@ always @(posedge sb_clk) begin
 end
           
      always@(*) begin
+	     ns=cs;
+	     
             case (cs)
               
               
@@ -94,10 +103,10 @@ end
                 end
                 IDLE: begin
                     // State logic for IDLE state
-                    if (error) begin
-                        ns = IDLE;
-                    end else if (sbrx[8:1] == DLE_SYMBOL) begin
+                    if (sbrx[8:1] == DLE_SYMBOL && ~error) begin
                         ns = DLE1;
+                    end else if (error) begin
+                        ns = IDLE;
                     end else if (tdisconnect) begin
                         ns = DISCONNECT;
                     end else begin
@@ -142,44 +151,59 @@ end
                         ns = IDLE;
                     end else if (tdisconnect) begin
                         ns = DISCONNECT;
-                    end else if (sbrx[8:1] == DLE_SYMBOL) begin
-                        ns = DLE2;
-                    end else if (data_count < 69) begin
-                        ns = AT;
                     end else begin
-                        ns = IDLE;
-                    end
-                end
+
+				case (sbrx [8:1])
+
+					DLE_SYMBOL: ns= DLE2;
+
+					default: begin 
+
+						if (des_count == 0) begin
+
+							if (data_count< 69) begin
+
+								ns = AT;
+
+							end else begin 
+								ns = IDLE;
+							end
+						end
+
+					end
+				endcase
+			end
+		end
+		    
                 // DLE2 State
                 DLE2: begin
                     if (error) begin
                         ns = IDLE;
                     end else if (tdisconnect) begin
                         ns = DISCONNECT;
-                    end else if (sbrx[8:1] == DLE_SYMBOL) begin
-                        if (data_count < 69) begin
-                            ns = DLE2;
-                        end else begin
-                            ns = IDLE;
-                        end
                     end else if (sbrx[8:1] == ETX_SYMBOL) begin
-                        ns = IDLE;
+			    ns= IDLE;
+                        end
+                    else if (sbrx[8:1] == DLE_SYMBOL ) begin
+                        ns = DLE2;
                     end else if (sbrx[8:1] == STX_COMMAND_SYMBOL || sbrx[8:1] == STX_RESPONSE_SYMBOL) begin
                         ns = AT;
                     end else begin
                         ns = DLE2;
                     end
-                end
-                default: begin
-                    // Default state transition
-                    ns = DLE2;
-                end
-            endcase
-        end
+              end
+            endcase 
+          end
         
         
         // Output logic
    always @(*) begin
+	   
+	   t_valid_reg = t_valid;
+
+	trans_error_reg = trans_error;
+
+	disconnect_reg = disconnect;
     // Update outputs based on cs
        case (cs)
          
@@ -187,24 +211,24 @@ end
             // Initialize all outputs to zero
             t_valid_reg = 0;
             trans_error_reg = 0;
-            payload_in_reg = 0;
+            payload_in_reg = 1;
             s_read_reg = 0;
             s_write_reg = 0;
             s_address_reg = 0;
             // Set disconnect to 0 if tconnect is asserted
             disconnect_reg = tconnect ? 0 : 1;
-            crc_det_en_reg = 0; // Assuming CRC detection is disabled in DISCONNECT state
+            crc_det_en = 0; // Assuming CRC detection is disabled in DISCONNECT state
         end
         
         IDLE: begin
             // Initialize all outputs to zero
             t_valid_reg = 0;
             trans_error_reg = 0;
-            payload_in_reg = 0;
+            payload_in_reg = 1;
             s_read_reg = 0;
             s_write_reg = 0;
             s_address_reg = 0;
-            crc_det_en_reg = 0; // Assuming CRC detection is disabled in DISCONNECT state
+            crc_det_en = 0; // Assuming CRC detection is disabled in DISCONNECT state
 
             // Check conditions to update outputs
             if (error) begin
@@ -238,7 +262,6 @@ end
                 crc_det_en = 0;
             end else begin
                 trans_error_reg = 0;
-                crc_det_en = 0;
 
                 // Check for different symbols and store accordingly
                 case (sbrx[8:1])
@@ -248,16 +271,17 @@ end
                         crc_det_en = 0;
 
                     end
-                    STX_RESPONSE_SYMBOL, STX_COMMAND_SYMBOL: begin
+                    STX_RESPONSE_SYMBOL: begin
                         // Store STX response/command symbol after DLE
+                        storing_element[1] = sbrx[8:1];
+		    end
+		 STX_COMMAND_SYMBOL: begin
+                        
                         storing_element[1] = sbrx[8:1];
                     
                     end
-                    default: begin
-                        // If none of the above, do nothing
-                    end
                 endcase
-            end
+	    end
 
             // Check for tdisconnect
             if (tdisconnect) begin
@@ -269,21 +293,16 @@ end
 
         LT: begin
            t_valid_reg = 0;
-            trans_error_reg = 0;
-            payload_in_reg = 0;
-            s_read_reg = 0;
-            s_write_reg = 0;
-            s_address_reg = 0;
           disconnect_reg = 0;
-          crc_det_en_reg = 0;
+          crc_det_en = 0;
 
             // Check for error
             if (error) begin
                 trans_error_reg = 1;
-                crc_det_en_reg = 0;
+                
             end else begin
                 trans_error_reg = 0;
-                crc_det_en_reg = 0;
+                
 
                 /// Check if sbrx[8:1] is DLE_SYMBOL
             if (sbrx[8:1] == DLE_SYMBOL) begin
@@ -309,21 +328,16 @@ end
       AT: begin
         
          t_valid_reg = 0;
-            trans_error_reg = 0;
-            payload_in_reg = 0;
-            s_read_reg = 0;
-            s_write_reg = 0;
-            s_address_reg = 0;
           disconnect_reg= 0;
-          crc_det_en_reg = 0;
+          crc_det_en = 0;
 
         // Check for error
         if (error) begin
             trans_error_reg = 1;
-            crc_det_en_reg = 0;
+            
         end else begin
             trans_error_reg = 0;
-            crc_det_en_reg = 0;
+            
 
             // Check if sbrx[8:1] is DLE_SYMBOL
             if (sbrx[8:1] == DLE_SYMBOL) begin
@@ -334,25 +348,25 @@ end
             else begin
              if (data_count < 69) begin
                  storing_element[2 + data_count] = sbrx[8:1];
-                crc_det_en =1;
+                
                 case (storing_element[1])
 
-								STX_COMMAND_SYMBOL: begin 
+		STX_COMMAND_SYMBOL: begin 
 
-									if (data_count == 4) begin
-										crc_det_en=0;
-									end else begin
-										crc_det_en=1;
-									end  
+		if (data_count == 4) begin
+		crc_det_en=0;
+		end else begin
+			crc_det_en=1;
+			end  
 
-								end
-								STX_RESPONSE_SYMBOL: begin 
+		end
+	STX_RESPONSE_SYMBOL: begin 
 
-									if (data_count == 7) begin
-										crc_det_en=0;
-									end else begin
-										crc_det_en=1;
-									end  
+	if (data_count == 7) begin
+		crc_det_en=0;
+			end else begin
+			crc_det_en=1;
+end  
 
 	end
 
@@ -375,7 +389,7 @@ end
         // Initialize t_valid_reg, disconnect_reg, and crc_det_en to zero
         t_valid_reg = 0;
         disconnect_reg = 0;
-        crc_det_en_reg = 0;
+        crc_det_en = 0;
 
         // Check for error
         if (error) begin
@@ -383,10 +397,6 @@ end
         end else begin
             trans_error_reg = 0;
 
-            // Check for tdisconnect
-            if (tdisconnect) begin
-                disconnect_reg = 1;
-            end
 
             // Check if sbrx[8:1] is ETX_SYMBOL
             if (sbrx[8:1] == ETX_SYMBOL) begin
@@ -400,7 +410,6 @@ end
                 // Store the symbol
                 storing_element[2 + data_count] = sbrx[8:1];
                 // Enable CRC detection
-                crc_det_en_reg = 1;
               end
               else begin
             storing_element[72]=0;
@@ -411,11 +420,15 @@ end
             else if (sbrx[8:1] == STX_COMMAND_SYMBOL || sbrx[8:1] == STX_RESPONSE_SYMBOL) begin
                 // Enable CRC detection
                 storing_element[2]=sbrx [8:1];
-                crc_det_en_reg = 1;
+                crc_det_en = 1;
             end
           
             // If sbrx[8:1] is not ETX_SYMBOL, DLE_SYMBOL, or STX_COMMAND/RESPONSE_SYMBOL, do nothing
         end
+        // Check for tdisconnect
+            if (tdisconnect) begin
+                disconnect_reg = 1;
+            end
         end
         endcase
 end 
@@ -423,6 +436,8 @@ end
 
         
         always @(*) begin
+		// Extract address from byte 0 of the data symbol
+        s_address_reg = storing_element[2];
           payload_in_reg = {storing_element[6], storing_element[5], storing_element[4]};
 
          if (storing_element[1] == STX_RESPONSE_SYMBOL) begin
@@ -431,34 +446,53 @@ end
         end
 
         // Extract read/write operation from storing symbol 3 (MSB bit 7)
-        else if (storing_element[3][7] == 1'b0) begin
+        else if (read_write[7] == 1'b0) begin
             // Read operation
             s_read_reg = 1;
             s_write_reg = 0;
-        end else begin
+	end else if (read_write[7]==1)begin
             // Write operation
             s_read_reg = 0;
             s_write_reg = 1;
         end
 
-        // Extract address from byte 0 of the data symbol
-        s_address_reg = storing_element[2];
+        
 end
 
 always @(posedge sb_clk or negedge rst) begin
     if (~rst) begin
         // Reset data_count to 0
         data_count <= 0;
-    end else begin
-        // Increment data_count if conditions are met
-        if ((cs == AT || cs == DLE2) && data_count < 69) begin
-            data_count <= data_count + 1;
-        end else begin
-            // Reset data_count to 0 for other states
-            data_count <= 0;
-        end
-    end
+    end else if ((cs == AT || cs == DLE2) && data_count != 70) begin
+            case (des_count)
+
+			9: data_count <= data_count + 1;
+
+			default : data_count <= data_count;
+		endcase
+
+	end else begin
+		data_count <= 0;
+
+	end
 end
+
+
+
+
+always @ (posedge sb_clk or negedge rst) begin 
+	if(~rst) begin
+		des_count <= 0;
+
+	end else if (cs == AT && des_count < 9 ) begin
+		des_count <= des_count + 1 ;
+
+	end else begin
+		des_count <= 0;
+
+	end
+end
+
 
 
 
@@ -467,4 +501,5 @@ end
 
 endmodule
 `resetall	
+
 

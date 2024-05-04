@@ -35,9 +35,10 @@ task run;
       
 
     @(recieved_on_elec_sboard); //  wait AT_rsp from dut to trigger 
-$stop;
+  //$display("[virtual_sequence]:waittttttttttttttttttttttttttttttttttttttt");
+   
    ///phase 4///
-   // @(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
+    @(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
     virtual_elec_gen.wake_up(4,gen4);
     virtual_elec_gen.Send_OS(TS1_gen4,gen4);
     virtual_elec_gen.Send_OS(TS2_gen4,gen4);
