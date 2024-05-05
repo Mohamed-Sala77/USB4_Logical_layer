@@ -173,7 +173,7 @@
 
 	//Parameters for TS symbols for Gen 4
   parameter        CURSOR = 12'h07E;
-  parameter        indication_TS1=4'h2,
+  parameter        indication_TS1=4'h4,
                    indication_TS2=4'h4,
                    indication_TS3=4'h6;
   parameter        indication_TS4=8'hf0;

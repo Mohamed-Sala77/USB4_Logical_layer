@@ -32,8 +32,8 @@ endtask: PRSC11
   integer i;
   logic [0:7] temp;
   for (i = 0; i < (queue_in.size()/8); i+=1) begin
-    temp ={>>{queue_in[(i*8):7+(8*i)]}} ; // get 8 bits
-    temp ={<<{temp}}; // reverse bits
+    temp ={<<{queue_in[(i*8):7+(8*i)]}} ; // get 8 bits
+    //temp ={<<{temp}}; // reverse bits
     queue_in[(i*8):((i*8)+7)] = {>>{temp}}; // store back in input queue
 
   end

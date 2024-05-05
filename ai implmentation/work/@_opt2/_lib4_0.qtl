@@ -1,10 +1,10 @@
-P/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/serializer.sv|
+Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/serializer.sv|
 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/serializer.sv|
 !i113 0
 R16
 R2
 vslos_send
-Z69 !s110 1714838055
+R67
 !i10b 1
 !s100 2iz>ZEnhNBoeLl7Re8?O51
 I3KbWE>_mdDk<6E[2zB1082
@@ -18,7 +18,7 @@ R12
 r1
 !s85 0
 31
-Z70 !s108 1714838055.000000
+R68
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/slos_send.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/slos_send.v|
 !i113 0
@@ -26,7 +26,7 @@ R53
 R2
 Xsymbols_sv_unit
 R4
-Z71 !s110 1714677877
+Z69 !s110 1714677877
 !i10b 1
 !s100 VQBK5`K@0Y0D37Z;K<8Ho3
 IcaK89=Dn2`mLDcLE4ilN:2
@@ -34,7 +34,7 @@ VcaK89=Dn2`mLDcLE4ilN:2
 !i103 1
 S1
 R55
-Z72 w1714677796
+Z70 w1714677796
 8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/symbols.sv
 FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/symbols.sv
 L0 1
@@ -42,7 +42,7 @@ R12
 r1
 !s85 0
 31
-Z73 !s108 1714677877.000000
+Z71 !s108 1714677877.000000
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/symbols.sv|
 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/symbols.sv|
 !i113 0
@@ -50,7 +50,7 @@ R16
 R2
 vtb
 R4
-R71
+R69
 !i10b 1
 !s100 D7EGoM9D`JL6Ahb2c];PD2
 I[2G:JH[XXSi4bbgCWKnT[3
@@ -58,7 +58,7 @@ R6
 !s105 dummy_file_sv_unit
 S1
 R55
-R72
+R70
 8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv
 FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv
 L0 240
@@ -66,7 +66,7 @@ R12
 r1
 !s85 0
 31
-R73
+R71
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv|
 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/dummy_file.sv|
 !i113 0
@@ -74,15 +74,15 @@ R16
 R2
 vtest
 R4
-!s110 1714849901
+!s110 1714912486
 !i10b 1
-!s100 ECeXRTK48kh2kV@o2j;SI1
-I02833WAG5ng??aIGjAJLb2
+!s100 `P3A[`m[=CU`h4cklOal:3
+I4HZl0b?cZ3cKOH[N3@Q9]2
 R6
-R60
+R59
 S1
 R8
-w1714849894
+w1714912483
 8C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/test_dummy_file.sv
 FC:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/test_dummy_file.sv
 L0 53
@@ -90,7 +90,7 @@ R12
 r1
 !s85 0
 31
-!s108 1714849901.000000
+!s108 1714912486.000000
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/test_dummy_file.sv|
 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/test_dummy_file.sv|
 !i113 0
@@ -107,15 +107,15 @@ I>BKU_5;9KP63j]8S@42o[2
 !i103 1
 S1
 R55
+R60
 R61
 R62
-R63
 L0 1
 R12
 31
+R63
 R64
 R65
-R66
 !i113 0
 R16
 R2
@@ -175,7 +175,7 @@ R17
 R18
 R19
 R4
-R71
+R69
 !i10b 1
 !s100 GRe9XOJ0?R?SSoBTlDKKH1
 IoeTHDY5mG^MTZSUPFbBSb1
@@ -183,7 +183,7 @@ VoeTHDY5mG^MTZSUPFbBSb1
 !i103 1
 S1
 R55
-R72
+R70
 8C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
 FC:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv
 R21
@@ -218,14 +218,14 @@ R12
 r1
 !s85 0
 31
-R73
+R71
 !s107 TEST.sv|Env.svh|virtual_sequence.sv|config_scoreboard.sv|up_scoreboard.sv|elec_layer_scoreboard.svh|config_agent.sv|up_agent.sv|elec_layer_agent.svh|config_monitor.sv|up_monitor.sv|elec_layer_monitor.svh|config_generator.sv|up_stimulus_generator.sv|elec_layer_generator.svh|Reference_model_wrapper.sv|upper_reference.sv|elec_reference.sv|configuration_space_reference.sv|elec_layer_driver.svh|up_driver.sv|config_driver.sv|env_cfg_class.sv|upper_layer_tr.svh|config_space_pkg.sv|elec_layer_tr.svh|symbols.sv|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/GIT_Code/USB4_Logical_layer/ai implmentation/testbench.sv|
 !i113 0
 R16
 R2
 vtimer
-R69
+R67
 !i10b 1
 !s100 3Va_:Aec7d8]VJ02TPa]X1
 I[b`hMo9I:QA9:?[Q_JLXB1
@@ -239,14 +239,14 @@ R12
 r1
 !s85 0
 31
-R70
+R68
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/timer.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/timer.v|
 !i113 0
 R53
 R2
 vtransactions_fsm
-R69
+R67
 !i10b 1
 !s100 XRb=>JSI=zebY[GZEFZl]1
 IXjlfRAi^_?[S;oCUIo^XI1
@@ -260,14 +260,14 @@ R12
 r1
 !s85 0
 31
-R70
+R68
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_fsm.v|
 !i113 0
 R53
 R2
 vtransactions_gen_fsm
-R69
+R67
 !i10b 1
 !s100 ljj:RfK9_0IbRG1__K7Pk1
 I6laN;=kHOHYEI7aJ;zak`3
@@ -281,7 +281,7 @@ R12
 r1
 !s85 0
 31
-R70
+R68
 !s107 C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v|
 !i113 0
@@ -623,6 +623,55 @@ R24
 R16
 R13
 n@m@t@i_@s@c@d@p@i
+Xstd
+Vd=_JfHTnXCN[H5FjiaJJc0
+r1
+!s85 0
+R1
+R2
+!i10b 1
+!s100 Y99>DDLIAgT:=WT5GS_<F0
+Id=_JfHTnXCN[H5FjiaJJc0
+S1
+R3
+R4
+Z25 8verilog_src/std/std.sv
+Z26 Fverilog_src/std/std.sv
+L0 6
+R8
+31
+!s108 1534563790.000000
+Z27 !s107 verilog_src/std/std.sv|
+!s90 -debug|-suppress|12110|-sv|-s|-work|sv_std|-dirpath|$MODEL_TECH/..|verilog_src/std/std.sv|
+!i113 1
+R12
+R13
+XSTD
+V[Snl]g>Z2U^Ni][7e5@WU3
+r1
+!s85 0
+R1
+R2
+!i10b 1
+!s100 4P^DUo8EGa[aEfE]Zmdko1
+I[Snl]g>Z2U^Ni][7e5@WU3
+S1
+!s86 1
+R3
+R4
+R25
+R26
+L0 6
+R8
+31
+R9
+R27
+!s90 -debug|-suppress|12110|-u|-sv|-s|-work|sv_std|-dirpath|$MODEL_TECH/..|verilog_src/std/std.sv|
+!i113 1
+R16
+R13
+n@s@t@d
+                 
 Xstd
 Vd=_JfHTnXCN[H5FjiaJJc0
 r1
