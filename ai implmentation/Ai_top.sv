@@ -2,14 +2,11 @@
 `include "testbench.sv"
 //import testbench::*;
 
-//+define+NO_STATIC_METHODS  vsim before compile
-
 //include innterfaces
 `include "config_space_if.sv"
 `include "upper_layer_if.sv"
 `include "electrical_layer_if.sv"
-
-module Ai_top;
+program Ai_top;
 
 	logic SystemClock; logic Rx_Clock;  //
 	logic local_clk;
@@ -47,14 +44,14 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	//Clocks' Initialization
 	initial begin
 
-		//$timeformat(-9 , 2 , " ns", 10);
+		$timeformat(-9 , 2 , " ns", 10);
 		
 		SystemClock = 0 ;
 		Rx_Clock = 0;
 		local_clk = 0;
 		gen2_lane_clk = 0;
 		gen3_lane_clk = 0;
-		gen4_lane_clk = 0;
+		gen4_lane_clk = 1;
 		gen2_fsm_clk = 0;
 		gen3_fsm_clk = 0;
 		gen4_fsm_clk = 0;
@@ -86,7 +83,9 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 									.sbrx(e_if.sbrx),		
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
-									.enable_scr(e_if.enable_rs)
+									.transport_data_flag(UL_if.transport_data_flag),
+									.cl0_s(UL_if.cl0_s),
+									.enable_scr(enable_rs)
 );    
 
 /*
@@ -107,25 +106,25 @@ logical_layer_no_scr logical_layer (
 	.lane_0_rx_i(e_if.lane_0_rx),		
 	.lane_1_rx_i(e_if.lane_1_rx),
 	// .control_unit_data(0),
-	.enable_deser(e_if.data_incoming),
+	.data_incoming(e_if.data_incoming),
 	.transport_layer_data_out(u_if.transport_layer_data_out),
 	.sbrx(e_if.sbrx),		
 	.lane_0_tx_o(e_if.lane_0_tx),
 	.lane_1_tx_o(e_if.lane_1_tx),
-	.enable_scr(e_if.enable_rs)
+	.enable_scr(enable_rs_dummy)
 );
-*/
 
+*/
 
 
 // TEST 
 initial begin 
-    TEST logical_layer_test;
-    logical_layer_test = new(e_if, c_if ,u_if); 
+    TEST USB3_test;
+    USB3_test = new(e_if, c_if ,u_if); 
     reset();
 
     //-------main test----------//
-    logical_layer_test.run();
+    USB3_test.run();
 
     //-------for test model only ----------//
     //USB3_test.test_model();
@@ -171,4 +170,5 @@ end
 
 	//always #(Rx_clock_cycle/2) Rx_Clock = ~Rx_Clock;
 
-endmodule
+endprogram
+
