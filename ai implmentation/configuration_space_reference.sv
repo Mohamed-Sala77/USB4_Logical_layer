@@ -26,6 +26,7 @@ class ConfigurationSpacesModel;
         // Construct request transaction
         request = new();
         request.c_read = 1'b1;
+        request.c_write = 1'b0;
         request.c_address = address;
         request.c_data_out = 32'd0; // Set c_data_out to 'd0
 
@@ -49,6 +50,7 @@ class ConfigurationSpacesModel;
         config_transaction request;
         request = new();
         request.c_write = 1'b1;
+        request.c_read = 1'b0;
         request.c_address = address;
         request.c_data_out = data;
         // Send write request to the stimulus generator

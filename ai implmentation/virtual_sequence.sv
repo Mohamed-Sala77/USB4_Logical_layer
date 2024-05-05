@@ -18,7 +18,7 @@ endfunction: new
 task run;
 
     ///phase 1///
-    virtual_elec_gen.wake_up(1);
+    //virtual_elec_gen.wake_up(1);
     virtual_cfg_gen.generate_stimulus() ;
     $display("[virtual_sequence]:waiting for sbtx_transition_high event");
    ///phase 2///
