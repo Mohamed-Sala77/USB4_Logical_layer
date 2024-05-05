@@ -33,24 +33,14 @@ always @(posedge local_clk or negedge rst) begin
 
     end else begin
         case (gen_speed)
-
             2'b00: begin // gen_speed is 0
-                ser_counter <= ser_counter + 1'b1;
                 enc_counter <= enc_counter + 1'b1;
-                fsm_counter <= fsm_counter + 1'b1;
-                
-                if (ser_counter == 4'd1) begin
-                    ser_clk <= ~ser_clk;
-                    ser_counter <= 4'b0;
-                end
+                ser_clk <= ~ser_clk;
                 if (enc_counter == 8'd15) begin
                     enc_clk <= ~enc_clk;
                     enc_counter <= 8'b0;
                 end
-                if (fsm_counter == 5'd1) begin
                     fsm_clk <= ~fsm_clk;
-                    fsm_counter <= 7'b0;
-                end
             end
 
             2'b01: begin // gen_speed is 1
