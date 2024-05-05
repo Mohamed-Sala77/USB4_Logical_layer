@@ -172,15 +172,15 @@
 
 
 	//Parameters for TS symbols for Gen 4
-  parameter        CURSOR = 12'h7E0;
+  parameter        CURSOR = 12'h07E;
   parameter        indication_TS1=4'h2,
                    indication_TS2=4'h4,
                    indication_TS3=4'h6;
   parameter        indication_TS4=8'hf0;
                   
-  parameter        counter_TS1=8'h0f,   //check on sending the counter value from zakaria
-                   counter_TS2=8'h0f,
-                   counter_TS3=8'h0f;
+  parameter        counter_TS1=8'hf0,   //check on sending the counter value from zakaria
+                   counter_TS2=8'hf0,
+                   counter_TS3=8'hf0;
   parameter        counter_TS4=4'hf;
 
 

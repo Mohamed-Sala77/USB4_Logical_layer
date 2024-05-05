@@ -476,46 +476,64 @@ endtask:recieved_TS234_gen4
 
 task  electrical_layer_monitor::recieved_TS1_gen4();
 int i,k=0;
-logic 		                   recieved_TS1_lane0[$]
-                               ,recieved_TS1_lane1[$];
-//logic 	                   TS1_total_recieved[$];
+logic 		               	   recieved_TS1_lane0[$],
+							   recieved_TS1_lane1[$];
 logic		      		       TS1_total_lane0[$],
-                               TS1_total_lane1[$];						   
+                               TS1_total_lane1[$],
+							   temp_q_lane0[$],
+							   temp_q_lane1[$];						   
 bit                            PRBS11_q_lane0[$],
                                PRBS11_q_lane1[$];
-logic						   temp_q_lane0[$],
-							   temp_q_lane1[$];								   
+logic						   one_byte_lane0[$:7],
+							   one_byte_lane1[$:7];	
+while(1)begin
+	$display("tmammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+	@(posedge ELEC_vif.gen4_lane_clk)
+	@(posedge ELEC_vif.enable_rs)
+		break;
+	end
 
+
+$display("tmammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+//@(posedge ELEC_vif.enable_rs);
+recieved_TS1_lane0.delete();
+recieved_TS1_lane1.delete();
+$display("[monitor](at time %0t)",$time);
 repeat(TS16_SIZE) //collect the TS1 from the two lanes
  begin 
-  @(negedge ELEC_vif.gen4_lane_clk);
-  recieved_TS1_lane0.push_back(ELEC_vif.lane_0_tx);
-  recieved_TS1_lane1.push_back(ELEC_vif.lane_1_tx);
+   @(negedge ELEC_vif.gen4_lane_clk)
+  	recieved_TS1_lane0.push_back(ELEC_vif.lane_0_tx);
+  	recieved_TS1_lane1.push_back(ELEC_vif.lane_1_tx);
   if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
         begin
-		   $display("[ELEC MONITOR]the value of ELEC_vif.sbtx is %0d AND ELEC_vif.enable_rs %0d during send TS1 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+		   $error("[ELEC MONITOR]the value of ELEC_vif.sbtx is %0d AND ELEC_vif.enable_rs %0d during send TS1 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		   break;
 		end
  end
-    $display("[ELEC MONITOR]the value of recieved_TS1_gen4 on lane0 is %p",recieved_TS1_lane0[0:27]);
+    $display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p",recieved_TS1_lane0[0:27]);
+	$display("[ELEC MONITOR]the value of recieved_TS1_lane1 on lane0 is %p",recieved_TS1_lane1[0:27]);
 	//$display("[ELEC MONITOR] size of TS1_total_lane1=%0d ",TS1_total_lane1.size());
     //$display("the value of recieved_TS1_gen4 is %p",recieved_SLOS1_lane0);
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane0 is %0d and must be 7168 on lane 0",recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the size of recieved_TS1_gen4 on lane1 is %0d and must be 7168 on lane 1",recieved_TS1_lane1.size());
+
+//reverse the recieved TS(8bit for gen4)
+	reverse_8bits_in_Gen4(recieved_TS1_lane0);
+	reverse_8bits_in_Gen4(recieved_TS1_lane1);
 		
 /*
-foreach(recieved_TS1_lane1[i]) //convert to packet
+foreach(Temp_recieved_TS1_lane1[i]) //convert to packet
 begin
-	if(TS1_total_lane0[i] ==recieved_TS1_lane0[i])
+	if(TS1_total_lane0[i] ==Temp_recieved_TS1_lane0[i])
 	begin
-	$display("[ELEC MONITOR]  equallll the value of TS1_total_lane0[%0d] is %0d and recieved_TS1_lane0[%0d] is %0d",i,TS1_total_lane0[i],i,recieved_TS1_lane0[i]);
-	$display("at i=%0d the value =%0d expect (1)",i,(TS1_total_lane0[i] == recieved_TS1_lane0[i]));
+	$display("[ELEC MONITOR]  equallll the value of TS1_total_lane0[%0d] is %0d and Temp_recieved_TS1_lane0[%0d] is %0d",i,TS1_total_lane0[i],i,Temp_recieved_TS1_lane0[i]);
+	$display("at i=%0d the value =%0d expect (1)",i,(TS1_total_lane0[i] == Temp_recieved_TS1_lane0[i]));
 	//if(i ==28) break;
 	end
 
-	if(TS1_total_lane1[i] ==recieved_TS1_lane1[i])begin
-	$display("[ELEC MONITOR]  equallll the value of TS1_total_lane0[%0d] is %0d and recieved_TS1_lane0[%0d] is %0d",i,TS1_total_lane1[i],i,recieved_TS1_lane1[i]);
-	$display("at i=%0d the value =%0d expect (1)",i,(TS1_total_lane1[i] == recieved_TS1_lane1[i]));
+	if(TS1_total_lane1[i] ==Temp_recieved_TS1_lane1[i])begin
+	$display("[ELEC MONITOR]  equallll the value of TS1_total_lane0[%0d] is %0d and Temp_recieved_TS1_lane0[%0d] is %0d",i,TS1_total_lane1[i],i,Temp_recieved_TS1_lane1[i]);
+	$display("at i=%0d the value =%0d expect (1)",i,(TS1_total_lane1[i] == Temp_recieved_TS1_lane1[i]));
 	if(i ==28) break;
 	end
 end*/
@@ -526,19 +544,24 @@ PRSC11(PRBS11_lane0_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane0);
 PRSC11(PRBS11_lane1_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane1);
 $display("[ELEC MONITOR] size of PRBS11_q_lane0=%0d",PRBS11_q_lane0.size());
 
-i=0;
+
 TS1_total_lane0.delete();
 TS1_total_lane1.delete();
+
+/////////////////////////////////////
+//generate  TS 
+i=0;
 repeat(No_TS_GEN4)
 begin
 	temp_q_lane0={<<{HEADER_TS1_GEN4}};
 	temp_q_lane1={<<{HEADER_TS1_GEN4}};
-	$display("[ELEC MONITOR] size of temp_q_lane0 in case HEADER_TS1_GEN4=%0d",temp_q_lane0.size());
+	$display("[ELEC MONITOR] size of temp_q_lane0 in case HEADER_TS1_GEN4=%p",temp_q_lane0);
 
 	foreach(temp_q_lane0[j])begin
 		TS1_total_lane0.push_back(temp_q_lane0[j]);
 		TS1_total_lane1.push_back(temp_q_lane1[j]);
 	end
+	$display("[ELEC MONITOR] size of TS1_total_lane0 in case HEADER_TS1_GEN4=%p",TS1_total_lane0[0:27]);
 	temp_q_lane0.delete();
 	temp_q_lane1.delete();
 
@@ -547,20 +570,19 @@ begin
 		TS1_total_lane1.push_back(PRBS11_q_lane1[k]);
 	end
 
-	$display("[ELEC MONITOR] size of TS1_total_lane0 in case =%0d",TS1_total_lane0.size());
-	$display("[ELEC MONITOR] check the first 28 bits= %p of recieved_TS1_lane0",(recieved_TS1_lane0[0:27]));
-	$display("[ELEC MONITOR] check the first 28 bits= %p of TS1_total_lane0",(TS1_total_lane0[0:27] ));
-	$stop;
-
+	//$display("[ELEC MONITOR] size of TS1_total_lane0 in case =%0d welllloooooo must be 7168",TS1_total_lane0.size());
+	$display("[ELEC MONITOR] check the first 28 bits= %p of Temp_recieved_TS1_lane0",(recieved_TS1_lane0[0:27]));
+	//$display("[ELEC MONITOR] check the first 28 bits= %p of TS1_total_lane0",(TS1_total_lane0[0:27] ));
+	
+    $stop;
 	temp_q_lane0.delete();
 	temp_q_lane1.delete();
 i++;
 end
 
+
+
 /////////////////////////////////////
-
-
-
 
 if(TS1_total_lane0==recieved_TS1_lane0 && TS1_total_lane1==recieved_TS1_lane1)
 begin
@@ -576,6 +598,8 @@ $display("[ELEC MONITOR]TS1 is correct on gen4");
 end
 else	
 $error("[ELEC MONITOR]TS1 is not correct on gen4");
+#1;
+$stop;
 endtask:recieved_TS1_gen4
 
 //task to recieved SLOS1 for gen2,3
@@ -857,7 +881,12 @@ endtask:recieved_TS1_gen4
 				check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
 
 			$display("[ELEC MONITOR]wait first OS after AT_rsp transaction at env_cfg_mem.gen_speed =%0p",env_cfg_mem.gen_speed);
-			wait(ELEC_vif.enable_rs ==1)
+
+            /*while(1)begin  
+				@(posedge ELEC_vif.enable_rs)
+				break;
+			end*/
+			//wait(ELEC_vif.enable_rs ==1)
 			$display("[ELEC MONITOR]enable_rs=1");
 			 case(env_cfg_mem.gen_speed)  //wait first type of os depend on generation
 			  gen2:begin
@@ -1013,6 +1042,7 @@ endtask:recieved_TS1_gen4
 		 endtask
 
 //endpackage : electrical_layer_monitor_pkg
+
 
 
 

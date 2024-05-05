@@ -49,3 +49,43 @@ trancated_PRBS11_OUT=PRBS11_OUT[28:$];  //trancate the PRBS11
 TS1_Frame={REVERSE_trancated_PRBS11_OUT,counter_TS1,~(indication_TS1),indication_TS1,CURSOR};
 $display("TS1_Frame=%d",$size(TS1_Frame));  
     endmodule*/
+
+ /*module test;
+
+  // Declare a queue to test the function
+  logic  queue_in[$];
+  logic   x[16];
+
+  initial begin
+    x='{0,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1};
+    foreach(x[i])
+    begin
+    queue_in.push_back(x[i]);
+
+    end
+    // Initialize the queue with some test data
+    $display("queue_in[0] size = %0d", queue_in.size());
+    $display("queue_in[0] = %p", queue_in[0:7]);
+    $display("queue_in[1] = %p", queue_in[8:15]);
+    // Call the function under test
+    reverse_bits_in_place(queue_in);
+
+    // Check the results
+    $display("after queue_in[0] = %p", queue_in[0:7]);
+    $display("after queue_in[1] = %p", queue_in[8:15]);
+  end
+
+  // The reverse_bits_in_place function goes here
+  function automatic void reverse_bits_in_place(ref logic queue_in[$]);
+  integer i;
+  logic [0:7] temp;
+  for (i = 0; i < (queue_in.size()/8); i+=1) begin
+    temp ={>>{queue_in[(i*8):7+(8*i)]}} ; // get 8 bits
+    temp ={<<{temp}}; // reverse bits
+    $display("temp = %b", temp);
+    queue_in[(i*8):((i*8)+7)] = {>>{temp}}; // store back in input queue
+
+  end
+endfunction
+
+endmodule*/
