@@ -106,7 +106,7 @@ always @(posedge enc_clk or negedge rst) begin
                 end else if (d_sel != 8) begin
                   //ordered set
                         lane_0_tx_enc_old <= {data_0[63:0],2'b01};
-						            lane_1_tx_enc_old <= {data_1[63:0],2'b01]};
+						            lane_1_tx_enc_old <= {data_1[63:0],2'b01};
 						             enable_ser <= 1;
 						             mem_0 [0] <= lane_0_tx;
 					              	mem_1 [0] <= lane_1_tx;
