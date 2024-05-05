@@ -200,4 +200,3 @@ always @(posedge enc_clk or negedge rst) begin
 
 endmodule
 `resetall	
-
