@@ -44,8 +44,8 @@ module lanes_serializer
                 // Load new data into shift register every DATA_WIDTH cycles
                 shift_reg0 <= Lane_0_tx_in;
                 shift_reg1 <= Lane_1_tx_in;
-		    Lane_0_tx_out <= Lane_0_tx_in[7];
-		    Lane_1_tx_out <= Lane_1_tx_in[7];
+                Lane_0_tx_out <= Lane_0_tx_in[7];
+                Lane_1_tx_out <= Lane_1_tx_in[7];
                 counter <= max_count-1;
                 enable_scr <= 1'b1; //enable scrambler next stage
             end else begin
