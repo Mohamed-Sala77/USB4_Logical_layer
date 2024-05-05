@@ -532,8 +532,8 @@ i++;
 end
 //////////////////////////////////////////////
 //*****reverse the recieved TS(8bit for gen4)*****//
-	reverse_8bits_in_Gen4(recieved_TS1_lane0);
-	reverse_8bits_in_Gen4(recieved_TS1_lane1);
+	//reverse_8bits_in_Gen4(recieved_TS1_lane0);
+	//reverse_8bits_in_Gen4(recieved_TS1_lane1);
 ////////////////////////////////////////////// 
 	$display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p and size %0d ",recieved_TS1_lane0[0:31],recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the value of TS1_total_lane0    on lane0 is %p and size %0d",TS1_total_lane0[0:31],TS1_total_lane0.size());

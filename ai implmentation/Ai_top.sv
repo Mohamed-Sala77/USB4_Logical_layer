@@ -157,11 +157,11 @@ end
 
 	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
-	always #((10**15)/(freq_10)) gen2_lane_clk = ~gen2_lane_clk;
+	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
 	
-	always #((10**15)/(freq_20)) gen3_lane_clk = ~gen3_lane_clk;
+	always #((10**15)/(2*freq_20)) gen3_lane_clk = ~gen3_lane_clk;
 	
-	always #((10**15)/(freq_40)) gen4_lane_clk = ~gen4_lane_clk;
+	always #((10**15)/(2*freq_40)) gen4_lane_clk = ~gen4_lane_clk;
 
 	always #((10**15)/(2*freq_9_697)) gen2_fsm_clk = ~gen2_fsm_clk;
 	

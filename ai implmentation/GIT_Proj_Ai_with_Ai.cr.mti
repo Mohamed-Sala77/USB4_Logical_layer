@@ -54,17 +54,6 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	data_bus_receive
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/Ai_top.sv} {1 {vlog -work work -vopt -sv -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/Ai_top.sv}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling package Ai_top_sv_unit
--- Compiling interface config_space_if
--- Compiling interface upper_layer_if
--- Compiling interface electrical_layer_if
--- Compiling module Ai_top
-
-Top level modules:
-	Ai_top
-
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/timer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/timer.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module timer
@@ -170,19 +159,12 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	clock_div
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/encoding.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/encoding.v}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module encoding_block
+-- Compiling module transactions_gen_fsm
 
 Top level modules:
-	encoding_block
-
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/logical_layer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/logical_layer.v}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module logical_layer
-
-Top level modules:
-	logical_layer
+	transactions_gen_fsm
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/pulse_generator.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -191,12 +173,19 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	pulse_generator
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/transactions_gen_fsm.v}
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/logical_layer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/logical_layer.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module transactions_gen_fsm
+-- Compiling module logical_layer
 
 Top level modules:
-	transactions_gen_fsm
+	logical_layer
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/encoding.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/encoding.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module encoding_block
+
+Top level modules:
+	encoding_block
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/lane_distributer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/lane_distributer.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -205,19 +194,19 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	lane_distributer
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module prbs11_rec
-
-Top level modules:
-	prbs11_rec
-
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/slos_send.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/slos_send.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module slos_send
 
 Top level modules:
 	slos_send
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module prbs11_rec
+
+Top level modules:
+	prbs11_rec
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/data_bus .v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/data_bus .v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
@@ -226,19 +215,19 @@ QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 Top level modules:
 	data_bus
 
-} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec_g4.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec_g4.v}
-QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
--- Compiling module prbs11_rec_g4
-
-Top level modules:
-	prbs11_rec_g4
-
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/sb_registers.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
 -- Compiling module sb_registers
 
 Top level modules:
 	sb_registers
+
+} {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec_g4.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/prbs11_rec_g4.v}
+QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
+-- Compiling module prbs11_rec_g4
+
+Top level modules:
+	prbs11_rec_g4
 
 } {} {}} {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v} {1 {vlog -work work -vopt -stats=none {C:/Users/Wello/Desktop/material/GP/GP_code/project/USB4_Logical_layer/ai implmentation/dut files/lanes_deserializer.v}
 QuestaSim-64 vlog 10.7c Compiler 2018.08 Aug 18 2018
