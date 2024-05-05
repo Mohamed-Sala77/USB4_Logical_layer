@@ -3,7 +3,8 @@ interface electrical_layer_if(input clk,
 	input SB_clock,
 	input gen2_lane_clk,
 	input gen3_lane_clk,
-	input gen4_lane_clk
+	input gen4_lane_clk,
+	input [1:0] up_clk_counter
 	);
 
 	// elec layer inputs signals
@@ -21,8 +22,6 @@ interface electrical_layer_if(input clk,
 	GEN generation_speed;
 	logic [2:0] phase;
 	bit phase_5_read_enable;
-
-	
 
 
 endinterface : electrical_layer_if

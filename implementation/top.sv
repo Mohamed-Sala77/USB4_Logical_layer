@@ -44,7 +44,7 @@ module top;
 
 	// interfaces 
 	upper_layer_if UL_if(SystemClock, gen2_fsm_clk, gen3_fsm_clk, gen4_fsm_clk, SystemReset);
-	electrical_layer_if elec_if(SystemClock, SB_clock, gen2_lane_clk, gen3_lane_clk, gen4_lane_clk);
+	electrical_layer_if elec_if(SystemClock, SB_clock, gen2_lane_clk, gen3_lane_clk, gen4_lane_clk, UL_if.clk_cycles_counter);
 	config_space_if config_if(SystemClock, gen4_fsm_clk);
 
 	//DUT instatiation
@@ -63,18 +63,20 @@ module top;
 									.lane_0_rx_i(elec_if.lane_0_rx),		
 									.lane_1_rx_i(elec_if.lane_1_rx),
 									// .control_unit_data(0),
-									.data_incoming(elec_if.data_incoming),
+									.enable_deser(elec_if.data_incoming),
 									.transport_layer_data_out(UL_if.transport_layer_data_out),
 									.sbrx(elec_if.sbrx),		
 									.lane_0_tx_o(elec_if.lane_0_tx),
 									.lane_1_tx_o(elec_if.lane_1_tx),
-									.enable_scr(enable_rs_dummy)
+									.enable_scr(enable_rs_dummy),
+									.cl0_s(UL_if.cl0_s),
+									.transport_data_flag(UL_if.transport_data_flag)
 								);
 
 	//Clocks' Initialization
 	initial begin
 		
-		$timeformat(-9 , 2 , " ns", 10);
+		//$timeformat(-9 , 2 , " ns", 10);
 
 		SystemClock = 0 ;
 		Rx_Clock = 0;
@@ -83,7 +85,7 @@ module top;
 		gen3_lane_clk = 0;
 		gen4_lane_clk = 1;
 		gen2_fsm_clk = 0;
-		gen3_fsm_clk = 0;
+		gen3_fsm_clk = 1;
 		gen4_fsm_clk = 0;
 		SB_clock = 0;
 		
@@ -121,7 +123,7 @@ module top;
 		Test test;
 		test = new (UL_if, elec_if, config_if);
 		reset();
-		test.run("normal_scenario_gen_4");
+		test.run("normal_scenario_gen_3");
 		
 	end
 

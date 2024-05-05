@@ -75,31 +75,31 @@
 			case(elec_tr.phase)
 				2:
 				begin
-					assert(	(elec_tr_model.sbtx === elec_tr.sbtx)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 2) SIDEBAND behavior ");
+					ELEC_Phase_2: assert(	(elec_tr_model.sbtx === elec_tr.sbtx)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 2) SIDEBAND behavior ");
 					else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 2) SIDEBAND behavior!!!");
 				end
 
 				3:
 			 	begin
 
-			 		assert(	//(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
-			 				(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
-			 				(elec_tr_model.read_write === elec_tr.read_write)				&&
-			 				(elec_tr_model.len === elec_tr.len)								&&
-			 				(elec_tr_model.crc_received === elec_tr.crc_received)			&&
-			 				(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			&&
-			 				(elec_tr_model.address === elec_tr.address)												
-			 				) $display("[ELEC SCOREBOARD] CORRECT (PHASE 3) Transaction received ");
-			 		else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) Transaction received   !!!");
+			 		ELEC_Phase_3: 	assert(	//(elec_tr_model.sbtx === elec_tr.sbtx) 							&&
+			 								(elec_tr_model.transaction_type === elec_tr.transaction_type) 	&&
+			 								(elec_tr_model.read_write === elec_tr.read_write)				&&
+			 								(elec_tr_model.len === elec_tr.len)								&&
+							 				(elec_tr_model.crc_received === elec_tr.crc_received)			&&
+							 				(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			&&
+							 				(elec_tr_model.address === elec_tr.address)												
+							 				) $display("[ELEC SCOREBOARD] CORRECT (PHASE 3) Transaction received ");
+			 						else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 3) Transaction received   !!!");
 
 					// Detailed Assertions
 					//assert	(elec_tr_model.sbtx === elec_tr.sbtx)							else 	$error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");						
-					assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT transaction_type !!!");		
-					assert	(elec_tr_model.read_write === elec_tr.read_write)				else 	$error("[ELEC SCOREBOARD] INCORRECT read_write !!!");						
-					assert	(elec_tr_model.len === elec_tr.len)								else 	$error("[ELEC SCOREBOARD] INCORRECT len !!!");							
-					assert	(elec_tr_model.crc_received === elec_tr.crc_received)			else 	$error("[ELEC SCOREBOARD] INCORRECT crc_received !!!");					
-					assert	(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			else 	$error("[ELEC SCOREBOARD] INCORRECT cmd_rsp_data !!!");				
-					assert	(elec_tr_model.address === elec_tr.address)						else 	$error("[ELEC SCOREBOARD] INCORRECT address !!!");		
+					ELEC_Phase_3_Tr_type: 		assert	(elec_tr_model.transaction_type === elec_tr.transaction_type) 	else 	$error("[ELEC SCOREBOARD] INCORRECT transaction_type !!!");		
+					ELEC_Phase_3_read_write: 	assert	(elec_tr_model.read_write === elec_tr.read_write)				else 	$error("[ELEC SCOREBOARD] INCORRECT read_write !!!");						
+					ELEC_Phase_3_len: 			assert	(elec_tr_model.len === elec_tr.len)								else 	$error("[ELEC SCOREBOARD] INCORRECT len !!!");							
+					ELEC_Phase_3_crc_received:	assert	(elec_tr_model.crc_received === elec_tr.crc_received)			else 	$error("[ELEC SCOREBOARD] INCORRECT crc_received !!!");					
+					ELEC_Phase_3_cmd_rsp_data:	assert	(elec_tr_model.cmd_rsp_data === elec_tr.cmd_rsp_data)			else 	$error("[ELEC SCOREBOARD] INCORRECT cmd_rsp_data !!!");				
+					ELEC_Phase_3_addressTr_type:assert	(elec_tr_model.address === elec_tr.address)						else 	$error("[ELEC SCOREBOARD] INCORRECT address !!!");		
 
 			 		
 			 	end
@@ -147,8 +147,8 @@
 
 				5:
 				begin
-					assert(	(elec_tr_model.transport_to_electrical === elec_tr.transport_to_electrical)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 5)  behavior ");
-					else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 5) in transport_to_electrical ");
+					ELEC_Phase_5: 	assert(	(elec_tr_model.transport_to_electrical === elec_tr.transport_to_electrical)) $display("[ELEC SCOREBOARD] CORRECT (PHASE 5)  behavior ");
+									else $error("[ELEC SCOREBOARD] INCORRECT (PHASE 5) in transport_to_electrical ");
 				end
 
 

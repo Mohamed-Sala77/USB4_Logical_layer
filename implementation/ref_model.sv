@@ -45,7 +45,7 @@ class ref_model extends primary_steps;
         //         $display("after run 5 \n");
         //     end
            
-        $display ("Run ref_model with phase = %d",E_transaction.phase);
+        //$display ("Run ref_model with phase = %d",E_transaction.phase);
         case (E_transaction.phase)
             3'd1:begin
                 $display("\n before run 1");

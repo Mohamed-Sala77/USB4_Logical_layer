@@ -67,26 +67,50 @@
 				
 
 				
-				wait_negedge(UL_tr.gen_speed); 
+				//wait_negedge(UL_tr.gen_speed); 
 				
 
 				//wait_negedge(UL_tr.gen_speed); 
 
 				if (UL_tr.enable_receive)
 				begin
-					repeat (24) //Z said 24 !!!!!!!!!!!!!!!!!!
-						wait_negedge(UL_tr.gen_speed); 
+					//repeat (20) //should be 24 !!!!!!!!!!!!!!!!!!
+						//wait_negedge(UL_tr.gen_speed); 
+					wait_negedge(UL_tr.gen_speed); 
 					v_if.enable_monitor = 1;
+					
+
 
 				end
 
 				else if (UL_tr.send_to_elec_enable)
 				begin
+					//wait_negedge(UL_tr.gen_speed); 
 					
+					v_if.wait_cl0_s = 0;
+					
+					wait(v_if.clk_cycles_counter == 1);
+					//wait_negedge(UL_tr.gen_speed); 
+
+					v_if.transport_layer_data_in = UL_tr.T_Data;
+					$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data);
+
+					repeat (2)
+						wait_negedge(UL_tr.gen_speed); //because (counter == 1) is read twice without this delay 
+
+					wait(v_if.clk_cycles_counter == 1);
+
+					v_if.transport_layer_data_in = UL_tr.T_Data_1;
+					$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data_1);
+					wait_negedge(UL_tr.gen_speed);
+
+						
+
+
 					//repeat (2)
 					//begin
 						//assert(UL_tr.randomize);
-
+						/*
 						v_if.transport_layer_data_in = UL_tr.T_Data;
 						$display("Time: %t [UL DRIVER] Data sent to electrical layer: %h", $time, UL_tr.T_Data);
 
@@ -98,6 +122,8 @@
 
 						repeat (4-1) // only 3 because there is an extra wait_negedge() before the next data
 							wait_negedge(UL_tr.gen_speed); 
+						*/
+
 					//end
 
 					/*
@@ -113,16 +139,37 @@
 					//-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
 				end
 
+				/*else if (UL_tr.x)
+				begin
+					v_if.generation_speed = UL_tr.gen_speed;
+					$display("@@@@@@@ X = 1 @@@@@@@@@@"); 
+
+				end*/
+
+				else if (UL_tr.wait_for_cl0s)
+				begin
+					v_if.wait_cl0_s = 1;
+					wait_negedge(UL_tr.gen_speed); 
+				end
+
 				else 
 				begin
 					//To disable the monitor
+					//v_if.enable_monitor = 1;
+					v_if.wait_cl0_s = 0;
+
+					$display("%%%%%%%%%%%%%%Disabling the monitor:%%%%%%%%%%%%%%%%%% \n time: %t", $time);
 					repeat (24) //Z said 24 !!!!!!!!!!!!!!!!!!
+					wait_negedge(UL_tr.gen_speed); 
+					//v_if.generation_speed = UL_tr.gen_speed; 
+
 						wait_negedge(UL_tr.gen_speed); 
 					//v_if.enable_monitor = 1;
 					v_if.enable_monitor = 0;
+
 				end
 				
-				-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
+			-> UL_gen_drv_done; // Triggering Event to notify stimulus generator
 
 
 			end

@@ -97,6 +97,13 @@
 						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %h ", elec_tr.electrical_to_transport[7:0]);
 						$display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %h ", elec_tr.electrical_to_transport[15:8]);
 						
+						for (int i = 0; i < 8; i++)
+						begin
+							elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i]);
+							elec_to_trans_enc_1.push_back(elec_tr.electrical_to_transport[i+8]);
+							
+						end
+
 						if(elec_tr.gen_speed == gen2)
 						begin
 							if (elec_to_trans_enc_0.size() == 64)
@@ -107,12 +114,12 @@
 								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %p ", elec_to_trans_enc_0);
 								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %p ", elec_to_trans_enc_1);
 								
-								foreach (elec_to_trans_enc_0[i]) 
+								foreach (elec_to_trans_enc_0_gen_2[i]) 
 								begin
 									wait_negedge (elec_tr.gen_speed);
 									v_if.data_incoming = 1;
-									v_if.lane_0_rx = elec_to_trans_enc_0[i];		
-									v_if.lane_1_rx = elec_to_trans_enc_1[i];
+									v_if.lane_0_rx = elec_to_trans_enc_0_gen_2[i];		
+									v_if.lane_1_rx = elec_to_trans_enc_1_gen_2[i];
 								end
 
 								wait_negedge (elec_tr.gen_speed);
@@ -121,7 +128,7 @@
 								elec_to_trans_enc_1 = {};
 							end
 
-							else
+							/*else
 							begin
 								for (int i = 0; i < 8; i++)
 								begin
@@ -129,7 +136,7 @@
 									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i+8]);
 									
 								end
-							end
+							end*/
 						end
 
 						else if (elec_tr.gen_speed == gen3)
@@ -142,12 +149,12 @@
 								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 0: %p ", elec_to_trans_enc_0);
 								// $display("[ELEC DRIVER] Sending data to be received by the transport layer on LANE 1: %p ", elec_to_trans_enc_1);
 								
-								foreach (elec_to_trans_enc_0[i]) 
+								foreach (elec_to_trans_enc_0_gen_3[i]) 
 								begin
 									wait_negedge (elec_tr.gen_speed);
 									v_if.data_incoming = 1;
-									v_if.lane_0_rx = elec_to_trans_enc_0[i];		
-									v_if.lane_1_rx = elec_to_trans_enc_1[i];
+									v_if.lane_0_rx = elec_to_trans_enc_0_gen_3[i];		
+									v_if.lane_1_rx = elec_to_trans_enc_1_gen_3[i];
 								end
 
 								wait_negedge (elec_tr.gen_speed);
@@ -156,7 +163,7 @@
 								elec_to_trans_enc_1 = {};
 							end
 
-							else
+							/*else
 							begin
 								for (int i = 0; i < 8; i++)
 								begin
@@ -164,7 +171,7 @@
 									elec_to_trans_enc_0.push_back(elec_tr.electrical_to_transport[i+8]);
 									
 								end
-							end
+							end*/
 						end
 
 						else if (elec_tr.gen_speed == gen4)
@@ -191,9 +198,15 @@
 					begin
 						if (elec_tr.phase_5_read_disable == 0) // in case we are sending to the transport layer
 						begin
-							repeat (7) // The DUT starts serializing the data after 7 clk cycles
-								wait_negedge(elec_tr.gen_speed);
-						
+							//wait_negedge(elec_tr.gen_speed);
+
+							wait(v_if.up_clk_counter == 1);
+							//wait_negedge(elec_tr.gen_speed);
+
+							/*repeat (7) // The DUT starts serializing the data after 7 clk cycles
+								wait_negedge(elec_tr.gen_speed);*/
+
+							wait_for_data (elec_tr.gen_speed);
 							v_if.phase_5_read_enable = 1;	
 							v_if.data_incoming = 0;
 						end
@@ -201,9 +214,9 @@
 
 						else 
 						begin
-							repeat (8) // To give time (8 clk cycles) for the last byte to be recieved from the DUT
-								wait_negedge(elec_tr.gen_speed);
 
+							disable_monitor(elec_tr.gen_speed);
+							
 							v_if.phase_5_read_enable = 0;
 						end
 					
@@ -939,7 +952,46 @@
 		endfunction
 
 
+		task wait_for_data(input GEN generation);
 
+			if (generation == gen2)
+			begin
+				repeat (8 + 66)
+					@(negedge v_if.gen2_lane_clk);
+			end
+			else if (generation == gen3)
+			begin
+				repeat (8 + 132 + 1) //8 + 132 !!!
+					@(negedge v_if.gen3_lane_clk);
+			end
+			else if (generation == gen4)
+			begin
+				repeat (7) // The DUT starts serializing the data after 7 clk cycles
+					@(negedge v_if.gen4_lane_clk);
+			end
+
+		endtask : wait_for_data
+
+
+		task disable_monitor(input GEN generation);
+
+			if (generation == gen2)
+			begin
+				repeat (8 + 66)
+					@(negedge v_if.gen2_lane_clk);
+			end
+			else if (generation == gen3)
+			begin
+				repeat (8 + 132)
+					@(negedge v_if.gen3_lane_clk);
+			end
+			else if (generation == gen4)
+			begin
+				repeat (8) // To give time (8 clk cycles) for the last byte to be recieved from the DUT
+					@(negedge v_if.gen4_lane_clk);
+			end
+
+		endtask : disable_monitor
 
 
 
