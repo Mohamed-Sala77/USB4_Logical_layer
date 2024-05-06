@@ -102,7 +102,8 @@ class electrical_layer_generator;
      //task to send ordered sets
     task electrical_layer_generator::Send_OS(input OS_type OS, input GEN generation);
       $display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%p] ", OS);
-      @correct_OS; // Blocking with the correct_OS event "this event on sboard"
+      wait(env_cfg_mem.correct_OS ==1); // Blocking with the correct_OS event "this event on sboard"
+      env_cfg_mem.correct_OS =0;
       $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
       
       repeat (1) begin        

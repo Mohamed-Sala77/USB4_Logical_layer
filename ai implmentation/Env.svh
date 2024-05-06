@@ -32,8 +32,7 @@ class env;
         event elec_gen_driver_done;    //elec_gen with elec_agent(driver)
         event correct_OS;              //elec_gen with elec_agent(monitor)
         event sbtx_transition_high;    //v_sequance with elec_agent(monitor)
-        event sbtx_response;           //v_sequance with elec_agent(monitor)
-        event recieved_on_elec_sboard; //v_sequance with elec_sboard  
+        event sbtx_response;           //v_sequance with elec_agent(monitor)  
         event cfg_driverDone;
         event cfg_next_stimulus;
         event up_driveDone;
@@ -98,10 +97,10 @@ class env;
         up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone);
                       
         //Sequences
-        virtual_seq =new(recieved_on_elec_sboard);
+        virtual_seq =new(env_cfg_mem);
 
         // Scoreboards
-        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,recieved_on_elec_sboard);
+        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem);
         cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem);
         up_scoreboard  = new(up_mod_scr, up_mon_scr);
         

@@ -15,12 +15,12 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem,event recieved_on_elec_sboard);
+                           env_cfg_class env_cfg_mem);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
-        this.recieved_on_elec_sboard=recieved_on_elec_sboard;
+        
     endfunction: new
 
     // Main task to run the scoreboard
@@ -32,8 +32,8 @@ class elec_scoreboard;
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                 
-                // elec_mod_sboard.get(model_tr);
-                // $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
+                 elec_mod_sboard.get(model_tr);
+                 $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
                /*
                 case (monitor_tr.phase)
                 3'd0: begin
@@ -126,7 +126,7 @@ class elec_scoreboard;
                 end
 
                 endcase
-*/              ->recieved_on_elec_sboard;
+*/              env_cfg_mem.recieved_on_elec_sboard=1;
             end
 
             begin  

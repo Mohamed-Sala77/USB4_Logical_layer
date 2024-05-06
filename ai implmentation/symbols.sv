@@ -174,7 +174,7 @@
 	//Parameters for TS symbols for Gen 4
   parameter        CURSOR = 12'h07E;
   parameter        indication_TS1=4'h4,
-                   indication_TS2=4'h4,
+                   indication_TS2=4'h2,
                    indication_TS3=4'h6;
   parameter        indication_TS4=8'hf0;
                   
@@ -185,8 +185,8 @@
 
 
    //Order sets TS1&2 for Gen4
-  parameter [27:0] ts2_gen4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
-  parameter [27:0] ts3_gen4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
+  /*parameter [27:0] ts2_gen4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
+  parameter [27:0] ts3_gen4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};*/
 
    
 	// Seeds for the Pseudo Random Sequences
@@ -197,9 +197,9 @@
 ///-------------------------///
 //Order sets TS1,2,3,4 for Gen4
 parameter [27:0]  HEADER_TS1_GEN4={counter_TS1,~(indication_TS1),indication_TS1,CURSOR};
-parameter [27:0]  HEADER_TS2_GEN4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
-parameter [27:0]  HEADER_TS3_GEN4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
-parameter [27:0]  HEADER_TS4_GEN4={4'd0,~(counter_TS4),counter_TS4,indication_TS4,CURSOR};
+parameter [31:0]  HEADER_TS2_GEN4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
+parameter [31:0]  HEADER_TS3_GEN4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
+parameter [31:0]  HEADER_TS4_GEN4={4'd0,~(counter_TS4),counter_TS4,indication_TS4,CURSOR};
 
 ///------------------------///
 //parameters

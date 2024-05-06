@@ -365,8 +365,8 @@ bit PRBS11_OUT_lane0[$],
     PRBS11_OUT_lane1[$];
 bit trancated_PRBS11_OUT_lane0[0:419],
     trancated_PRBS11_OUT_lane1[0:419];
-bit TS1_Frame_lane0 [447:0],
-    TS1_Frame_lane1 [447:0];
+bit TS1_Frame_lane0 [$:447],
+    TS1_Frame_lane1 [$:447];
 
 
 
@@ -378,19 +378,23 @@ trancated_PRBS11_OUT_lane1=PRBS11_OUT_lane1[28:$];  //trancate the PRBS11
 trancated_PRBS11_OUT_lane0.reverse();     //reverse the trancated PRBS11
 trancated_PRBS11_OUT_lane1.reverse();     //reverse the trancated PRBS11
 
-TS1_Frame_lane0={ >>{trancated_PRBS11_OUT_lane0,HEADER_TS1_GEN4}};
-TS1_Frame_lane1={ >>{trancated_PRBS11_OUT_lane1,HEADER_TS1_GEN4}};
+TS1_Frame_lane0={ <<{trancated_PRBS11_OUT_lane0,HEADER_TS1_GEN4}};
+TS1_Frame_lane1={ <<{trancated_PRBS11_OUT_lane1,HEADER_TS1_GEN4}};
+$display("[ELEC DRIVER] the  TS1_Frame_lane0 is %p",TS1_Frame_lane0);
 
 //send the TS1 symbols to the DUT
-@(posedge ELEC_vif.gen4_lane_clk);
-   ELEC_vif.data_incoming <=1;
-
+//@(posedge ELEC_vif.gen4_lane_clk)
+$display("[elec DRIVER] start sending TS1 symbols to the DUT");
+   
     foreach(TS1_Frame_lane0[i]) begin
-    ELEC_vif.lane_0_rx <=TS1_Frame_lane0[i];
-    ELEC_vif.lane_1_rx <=TS1_Frame_lane1[i];
     @(posedge ELEC_vif.gen4_lane_clk);
+    ELEC_vif.data_incoming =1;
+    ELEC_vif.lane_0_rx =TS1_Frame_lane0[i];
+    ELEC_vif.lane_1_rx =TS1_Frame_lane1[i];
+    
     end
-    ELEC_vif.data_incoming <=0;
+    ELEC_vif.data_incoming =0;
+    $display("[elec DRIVER] doneeeeeeeeeeeeeeeeeeeeeeeeee");
 endtask: TS1_gen4_2_DUT
 
 task electrical_layer_driver::TS2_gen4_2_DUT();
