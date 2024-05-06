@@ -15,9 +15,9 @@ class TEST;
         this.environment = new(ELEC_vif, cfg_if, up_if);
     endfunction
 
-    task run();
+    task run(input GEN speed);
         // Call the run task on the environment
-        environment.run();
+        environment.run(speed);
     endtask
 endclass
 

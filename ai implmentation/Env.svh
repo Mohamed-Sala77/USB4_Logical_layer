@@ -108,7 +108,7 @@ class env;
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard,env_cfg_mem);
         cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
-        up_gen = new(up_mod_gen, up_drv_gen, up_driveDone);
+        up_gen = new(up_mod_gen, up_drv_gen, up_driveDone, up_if);
 
        
 
@@ -122,65 +122,13 @@ class env;
 
         endfunction: new
 
-        //--------Declare the run task -----------//
+       
 
 
-        // for test the model coming data only
-        task test_model();
-            fork
-
-            //**********Run the components**********//
-                //ELEC_components
-                elec_sboard.run_m();
-
-                // Config components
-                cfg_scoreboard.run_m();
-
-                // Upper layer components
-                up_scoreboard.run_scr_m();
-
-                //Virtual Sequence
-                virtual_seq.run_m();
-
-                //ref_model
-                //model.run_phase();
-                
-            join
-        endtask
-
-
-        // for test the dut coming data only
-     //   task test_dut();
-       //     fork
-
-            //**********Run the components**********//
-          /*      //ELEC_components
-                elec_agent.run();
-                elec_sboard.run();
-
-                
-                // Config components
-                cfg_agent.run();
-                cfg_scoreboard.run();
-
-                // Upper layer components
-                up_agent.run();
-                up_scoreboard.run_scr();
-
-                
-
-                //Virtual Sequence
-                virtual_seq.run();
-
-                //ref_model
-                //model.run_phase();
-                
-            join
-        endtask*/
 
 
         // for compare the performance of the dut with the model
-        task run();
+        task run(GEN speed);
             fork
 
             //**********Run the components**********//
@@ -194,13 +142,13 @@ class env;
                 cfg_scoreboard.run();
 
                 // Upper layer components
-                up_agent.run();
+                up_agent.run(speed);
                 up_scoreboard.run_scr();
 
                 
 
                 //Virtual Sequence
-                virtual_seq.run();
+                virtual_seq.run(speed);
 
                 //ref_model
                 model.run();

@@ -123,11 +123,11 @@ initial begin
     USB3_test = new(e_if, c_if ,u_if); 
     reset();
 
-    //-------main test----------//
-    USB3_test.run();
+	GEN speed = gen4 ;
 
-    //-------for test model only ----------//
-    //USB3_test.test_model();
+    //-------main test----------//
+    USB3_test.run(speed);
+
 end
 
 

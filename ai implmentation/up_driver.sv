@@ -22,23 +22,50 @@ class up_transport_driver;
         this.driveDone = doneEvent;
     endfunction
 
-    // Main task that runs forever
-    task run();
-        forever begin
-            // Get the transaction from the mailbox
-            drv_gen_mbx.get(tr);
 
-            // Wait for the next clock edge
-            @(negedge vif.clk);
+    task run(input GEN speed);
 
-            // If data is valid, drive the data and signal that driving is done
-            if (UL_if.cl0_s) begin
-                vif.transport_layer_data_out = tr.T_Data;
-                -> driveDone;
-            end
+        while (vif.enable_sending == 1) begin
+            
+         // Get the transaction from the mailbox
+        drv_gen_mbx.get(tr);
 
-//! we should add here more if we add more var in monitor (phase , gen_speed)
-
-        end
+        // Wait for 4 clock cycles
+        repeat(4) wait_for_negedge(speed);
+      
+        // Assign T_Data to transport_layer_data_in
+        transport_layer_data_in = tr.T_Data;
+      
+        // Wait for 4 more clock cycles
+        repeat(4) wait_for_negedge(speed);
+      
+        // Assign T_Data_1 to transport_layer_data_in
+        transport_layer_data_in = tr.T_Data_1;
+        
+        wait_for_negedge(speed);
+      
+        ->driveDone.trigger();
+  
+    end
+  
+        
     endtask
+
+
+
+
+
+
+
+
+  task wait_for_negedge( input GEN gen_speed );
+  case (gen_speed)
+  gen2: @(negedge  vif.gen2_fsm_clk );
+  gen3: @(negedge  vif.gen3_fsm_clk);
+  gen4: @(negedge  vif.gen4_fsm_clk);
+  default: @(negedge  vif.gen4_fsm_clk );
+  endcase
+  endtask
+
+    
 endclass
