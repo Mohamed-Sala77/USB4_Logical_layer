@@ -2,11 +2,14 @@
 `include "testbench.sv"
 //import testbench::*;
 
+//+define+NO_STATIC_METHODS  vsim before compile
+
 //include innterfaces
 `include "config_space_if.sv"
 `include "upper_layer_if.sv"
 `include "electrical_layer_if.sv"
-program Ai_top;
+
+module Ai_top;
 
 	logic SystemClock; logic Rx_Clock;  //
 	logic local_clk;
@@ -48,14 +51,15 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 		
 		SystemClock = 0 ;
 		Rx_Clock = 0;
-		local_clk = 0;
+		
 		gen2_lane_clk = 0;
 		gen3_lane_clk = 0;
-		gen4_lane_clk = 1;
+		gen4_lane_clk = 0;
 		gen2_fsm_clk = 0;
 		gen3_fsm_clk = 0;
 		gen4_fsm_clk = 0;
 		SB_clock = 0;
+		local_clk = 0;
 		
 		//$display("freq_10: %0d", freq_10);
 		//$display("period: %0d", ((10**12)/freq_10));
@@ -63,7 +67,7 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	end
 
 	//Instantiate the logical layer
-	logical_layer l_layer(
+	/*logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -83,12 +87,10 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 									.sbrx(e_if.sbrx),		
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
-									.transport_data_flag(UL_if.transport_data_flag),
-									.cl0_s(UL_if.cl0_s),
-									.enable_scr(enable_rs)
+									.enable_scr(e_if.enable_rs)
 );    
+*/
 
-/*
 								//--for old dut files --//
 								//Instantiate the logical layer
 logical_layer_no_scr logical_layer (
@@ -106,26 +108,33 @@ logical_layer_no_scr logical_layer (
 	.lane_0_rx_i(e_if.lane_0_rx),		
 	.lane_1_rx_i(e_if.lane_1_rx),
 	// .control_unit_data(0),
-	.data_incoming(e_if.data_incoming),
+	.enable_deser(e_if.data_incoming),
 	.transport_layer_data_out(u_if.transport_layer_data_out),
 	.sbrx(e_if.sbrx),		
 	.lane_0_tx_o(e_if.lane_0_tx),
 	.lane_1_tx_o(e_if.lane_1_tx),
-	.enable_scr(enable_rs_dummy)
+	.enable_scr(e_if.enable_rs)
 );
 
-*/
+
 
 
 // TEST 
 initial begin 
-    TEST USB3_test;
-    USB3_test = new(e_if, c_if ,u_if); 
+    TEST logical_layer_test;
+    logical_layer_test = new(e_if, c_if ,u_if); 
     reset();
 
 	GEN speed = gen4 ;
 
+	GEN speed = gen4 ;
+
+	GEN speed = gen4 ;
+
     //-------main test----------//
+    USB3_test.run(speed);
+    //-------main test----------//
+    logical_layer_test.run();
     USB3_test.run(speed);
 
 end
@@ -170,5 +179,4 @@ end
 
 	//always #(Rx_clock_cycle/2) Rx_Clock = ~Rx_Clock;
 
-endprogram
-
+endmodule

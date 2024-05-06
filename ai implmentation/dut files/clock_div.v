@@ -27,20 +27,26 @@ always @(posedge local_clk or negedge rst) begin
         ser_clk <= 1'b0;
         enc_clk <= 1'b0;
         fsm_clk <= 1'b0;
-        ms_clk <= 1'b0;
+		ms_clk <= 1'b0;
         fsm_counter <= 7'b0;
         factor_counter <= 6'b0;
 
     end else begin
         case (gen_speed)
+
             2'b00: begin // gen_speed is 0
+                
                 enc_counter <= enc_counter + 1'b1;
-                ser_clk <= ~ser_clk;
+                
+                
+                    ser_clk <= ~ser_clk;
+
                 if (enc_counter == 8'd15) begin
                     enc_clk <= ~enc_clk;
                     enc_counter <= 8'b0;
                 end
                     fsm_clk <= ~fsm_clk;
+
             end
 
             2'b01: begin // gen_speed is 1
@@ -134,7 +140,7 @@ always @(posedge sb_clk or negedge rst) begin
     end else begin
          ms_counter <= ms_counter + 1'b1;
                 
-        if (ms_counter == 999) begin
+        if (ms_counter ==4) begin
             ms_clk <= ~ms_clk;
             ms_counter <= 0;
         end

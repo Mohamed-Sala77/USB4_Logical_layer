@@ -17,7 +17,7 @@ class electrical_layer_monitor  extends parent;
       event sbtx_transition_high;  // Event to indicate that the monitor recieved sbtx high("connect to sequance")
 	  event correct_OS;            // Event to indicate that the monitor recieved correct ordered set("connect to sequancer")
 	  event ready_to_recieved_data;  // Event to indicate that the monitor is ready to recieve data
-      event sbtx_response;          // Event to indicate that the monitor recieved sbtx response("connect to sequance")
+      event sbtx_response,done;          // Event to indicate that the monitor recieved sbtx response("connect to sequance")
 	  //event data_income;            
     //declare the transactions
     elec_layer_tr mon_2_Sboard_trans;    // Transaction to be recieved from the generator
@@ -354,23 +354,52 @@ if(!done_training)begin
 	case(os)
 	TS2_gen4:
 	begin
-          repeat(16*TS_GEN_4_HEADER_SIZE)begin //collect the TS from the two lanes
-		   @(negedge ELEC_vif.gen4_lane_clk);
-			recieved_TS_lane0.push_back(ELEC_vif.lane_0_rx);
-			recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
-			if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
-			begin
-			$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
-			break;
+		$display("[ELEC MONITOR]HEADER_TS2_GEN4=%32b",HEADER_TS2_GEN4);
+			repeat(1)begin
+				foreach(HEADER_TS2_GEN4[i])begin
+					correct_TS2.push_front(HEADER_TS2_GEN4[i]);
+				end
 			end
-		    end
-			$display("[ELEC MONITOR] the size of recieved_TS2 GEN4 on lane0 is %0d and must be 32 on lane 0",recieved_TS_lane0.size());
+			//temp_correct_TS={16{HEADER_TS2_GEN4}};
+            //correct_TS2 ={<<{temp_correct_TS}}; // Ensure TS2_gen4 is defined before this line
+		   $display("[ELEC MONITOR]the value of correct_TS2 is %p",correct_TS2);
+            while(1)    begin                                                 //repeat(16*TS_GEN_4_HEADER_SIZE)begin //collect the TS from the two lanes
+				@(negedge ELEC_vif.gen4_lane_clk);
+					recieved_TS_lane0.push_back(ELEC_vif.lane_0_rx);
+					recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
 
-			temp_correct_TS={{16{ts2_gen4}}};
-            correct_TS2 ={<<{temp_correct_TS}}; // Ensure TS2_gen4 is defined before this line
+					if(recieved_TS_lane0.size()==correct_TS2.size())begin
+					if((recieved_TS_lane0 ==correct_TS2)&&(recieved_TS_lane1 ==correct_TS2))begin
+						$display("[ELEC MONITOR] TS2 IS CORRECT ON GEN4");
+						env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
+						mon_2_Sboard_trans.phase=3'd4;
+						mon_2_Sboard_trans.gen_speed=gen4;
+						mon_2_Sboard_trans.o_sets=TS2_gen4;
+						mon_2_Sboard_trans.sbtx='b1;
+						mon_2_Sboard_trans.tr_os=ord_set;
+						mon_2_Sboard_trans.lane=both;
+						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+						break;
+					end
+					else
+					begin
+						recieved_TS_lane0.delete(0);
+						recieved_TS_lane1.delete(0);
+					end
+					end
+					if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
+					begin
+					$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+					break;
+					end
+			end
+
+			$display("[ELEC MONITOR] the size of recieved_TS2 GEN4 on lane0 is %0d and must be 32*16 on lane 0",recieved_TS_lane0.size());
+			$display("[ELEC MONITOR] the recieved_TS2 GEN4 on lane0 is %0p ",recieved_TS_lane0[0:31]);
+			$stop;
 			if((correct_TS2 ==recieved_TS_lane1)&& (correct_TS2 ==recieved_TS_lane0))begin
-			$display("[ELEC MONITOR] TS2 is correct on gen4");
-			-> correct_OS;   //do that on all first OS on each gen
+			$display("[ELEC MONITOR] TS2 IS CORRECT ON GEN4");
+			env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 			mon_2_Sboard_trans.phase=3'd4;
 			mon_2_Sboard_trans.gen_speed=gen4;
 			mon_2_Sboard_trans.o_sets=TS2_gen4;
@@ -397,7 +426,7 @@ if(!done_training)begin
 		    end
 			$display("[ELEC MONITOR] the size of recieved_TS2 GEN4 on lane0 is %0d and must be 448 zakaria on lane 0",recieved_TS_lane0.size());
 
-            temp_correct_TS={{16{ts3_gen4}}};
+            temp_correct_TS={{16{HEADER_TS3_GEN4}}};
 			correct_TS3 ={<<{temp_correct_TS}};
 
 			if((correct_TS3 ==recieved_TS_lane1)&& (correct_TS3 ==recieved_TS_lane0))begin
@@ -491,12 +520,13 @@ temp_q_lane1={<<{HEADER_TS1_GEN4}};
 //generate the TS1 for gen4
 PRSC11(PRBS11_lane0_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane0);
 PRSC11(PRBS11_lane1_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane1);
-$display("[ELEC MONITOR] size of PRBS11_q_lane0=%0d",PRBS11_q_lane0.size());
+//$display("[ELEC MONITOR] size of PRBS11_q_lane0=%0d",PRBS11_q_lane0.size());
 /////////////////////////////////////
+ @(posedge ELEC_vif.gen4_lane_clk)
 //*****collect the TS1 from both lanes*****//
 repeat(TS16_SIZE) 
  begin 
-   @(negedge ELEC_vif.gen4_lane_clk)
+   @(posedge ELEC_vif.gen4_lane_clk)
   	recieved_TS1_lane0.push_back(ELEC_vif.lane_0_tx);
   	recieved_TS1_lane1.push_back(ELEC_vif.lane_1_tx);
   if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
@@ -544,7 +574,6 @@ end
 foreach(TS1_total_lane0[i])
 begin
 	if(TS1_total_lane0[i] ==recieved_TS1_lane0[i])begin
-
 	end
 	else
 	$display("[monitor] error on bit%0d TS1_total_lane0[%0d] and recieved_TS1_lane0[%0d]",i,TS1_total_lane0[i],recieved_TS1_lane0[i]);
@@ -552,8 +581,11 @@ end
 ///*****compare*****///
 if(TS1_total_lane0==recieved_TS1_lane0 && TS1_total_lane1==recieved_TS1_lane1)
 begin
-$display("[ELEC MONITOR]TS1 is correct on gen4");
--> correct_OS;   //do that on all first OS on each gen
+$display("[ELEC MONITOR]*************TS1 IS CORRECT on GEN4*******************");
+env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
+$display("[ELEC monitor correct_OS is trigger]");
+        @(done);
+		mon_2_Sboard_trans=new();
         mon_2_Sboard_trans.gen_speed=gen4;
 		mon_2_Sboard_trans.o_sets=TS1_gen4;
 		mon_2_Sboard_trans.sbtx='b1;
@@ -562,15 +594,14 @@ $display("[ELEC MONITOR]TS1 is correct on gen4");
 		mon_2_Sboard_trans.phase=3'd4;
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 end
-else	
+else	begin
 $error("[ELEC MONITOR]TS1 is not correct on gen4");
-
+end
 recieved_TS1_lane0.delete();
 recieved_TS1_lane1.delete();
 TS1_total_lane0.delete();
 TS1_total_lane1.delete();
 $display("tmammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-$stop;
 endtask:recieved_TS1_gen4
 
 //task to recieved SLOS1 for gen2,3
@@ -697,6 +728,7 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;  
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
+			->done;
 			end
 		else
 		begin
@@ -854,13 +886,14 @@ endtask:recieved_TS1_gen4
 				     check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
 					end
 					begin
-						$display("[ELEC MONITOR]wait first OS after AT_rsp transaction at env_cfg_mem.gen_speed =%0p",env_cfg_mem.gen_speed);
+						
 
 						/*while(1)begin  
 							@(posedge ELEC_vif.enable_rs)
 							break;
 						end*/
 						wait(ELEC_vif.enable_rs ==1)
+						$display("at time(%0d),[ELEC MONITOR]wait first OS after AT_rsp transaction at env_cfg_mem.gen_speed =%0p",$time,env_cfg_mem.gen_speed);
 						$display("at time(%0d)[ELEC MONITOR]enable_rs=1",$time);
 						case(env_cfg_mem.gen_speed)  //wait first type of os depend on generation
 						gen2:begin
@@ -882,6 +915,7 @@ endtask:recieved_TS1_gen4
 		  end
           3'd4: //wait os accourded to the transaction (last os another thread will recieve)
           begin
+			$display("[ELEC MONITOR]wait OS type %0p at env_cfg_mem.gen_speed =%0p",(env_cfg_mem.o_sets+1),env_cfg_mem.gen_speed);
 			case(env_cfg_mem.gen_speed)
 			gen2:begin
 				case(env_cfg_mem.o_sets)
@@ -935,7 +969,9 @@ endtask:recieved_TS1_gen4
 			gen4:begin 
 				case(env_cfg_mem.o_sets)
                   TS1_gen4:begin
-					@(ELEC_vif.enable_rs)
+					$display("[ELEC MONITOR]waittttttttttttttt");
+					//@(ELEC_vif.enable_rs)
+					$display("[ELEC MONITOR] enable_rs =1 on recieving TS2_gen4");
 					recieved_TS234_gen4(TS2_gen4,0); 
 				  end
 				  TS2_gen4:begin 
@@ -947,7 +983,7 @@ endtask:recieved_TS1_gen4
 					recieved_TS234_gen4(TS4,0); 
 				  end
 				  TS4:begin 
-					@(ELEC_vif.enable_rs)
+					//@(ELEC_vif.enable_rs)
 					recieved_TS234_gen4(TS4,1); 
 				  end
 			     endcase
