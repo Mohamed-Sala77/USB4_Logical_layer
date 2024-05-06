@@ -41,7 +41,7 @@ always @(posedge local_clk or negedge rst) begin
                 
                     ser_clk <= ~ser_clk;
 
-                if (enc_counter == 8'd15) begin
+                if (enc_counter == 8'd7) begin
                     enc_clk <= ~enc_clk;
                     enc_counter <= 8'b0;
                 end
