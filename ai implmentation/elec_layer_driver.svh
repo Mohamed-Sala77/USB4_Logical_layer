@@ -362,39 +362,62 @@ endtask: TS2_gen23_2_DUT
 
 task electrical_layer_driver::TS1_gen4_2_DUT();
 bit PRBS11_OUT_lane0[$],
-    PRBS11_OUT_lane1[$];
-bit trancated_PRBS11_OUT_lane0[0:419],
-    trancated_PRBS11_OUT_lane1[0:419];
-bit TS1_Frame_lane0 [$:447],
-    TS1_Frame_lane1 [$:447];
+      PRBS11_OUT_lane1[$];
+logic trancated_PRBS11_OUT_lane0[$],
+      trancated_PRBS11_OUT_lane1[$];
+logic TS1_Frame_lane0 [$],
+      TS1_Frame_lane1 [$],
+      temp_q_lane[$];
+int i;
+i=0;
+temp_q_lane={<<{HEADER_TS1_GEN4}};
+PRBS11_OUT_lane0.delete();
+PRBS11_OUT_lane1.delete();
 
+PRSC11(PRBS11_lane0_seed,(PRBS11_SYMBOL_SIZE),PRBS11_OUT_lane0); //generate PRBS11 
+PRSC11(PRBS11_lane1_seed,(PRBS11_SYMBOL_SIZE),PRBS11_OUT_lane1); //generate PRBS11
+$display("[ELEC DRIVER] the  PRBS11_OUT_lane0 size is %0d",PRBS11_OUT_lane0.size());
+ i=0;
+repeat(1)begin
+  foreach(temp_q_lane[j]) begin
+  TS1_Frame_lane0.push_back(temp_q_lane[j]); //add the header to the TS1_Frame_lane0
+  TS1_Frame_lane1.push_back(temp_q_lane[j]); //add the header to the TS1_Frame_lane1
+  end
 
-
-PRSC11(PRBS11_lane0_seed,PRBS11_SYMBOL_SIZE,PRBS11_OUT_lane0); //generate PRBS11 
-PRSC11(PRBS11_lane1_seed,PRBS11_SYMBOL_SIZE,PRBS11_OUT_lane1); //generate PRBS11
-trancated_PRBS11_OUT_lane0=PRBS11_OUT_lane0[28:$];  //trancate the PRBS11
-trancated_PRBS11_OUT_lane1=PRBS11_OUT_lane1[28:$];  //trancate the PRBS11
-
-trancated_PRBS11_OUT_lane0.reverse();     //reverse the trancated PRBS11
-trancated_PRBS11_OUT_lane1.reverse();     //reverse the trancated PRBS11
-
-TS1_Frame_lane0={ <<{trancated_PRBS11_OUT_lane0,HEADER_TS1_GEN4}};
-TS1_Frame_lane1={ <<{trancated_PRBS11_OUT_lane1,HEADER_TS1_GEN4}};
+  for(int k=(i*448)+28;k<=((i*448)+447);k++)begin
+		TS1_Frame_lane0.push_back(PRBS11_OUT_lane0[k]);
+		TS1_Frame_lane1.push_back(PRBS11_OUT_lane1[k]);
+  end
+  i++;
+end
 $display("[ELEC DRIVER] the  TS1_Frame_lane0 is %p",TS1_Frame_lane0);
-
+$display("[ELEC DRIVER] the  TS1_Frame_lane1 is %p",TS1_Frame_lane1);
+/*
+$display("[ELEC DRIVER] the  TS1_Frame_lane0 is %p",TS1_Frame_lane0[448:(448+447)]);
+*/
 //send the TS1 symbols to the DUT
 //@(posedge ELEC_vif.gen4_lane_clk)
 $display("[elec DRIVER] start sending TS1 symbols to the DUT");
-   
-    foreach(TS1_Frame_lane0[i]) begin
+    //reverse_8bits_in_Gen4(TS1_Frame_lane0);
+    //reverse_8bits_in_Gen4(TS1_Frame_lane1);
+$display("[ELEC DRIVER] the  TS1_Frame_lane0 is %0d",TS1_Frame_lane0.size());
+$display("[ELEC DRIVER] the  TS1_Frame_lane1 is %0d",TS1_Frame_lane1.size());
+    //ELEC_vif.data_incoming <=1; 
+    @(posedge ELEC_vif.gen4_lane_clk);
+    @(posedge ELEC_vif.gen4_lane_clk);
+    @(posedge ELEC_vif.gen4_lane_clk);
+    @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
     ELEC_vif.data_incoming =1;
+    foreach(TS1_Frame_lane0[i]) begin
+    @(posedge ELEC_vif.gen4_lane_clk);
     ELEC_vif.lane_0_rx =TS1_Frame_lane0[i];
     ELEC_vif.lane_1_rx =TS1_Frame_lane1[i];
-    
+    ELEC_vif.data_incoming =1;
     end
-    ELEC_vif.data_incoming =0;
-    $display("[elec DRIVER] doneeeeeeeeeeeeeeeeeeeeeeeeee");
+    ELEC_vif.data_incoming <=0;
+    $display("at time(%0t)[elec DRIVER] doneeeeeeeeeeeeeeeeeeeeeeeeee",$time);
+    
 endtask: TS1_gen4_2_DUT
 
 task electrical_layer_driver::TS2_gen4_2_DUT();

@@ -354,10 +354,15 @@ if(!done_training)begin
 	case(os)
 	TS2_gen4:
 	begin
-		$display("[ELEC MONITOR]HEADER_TS2_GEN4=%0p",HEADER_TS2_GEN4);
-			temp_correct_TS={{16{HEADER_TS2_GEN4}}};
-            correct_TS2 ={<<{temp_correct_TS}}; // Ensure TS2_gen4 is defined before this line
-		   $display("[ELEC MONITOR]the value of correct_TS2 is %0p",correct_TS2);
+		$display("[ELEC MONITOR]HEADER_TS2_GEN4=%32b",HEADER_TS2_GEN4);
+			repeat(1)begin
+				foreach(HEADER_TS2_GEN4[i])begin
+					correct_TS2.push_front(HEADER_TS2_GEN4[i]);
+				end
+			end
+			//temp_correct_TS={16{HEADER_TS2_GEN4}};
+            //correct_TS2 ={<<{temp_correct_TS}}; // Ensure TS2_gen4 is defined before this line
+		   $display("[ELEC MONITOR]the value of correct_TS2 is %p",correct_TS2);
             while(1)    begin                                                 //repeat(16*TS_GEN_4_HEADER_SIZE)begin //collect the TS from the two lanes
 				@(negedge ELEC_vif.gen4_lane_clk);
 					recieved_TS_lane0.push_back(ELEC_vif.lane_0_rx);
@@ -517,11 +522,11 @@ PRSC11(PRBS11_lane0_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane0);
 PRSC11(PRBS11_lane1_seed,16*PRBS11_SYMBOL_SIZE, PRBS11_q_lane1);
 //$display("[ELEC MONITOR] size of PRBS11_q_lane0=%0d",PRBS11_q_lane0.size());
 /////////////////////////////////////
- //@(posedge ELEC_vif.gen4_lane_clk)
+ @(posedge ELEC_vif.gen4_lane_clk)
 //*****collect the TS1 from both lanes*****//
 repeat(TS16_SIZE) 
  begin 
-   @(negedge ELEC_vif.gen4_lane_clk)
+   @(posedge ELEC_vif.gen4_lane_clk)
   	recieved_TS1_lane0.push_back(ELEC_vif.lane_0_tx);
   	recieved_TS1_lane1.push_back(ELEC_vif.lane_1_tx);
   if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
@@ -560,10 +565,10 @@ end
 	//reverse_8bits_in_Gen4(recieved_TS1_lane0);
 	//reverse_8bits_in_Gen4(recieved_TS1_lane1);
 ////////////////////////////////////////////// 
-	/*$display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p and size %0d ",recieved_TS1_lane0[0:31],recieved_TS1_lane0.size());
+	$display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p and size %0d ",recieved_TS1_lane0[0:31],recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the value of TS1_total_lane0    on lane0 is %p and size %0d",TS1_total_lane0[0:31],TS1_total_lane0.size());
 	$display("[ELEC MONITOR]the value of recieved_TS1_lane1 on lane0 is %p and size %0d",recieved_TS1_lane1[0:31],recieved_TS1_lane1.size());
-	$display("[ELEC MONITOR]the value of TS1_total_lane1    on lane0 is %p and size %0d",TS1_total_lane1[0:31],TS1_total_lane1.size());*/
+	$display("[ELEC MONITOR]the value of TS1_total_lane1    on lane0 is %p and size %0d",TS1_total_lane1[0:31],TS1_total_lane1.size());
 /////////////////////////////////////
 
 foreach(TS1_total_lane0[i])
@@ -910,7 +915,7 @@ endtask:recieved_TS1_gen4
 		  end
           3'd4: //wait os accourded to the transaction (last os another thread will recieve)
           begin
-			$display("[ELEC MONITOR]wait OS type %0p at env_cfg_mem.gen_speed =%0p",env_cfg_mem.o_sets,env_cfg_mem.gen_speed);
+			$display("[ELEC MONITOR]wait OS type %0p at env_cfg_mem.gen_speed =%0p",(env_cfg_mem.o_sets+1),env_cfg_mem.gen_speed);
 			case(env_cfg_mem.gen_speed)
 			gen2:begin
 				case(env_cfg_mem.o_sets)
@@ -978,7 +983,7 @@ endtask:recieved_TS1_gen4
 					recieved_TS234_gen4(TS4,0); 
 				  end
 				  TS4:begin 
-					@(ELEC_vif.enable_rs)
+					//@(ELEC_vif.enable_rs)
 					recieved_TS234_gen4(TS4,1); 
 				  end
 			     endcase

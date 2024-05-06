@@ -106,7 +106,7 @@ class electrical_layer_generator;
       env_cfg_mem.correct_OS =0;
       $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
       
-      repeat (1) begin        
+      repeat (2) begin        
         transaction = new();                 // Instantiate a new transaction object
         transaction.o_sets = OS;             // type of the ordered set
         transaction.tr_os = ord_set;         // indicates whether the driver will send transaction or ordered set
