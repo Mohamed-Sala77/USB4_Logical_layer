@@ -44,35 +44,35 @@ module transactions_gen_fsm (
 
 
 typedef enum logic [4:0] {
-DISCONNECT = 'b00000,
-IDLE = 'b00001,
-DLE1 = 'b00010,
-LSE = 'b00011,
-CLSE = 'b00100,
+DISCONNECT = 5'b00000,
+IDLE = 5'b00001,
+DLE1 = 5'b00010,
+LSE = 5'b00011,
+CLSE = 5'b00100,
 
-STX_COMMAND = 'b00101,
-DATA_WRITE_COMMAND_ADDRESS = 'b00110,
-DATA_WRITE_COMMAND_LENGTH = 'b00111,
-DATA_WRITE_COMMAND_DATA = 'b01000,
+STX_COMMAND = 5'b00101,
+DATA_WRITE_COMMAND_ADDRESS = 5'b00110,
+DATA_WRITE_COMMAND_LENGTH = 5'b00111,
+DATA_WRITE_COMMAND_DATA = 5'b01000,
 
-DATA_READ_COMMAND_ADDRESS = 'b01001,
-DATA_READ_COMMAND_LENGTH = 'b01010,
+DATA_READ_COMMAND_ADDRESS = 5'b01001,
+DATA_READ_COMMAND_LENGTH = 5'b01010,
 
 
-STX_RESPONSE = 'b01011,
-DATA_WRITE_RESPONSE_ADDRESS = 'b01100,
-DATA_WRITE_RESPONSE_LENGTH = 'b01101,
-DATA_WRITE_RESPONSE_DATA = 'b01110,
+STX_RESPONSE = 5'b01011,
+DATA_WRITE_RESPONSE_ADDRESS = 5'b01100,
+DATA_WRITE_RESPONSE_LENGTH = 5'b01101,
+DATA_WRITE_RESPONSE_DATA = 5'b01110,
 
-DATA_READ_RESPONSE_ADDRESS = 'b01111,
-DATA_READ_RESPONSE_LENGTH = 'b10000,
-DATA_READ_RESPONSE_DATA = 'b10001,
+DATA_READ_RESPONSE_ADDRESS = 5'b01111,
+DATA_READ_RESPONSE_LENGTH = 5'b10000,
+DATA_READ_RESPONSE_DATA = 5'b10001,
 
-CRC1='b10010,
-CRC2='b10011,
+CRC1=5'b10010,
+CRC2=5'b10011,
 
-DLE2 = 'b10100,
-ETX = 'b10101
+DLE2 = 5'b10100,
+ETX = 5'b10101
 
 } state;
 
@@ -168,6 +168,12 @@ end
 
 
 always @(*) begin 
+
+	trans_reg = trans ;
+	crc_en_reg = crc_en ;
+	sbtx_sel_reg = sbtx_sel ;
+	trans_state_reg = trans_state ;
+	ns=cs;
 	
 	case (cs)
 
@@ -316,14 +322,6 @@ always @(*) begin
 			if (ser_clk_cycles == 9) begin
 				case (trans_sel_reg)
 
-/*
-				5: begin 
-					ns = DATA_WRITE_COMMAND_ADDRESS;
-					trans_reg = {1'b1,control_unit_data,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-				*/
 
 				2: begin 
 					ns = DATA_READ_COMMAND_ADDRESS;
@@ -339,60 +337,6 @@ always @(*) begin
 
 	end
 
-/*
-
-		DATA_WRITE_COMMAND_ADDRESS: begin 
-
-			case (trans_sel_reg)
-
-				5: begin 
-					ns = DATA_WRITE_COMMAND_LENGTH;
-					trans_reg = {1'b1,8'h24,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-
-			endcase
-		end
-
-
-		DATA_WRITE_COMMAND_LENGTH: begin 
-
-			case (trans_sel_reg)
-
-				5: begin 
-					ns = DATA_WRITE_COMMAND_DATA;
-					trans_reg = {1'b1,control_unit_data,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-
-			endcase
-		end
-
-
-		DATA_WRITE_COMMAND_DATA: begin 
-
-			case (trans_sel_reg)
-
-				5: begin 
-					if (data_clock_cycles==2) begin
-						ns = DLE2;
-						trans_reg = {1'b1,8'hFE,1'b0};
-						crc_en_reg = 0;
-						sbtx_sel_reg=0;
-					end else begin
-						ns = DATA_WRITE_COMMAND_DATA;
-						trans_reg = {1'b1,control_unit_data,1'b0};
-						crc_en_reg = 1;
-						sbtx_sel_reg=0;
-					end
-				end 
-
-			endcase
-		end
-
-		*/
 
 		DATA_READ_COMMAND_ADDRESS: begin 
 
@@ -442,14 +386,6 @@ always @(*) begin
 			if (ser_clk_cycles == 9) begin
 				case (trans_sel_reg)
 
-/*
-				7: begin 
-					ns = DATA_WRITE_RESPONSE_ADDRESS;
-					trans_reg = {1'b1,control_unit_data,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-				*/
 
 				3: begin 
 					ns = DATA_READ_RESPONSE_ADDRESS;
@@ -464,52 +400,7 @@ always @(*) begin
 
 	end
 
-/*
-		DATA_WRITE_RESPONSE_ADDRESS: begin 
 
-			case (trans_sel_reg)
-
-				7: begin 
-					ns = DATA_WRITE_RESPONSE_LENGTH;
-					trans_reg = {1'b1,control_unit_data,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-
-			endcase
-		end
-
-
-		DATA_WRITE_RESPONSE_LENGTH: begin 
-
-			case (trans_sel_reg)
-
-				7: begin 
-					ns = DATA_WRITE_RESPONSE_DATA;
-					trans_reg = {1'b1,control_unit_data,1'b0};
-					crc_en_reg = 1;
-					sbtx_sel_reg=0;
-				end 
-
-			endcase
-		end
-
-
-		DATA_WRITE_RESPONSE_DATA: begin 
-
-			case (trans_sel_reg)
-
-				7: begin 
-					ns = DLE2;
-					trans_reg = {1'b1,8'hFE,1'b0};
-					crc_en_reg = 0;
-					sbtx_sel_reg=0;
-				end 
-
-			endcase
-		end
-
-		*/
 
 		DATA_READ_RESPONSE_ADDRESS: begin 
 
@@ -615,23 +506,7 @@ always @(*) begin
 						sbtx_sel_reg=0;
 					end 
 
-/*
 
-				7:begin 
-					ns = ETX;
-					trans_reg = {1'b1,8'h40,1'b0};
-					crc_en_reg = 0;
-					sbtx_sel_reg=0;
-				end 
-
-				8:begin 
-					ns = ETX;
-					trans_reg = {1'b1,8'h40,1'b0};
-					crc_en_reg = 0;
-					sbtx_sel_reg=0;
-				end 
-
-				*/
 
 			endcase
 		end
@@ -659,21 +534,7 @@ always @(*) begin
 					crc_en_reg = 0;
 					sbtx_sel_reg=0;
 				end 
-/*
-				7: begin 
-					ns = IDLE;
-					trans_reg = 10'b1111111111;
-					crc_en_reg = 0;
-					sbtx_sel_reg=0;
-				end 
 
-				8:begin 
-					ns = IDLE;
-					trans_reg = 10'b1111111111;
-					crc_en_reg = 0;
-					sbtx_sel_reg=0;
-				end 
-				*/
 
 			endcase
 		end

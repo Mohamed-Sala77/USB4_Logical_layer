@@ -21,7 +21,7 @@ module logical_layer_no_scr
   input  wire [7:0]  transport_layer_data_in, 
   input  wire        lane_0_rx_i, 
   input  wire        lane_1_rx_i,
-  input  wire        data_incoming,
+  input  wire        enable_deser,
   output wire [7:0]  transport_layer_data_out,
   output wire        sbtx, 
   output wire        lane_0_tx_o, 
@@ -30,7 +30,9 @@ module logical_layer_no_scr
   output wire        c_write,  
   output wire [7:0]  c_address,
   output wire [31:0] c_data_out,
-  output wire        enable_scr
+  output wire        enable_scr,
+  output wire        cl0_s,
+  output wire        transport_data_flag
 );
 
 
@@ -165,7 +167,8 @@ control_fsm ctrl_fsm
   .s_data_o                ( s_data_o                ),
   .s_address_o             ( s_address_o             ),
   .s_read_o                ( s_read_o                ),
-  .s_write_o               ( s_write_o               )
+  .s_write_o               ( s_write_o               ),
+  .cl0_s                   ( cl0_s                   )
 );
 
 data_bus bus
@@ -189,23 +192,24 @@ data_bus bus
 												     
 lane_distributer lane_dist                           
 (                                                    
-  .clk                     ( fsm_clk                 ),             
-  .rst                     ( rst                     ),                   
-  .enable_t                ( tx_lanes_on             ),           
-  .enable_r                ( enable_deskew           ),         
-  .data_os_i               ( data_os                 ),         
-  .data_os_o               ( data_os_bus             ),         
-  .d_sel                   ( d_sel                   ),         
-  .lane_0_tx_in            ( lane_0_tx_bus_dis       ), 
-  .lane_1_tx_in            ( lane_1_tx_bus_dis       ), 
-  .lane_0_rx_in            ( lane_0_rx_dis_enc       ), 
-  .lane_1_rx_in            ( lane_1_rx_dis_enc       ), 
-  .lane_0_tx_out           ( lane_0_tx_dis_enc       ), 
-  .lane_1_tx_out           ( lane_1_tx_dis_enc       ), 
-  .lane_0_rx_out           ( lane_0_rx_bus_dis       ),
-  .lane_1_rx_out           ( lane_1_rx_bus_dis       ),
-  .enable_enc              ( enable_enc              ),
-  .rx_lanes_on             ( rx_lanes_on             )
+  .clk                     ( fsm_clk                     ),             
+  .rst                     ( rst                         ),                   
+  .enable_t                ( tx_lanes_on                 ),           
+  .enable_r                ( enable_deskew               ),         
+  .data_os_i               ( data_os                     ),         
+  .data_os_o               ( data_os_bus                 ),         
+  .d_sel                   ( d_sel                       ),         
+  .lane_0_tx_in            ( lane_0_tx_bus_dis           ), 
+  .lane_1_tx_in            ( lane_1_tx_bus_dis           ), 
+  .lane_0_rx_in            ( lane_0_rx_dis_enc           ), 
+  .lane_1_rx_in            ( lane_1_rx_dis_enc           ), 
+  .lane_0_tx_out           ( lane_0_tx_dis_enc           ), 
+  .lane_1_tx_out           ( lane_1_tx_dis_enc           ), 
+  .lane_0_rx_out           ( lane_0_rx_bus_dis           ),
+  .lane_1_rx_out           ( lane_1_rx_bus_dis           ),
+  .enable_enc              ( enable_enc                  ),
+  .rx_lanes_on             ( rx_lanes_on                 ),
+  .transport_data_flag     ( transport_data_flag         )
 );
 
 encoding_block enc_block
@@ -251,7 +255,7 @@ lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
   .clk                     ( ser_clk                 ), 
   .rst                     ( rst                     ),
   .enable_ser              ( enable_ser              ),
-  .enable_deser            ( data_incoming           ),
+  .enable_deser            ( enable_deser           ),
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),

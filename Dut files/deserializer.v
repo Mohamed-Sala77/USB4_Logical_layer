@@ -21,7 +21,6 @@ module deserializer #(parameter WIDTH = 10) (
 			temp <= 0;
 			parallel_data <= 0;
 			count <= 0;
-			started <= 0;
 		end	
 		else if (start) begin
 			temp <= {in_bit, temp[WIDTH-1:1]};
@@ -49,7 +48,9 @@ module deserializer #(parameter WIDTH = 10) (
 	end	
 	
 	always @(posedge clk) begin
-		if (count == 0 && start)
+		if (!rst)
+		    started <= 0;
+		else if (count == 0 && start)
 		    started <= 1;
 		else if (count == 0 && !start)
 		    started <= 0;

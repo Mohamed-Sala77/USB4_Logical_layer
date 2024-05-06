@@ -47,7 +47,7 @@ module lanes_serializer #(parameter WIDTH = 132)
 			scr_rst <= 0;
 			enable_scr <= 0;
         end
-        if (!enable_ser) begin
+        else if (!enable_ser) begin
             lane_0_tx_ser <= 1'b0;
             lane_1_tx_ser <= 1'b0;
             temp <= 0;

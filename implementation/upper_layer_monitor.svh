@@ -51,8 +51,9 @@
 
 				if (v_if.enable_monitor)
 				begin
-					wait_negedge(v_if.generation_speed); 
+					//wait_negedge(v_if.generation_speed); 
 					begin 
+						@(posedge v_if.transport_data_flag);
 						UL_tr.T_Data = v_if.transport_layer_data_out; //transport_layer_data_in for debugging
 					end
 				
@@ -63,8 +64,18 @@
 						$display("UL Monitor enable @: ",$time);
 					x = 1;*/
 					$display("Time: %t [UL MONITOR]: Received from the logical layer: %h", $time, UL_tr.T_Data);
-					repeat(4-1)
-					wait_negedge(v_if.generation_speed);
+					// repeat(4)
+					//wait_negedge(v_if.generation_speed);
+
+				end
+
+				else if (v_if.wait_cl0_s)
+				begin
+					wait(v_if.cl0_s);
+					UL_tr.wait_for_cl0s = 1;
+					$display("[UL MONITOR]: Cl0_s signal raised at time %t", $time);
+					v_if.wait_cl0_s = 0;
+					UL_mon_scr.put(UL_tr);	//Sending the transaction to the scoreboard
 
 				end
 

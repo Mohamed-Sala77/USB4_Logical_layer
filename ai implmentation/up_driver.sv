@@ -32,7 +32,7 @@ class up_transport_driver;
             @(negedge vif.clk);
 
             // If data is valid, drive the data and signal that driving is done
-            if (/*vif.dataValidIn ==*/ 1) begin
+            if (UL_if.cl0_s) begin
                 vif.transport_layer_data_out = tr.T_Data;
                 -> driveDone;
             end

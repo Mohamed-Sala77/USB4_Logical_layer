@@ -8,6 +8,8 @@
 
 		bit send_to_elec_enable; //to enable sending data to the electrical layer
 		bit enable_receive; // to enable the monitor of the UL to start receiving data from transport_data_out
+		
+		bit wait_for_cl0s;
 		//constraints
 
 		/*

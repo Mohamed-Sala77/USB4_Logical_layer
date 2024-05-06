@@ -23,32 +23,17 @@ class up_transport_scoreboard;
       UL_mon_scr.get(mon_tr);
       $display("\n[Scoreboard Upper layer From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
       
+      //* we campare here first the data from lane 0 then lane 1
       
          // Assertion to compare the values from the two mailboxes
       assert (mod_tr.T_Data == mon_tr.T_Data) else $display("Values from the two mailboxes do not match");
 
         
-//! we should add here more assertion if we add more var in monitor (phase , gen_speed)
 
 
     end
   endtask: run_scr
 
 
-//--------for test model only -----------//
-
- //for model only 
-  task run_scr_m();
-
-  forever begin
-    UL_mod_scr.get(mod_tr);
-
-    // Display the values from mod_tr 
-    $display("------------------------------");
-    $display("[Scoreboard Upper layer ]get from Mod_tr: %p",mod_tr);
-    
-
-  end
-  endtask: run_scr_m
   
 endclass

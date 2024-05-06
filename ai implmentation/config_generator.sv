@@ -22,7 +22,8 @@ class config_generator;
 
     // This task generates stimulus for the driver and model.
     task generate_stimulus();
-       
+            
+            wake_up(1);
             // Wait for scr_mon_done event
             @(scr_mon_done);
 
@@ -60,4 +61,12 @@ class config_generator;
     mb_gen_mod.put(transaction);
 
     endtask
+
+    task  wake_up(input bit [2:0] phase);
+      transaction = new();                     // Instantiate the transaction object using the default constructor
+      transaction.phase = phase;                //not real phase but for env only
+      mb_gen_mod.put(transaction);           // Sending transaction to the Driver
+    endtask
+
+
 endclass

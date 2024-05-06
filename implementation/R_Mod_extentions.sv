@@ -113,7 +113,7 @@ task generate_AT;
    begin
      C_trans_2_serializar=this.C_trans_2_serializar[3:1];
     // C_trans_2_serializar={8'hfe,8'h51,8'h80,8'h0a,8'h43,8'h85,8'h62,8'h05};  
-     $display("[welloooo] at generate_AT task the value of this.C_trans_2_serializar %0h and the size=%0d",C_trans_2_serializar,$size(C_trans_2_serializar));
+     //$display("[welloooo] at generate_AT task the value of this.C_trans_2_serializar %0h and the size=%0d",C_trans_2_serializar,$size(C_trans_2_serializar));
       for(int k=0;k<$size(C_trans_2_serializar);k++)
        begin
         b_yte=C_trans_2_serializar[k];
@@ -141,7 +141,7 @@ task generate_AT;
    else         //response
     begin
       R_trans_2_serializar=this.R_trans_2_serializar[6:1];
-      $display("[welloooo] at generate_AT task the value of this.R_trans_2_serializar %0h and the size=%0d",R_trans_2_serializar,$size(R_trans_2_serializar));    
+      //$display("[welloooo] at generate_AT task the value of this.R_trans_2_serializar %0h and the size=%0d",R_trans_2_serializar,$size(R_trans_2_serializar));    
       for(int k=0;k<$size(R_trans_2_serializar);k++)
        begin
         b_yte=R_trans_2_serializar[k];
@@ -168,7 +168,7 @@ task generate_AT;
       crc=R_rigister;
       end
 
-$display("[welloooo] at generate_AT task the value of crc %0h and the size=%0d",crc,$size(crc));
+//$display("[welloooo] at generate_AT task the value of crc %0h and the size=%0d",crc,$size(crc));
     this.crc=crc;
     this.len=7'd3;
     this.address=8'd78;

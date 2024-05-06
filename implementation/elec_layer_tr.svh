@@ -7,7 +7,7 @@
 	class elec_layer_tr;
 
 		//General Components
-		rand tr_type transaction_type; // NONE / LT_FALL/ AT_cmd / AT_RSP  
+		tr_type transaction_type; // NONE / LT_FALL/ AT_cmd / AT_RSP  
 		//rand var [2:0] LT_type; // type of LT transaction
 		rand var read_write ; // read/write operation
 		rand var [7:0] address; // Address of the register being read from or written to

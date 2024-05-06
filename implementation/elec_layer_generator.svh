@@ -174,6 +174,7 @@
 		int counter_lane_1 = 0;
 		OS_type ordered_set;
 		int limit;
+		int num; // number of ordered sets to be sent in case of TS2
 
 		transaction = new();
 		tr_mon = new();
@@ -305,7 +306,18 @@
 							if((counter_lane_0 == 1) && (counter_lane_1 == 1)) // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII (15-4-2024)
 								begin
 									transaction.o_sets = OS;
-									repeat (2)
+									
+									if (generation == gen3)
+									begin
+										num = 1; // since the driver already sends 2 TS2 in case of gen 3 for the 128/132 encoding
+									end
+
+									else
+									begin
+										num = 2;
+									end
+
+									repeat (num) // was repeat (2) originally
 									begin
 										elec_gen_drv.put(transaction);
 										$display("[ELEC GENERATOR] SENDING [%0p]",OS);
@@ -360,16 +372,27 @@
 						begin 
 							// I think ordered_set should be reset each cycle: ordered_set = None (none should be added to the transaction) 
 							
-							if((counter_lane_0 == 1) || (counter_lane_1 == 1)) // should be &&
+							if((counter_lane_0 == 1) && (counter_lane_1 == 1)) // should be &&
 								begin
 									
 									transaction.o_sets = OS;
-									repeat (2)
+									
+									if (generation == gen3)
+									begin
+										num = 1; // since the driver already sends 2 TS2 in case of gen 3 for the 128/132 encoding
+									end
+
+									else
+									begin
+										num = 2;
+									end
+
+									repeat (num) // was repeat (2) originally
 									begin
 										elec_gen_drv.put(transaction);
 										$display("[ELEC GENERATOR] SENDING [%0p]",OS);
 										@(elec_gen_drv_done);	// To wait for the driver to finish driving the data		
-										$display("[ELEC GENERATOR] [%0p] SENT SUCCESSFULLY ",OS);
+										$display("[ELEC GENERATOR] [%0p] SENT SUCCESSFULLY at time: %t",OS, $time);
 									end
 									
 								end
@@ -592,6 +615,7 @@
 		transaction = new(); 
 		transaction.phase = 5 ; 
 		transaction.gen_speed = speed;
+		transaction.send_to_UL = 0;
 		
 		if (control == "enable")
 		begin

@@ -60,8 +60,8 @@ class config_scoreboard;
     // Function to get transactions from both mailboxes
     task get_transactions();
     
-        //    ref_mbox.get(ref_trans);
-        //   $display("[Config Scoreboard From Model] at time (%t) --> : %p", $time, ref_trans.convert2string() );
+        ref_mbox.get(ref_trans);
+        $display("[Config Scoreboard From Model] at time (%t) --> : %p", $time, ref_trans.convert2string() );
     
           mon_mbox.get(mon_trans);
           $display("\n[Config Scoreboard From Dut] at time (%t) is --> %p", $time ,mon_trans.convert2string());

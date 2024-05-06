@@ -28,11 +28,12 @@ class up_transport_generator;
             
             // Generate random variables for tr
             // Check if randomization was successful
-            if (!tr.randomize()) begin
+            if (!tr.randomize() with {T_Data, T_Data_1}) begin
                 $display("Randomization failed");
                 return;
             end
-            
+            $display("data sent to lane 0: %0d", tr.T_Data);
+            $display("data sent to lane 1: %0d", tr.T_Data_1);
             // Put the transaction into the mailboxes
             ub_gen_mod.put(tr);
             ub_gen_drv.put(tr);
@@ -43,28 +44,4 @@ class up_transport_generator;
     endtask
 
 
-
-
-
-    //-----------for test model ----------------//
-
-    task run_m();
-        // Repeat 100 times
-        repeat (5) begin
-            
-            // Create a new transaction object
-            tr = new();
-            
-            // Generate random variables for tr
-            // Check if randomization was successful
-            if (!tr.randomize()) begin
-                $display("Randomization failed");
-                return;
-            end
-            
-            // Put the transaction into the mailboxes
-            ub_gen_mod.put(tr);
-
-        end
-    endtask
 endclass
