@@ -21,12 +21,14 @@ module deserializer #(
             parallel_data <= 0;
             counter <= 0;
         end else if (start) begin
-			shift_reg <= {in_bit, shift_reg[DATA_WIDTH-1:1]};
             if (counter == (DATA_WIDTH-1)) begin
                 // Shift in the new bit
+                shift_reg <= (shift_reg << 1) | in_bit;
                 counter <= 0;
-				parallel_data <= {in_bit, shift_reg[DATA_WIDTH-1:1]};
+                parallel_data <= (shift_reg << 1) | in_bit; // Update parallel data after all bits are received
             end else begin
+                // Keep shifting in the new bits
+                shift_reg <= (shift_reg << 1) | in_bit;
                 counter <= counter + 1'b1;
             end
         end
@@ -45,9 +47,7 @@ module deserializer #(
 	end	
 	
 	always @(posedge clk) begin
-		if (!rst) begin
-		    started <= 0;
-		end else if (counter == 0 && start) begin
+		if (counter == 0 && start) begin
 		    started <= 1;
 		end else if (counter == 0 && !start) begin
 		    started <= 0;
