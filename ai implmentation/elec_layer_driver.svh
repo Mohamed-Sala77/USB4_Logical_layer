@@ -1,5 +1,11 @@
 ///************ Define the parent class inside electrical_layer_driver_pkg************///
 class parent;
+
+
+
+static logic GEN4_recieved_TS1_LANE0[$];
+static logic GEN4_recieved_TS1_LANE1[$];
+
 //TASKS for genetate PRBS11 
     task automatic PRSC11(input bit [10:0] seed, input int size, output bit PRBS11_OUT[$]);
  
@@ -369,6 +375,7 @@ logic TS1_Frame_lane0 [$],
       TS1_Frame_lane1 [$],
       temp_q_lane[$];
 int i;
+/*
 i=0;
 temp_q_lane={<<{HEADER_TS1_GEN4}};
 PRBS11_OUT_lane0.delete();
@@ -400,50 +407,68 @@ $display("[ELEC DRIVER] the  TS1_Frame_lane0 is %p",TS1_Frame_lane0[448:(448+447
 $display("[elec DRIVER] start sending TS1 symbols to the DUT");
     //reverse_8bits_in_Gen4(TS1_Frame_lane0);
     //reverse_8bits_in_Gen4(TS1_Frame_lane1);
-$display("[ELEC DRIVER] the  TS1_Frame_lane0 is %0d",TS1_Frame_lane0.size());
-$display("[ELEC DRIVER] the  TS1_Frame_lane1 is %0d",TS1_Frame_lane1.size());
+    $display("---------------------------------------------------------------");
+$display("[ELEC DRIVER] the size GEN4_recieved_TS1_LANE0 is %0d and value =%p",GEN4_recieved_TS1_LANE0.size(),GEN4_recieved_TS1_LANE0);
+$display("[ELEC DRIVER] the size GEN4_recieved_TS1_LANE1f is %0d and value =%p",GEN4_recieved_TS1_LANE1.size(),GEN4_recieved_TS1_LANE1);
+    $display("---------------------------------------------------------------");
     //ELEC_vif.data_incoming <=1; 
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
-    ELEC_vif.data_incoming =1;
-    foreach(TS1_Frame_lane0[i]) begin
+    ELEC_vif.data_incoming <=1;       //(must be comment on Ai DUT)
+    $display("[elec monitor] at(%0t)",$time);
+
+    foreach(GEN4_recieved_TS1_LANE0[i]) begin
     @(posedge ELEC_vif.gen4_lane_clk);
-    ELEC_vif.lane_0_rx =TS1_Frame_lane0[i];
-    ELEC_vif.lane_1_rx =TS1_Frame_lane1[i];
-    ELEC_vif.data_incoming =1;
+    ELEC_vif.data_incoming <=1;
+    ELEC_vif.lane_0_rx <=GEN4_recieved_TS1_LANE0[i];
+    ELEC_vif.lane_1_rx <=GEN4_recieved_TS1_LANE1[i];
     end
-    ELEC_vif.data_incoming <=0;
+    @(posedge ELEC_vif.gen4_lane_clk);
+    //ELEC_vif.data_incoming <=0;
     $display("at time(%0t)[elec DRIVER] doneeeeeeeeeeeeeeeeeeeeeeeeee",$time);
-    
+    //$stop;
 endtask: TS1_gen4_2_DUT
 
 task electrical_layer_driver::TS2_gen4_2_DUT();
-
-@(posedge ELEC_vif.gen4_lane_clk)
-   ELEC_vif.data_incoming <=1;
-
-   foreach(HEADER_TS2_GEN4[i])
+    ELEC_vif.data_incoming <=1;     //(must be comment on Ai DUT)
+    foreach(HEADER_TS2_GEN4[i])
     begin
-    ELEC_vif.lane_0_rx <=HEADER_TS2_GEN4[i];
-    ELEC_vif.lane_1_rx <=HEADER_TS2_GEN4[i];
-    @(posedge ELEC_vif.gen4_lane_clk);
+    @(posedge ELEC_vif.gen4_lane_clk)
+    ELEC_vif.data_incoming <=1; 
+    ELEC_vif.lane_0_rx <=HEADER_TS2_GEN4[31-i];
+    ELEC_vif.lane_1_rx <=HEADER_TS2_GEN4[31-i];
    end
-   ELEC_vif.data_incoming <=0;
+$display("[ELEC DRIVER] the value of GEN4_recieved_TS2_LANE0 is:");
+   foreach(HEADER_TS2_GEN4[l])begin
+
+    $write (HEADER_TS2_GEN4[l]);
+   end 
+    $display;
+   //ELEC_vif.data_incoming <=0;
+   
 endtask: TS2_gen4_2_DUT
 
 task electrical_layer_driver::TS3_2_DUT();
-@(posedge ELEC_vif.gen4_lane_clk);
-   ELEC_vif.data_incoming <=1;
-    foreach(HEADER_TS3_GEN4[i]) 
+
+  ELEC_vif.data_incoming <=1;     //(must be comment on Ai DUT)
+    foreach(HEADER_TS3_GEN4[i])
     begin
-    ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[i];
-    ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[i];
-    @(posedge ELEC_vif.gen4_lane_clk);
-   end
-   ELEC_vif.data_incoming <=0;
+    @(posedge ELEC_vif.gen4_lane_clk)
+    ELEC_vif.data_incoming <=1;
+    ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[31-i];
+    ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[31-i];
+    end
+   $display("[ELEC DRIVER] the value of GEN4_recieved_TS3_LANE0 is:");
+
+   foreach(HEADER_TS3_GEN4[l])begin
+
+    $write (HEADER_TS3_GEN4[l]);
+   end 
+    $display;
+
 endtask: TS3_2_DUT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //task send data to the DUT
@@ -563,9 +588,12 @@ endcase
         end
         TS2_gen4: begin
           TS2_gen4_2_DUT();
+          $display("[ELEC DRIVER] wellllllllllllllooool");
+          //$stop;
         end
         TS3: begin
           TS3_2_DUT();
+          $display("[ELEC DRIVER] salahhhhhhhhhhhhhhhhh");
         end
         TS4: begin
           //TS4_2_DUT();  no need to this task as no response in case TS4 

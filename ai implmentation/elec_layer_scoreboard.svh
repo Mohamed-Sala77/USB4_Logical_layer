@@ -32,10 +32,8 @@ class elec_scoreboard;
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                 
-                 elec_mod_sboard.get(model_tr);
-                 $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
-                elec_mod_sboard.get(model_tr);
-                $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
+                // elec_mod_sboard.get(model_tr);
+                // $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
                /*
                 case (monitor_tr.phase)
                 3'd0: begin
