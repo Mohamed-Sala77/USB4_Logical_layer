@@ -7,5 +7,6 @@ bit         data_income;
 bit  [1:0]  ready_phase2; 
 bit         correct_OS;
 bit         recieved_on_elec_sboard;  //for recieving on elec scoreboard
+bit         done;
 endclass: env_cfg_class
 

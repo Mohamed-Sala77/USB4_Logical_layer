@@ -258,83 +258,88 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 	int i;
 	logic 			        recieved_SLOS2_lane0[$],
 						    recieved_SLOS2_lane1[$];
-	logic [2*SLOS_SIZE-1:0] P_SLOS2_lane0,
-	                        P_SLOS2_lane1;
 
 	if(speed==gen2) //collect the SLOS from the two lanes
 	begin
-	repeat(2*SLOS_SIZE)
-	begin
-		@(negedge ELEC_vif.gen2_lane_clk);
-		recieved_SLOS2_lane0.push_back(ELEC_vif.lane_0_rx);
-		recieved_SLOS2_lane1.push_back(ELEC_vif.lane_1_rx);
-		
-		if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
-		begin
-		$display("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN2",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
-		break;
+		 while(1)    
+		 begin                                                 //repeat(16*TS_GEN_4_HEADER_SIZE)begin //collect the TS from the two lanes
+			@(negedge ELEC_vif.gen2_lane_clk);
+				recieved_SLOS2_lane0.push_back(ELEC_vif.lane_0_tx);
+				recieved_SLOS2_lane1.push_back(ELEC_vif.lane_1_tx);
+				if(recieved_SLOS2_lane0.size()==GEN2_Recieved_SLOS2.size())begin
+				if((recieved_SLOS2_lane0 ==GEN2_Recieved_SLOS2)&&(recieved_SLOS2_lane1 ==GEN2_Recieved_SLOS2))begin
+					$display("[ELEC MONITOR] ****************SLOS2 IS CORRECT ON GEN2****************");
+					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
+					mon_2_Sboard_trans.phase=3'd4;
+					mon_2_Sboard_trans.gen_speed=gen2;
+					mon_2_Sboard_trans.o_sets=SLOS2;
+					mon_2_Sboard_trans.sbtx='b1;
+					mon_2_Sboard_trans.tr_os=ord_set;
+					mon_2_Sboard_trans.lane=both;
+					ELEC_vif.data_incoming=0;
+					elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+					break;
+					end
+					else
+					begin
+						recieved_SLOS2_lane0.delete(0);
+						recieved_SLOS2_lane1.delete(0);
+					end
+					end
+
+					if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
+					begin
+					$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+					break;
+					end
 		end
-	end
+
+
+		/////////////////
+	
 	//$display("the value of recieved_SLOS2_lane0 is %p for GEN2",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN2",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN2",recieved_SLOS2_lane1.size());
 	end
 	else if(speed==gen3)
 	begin
-	repeat(2*SLOS_SIZE)	//collect the SLOS from the two lanes
-	begin
-	recieved_SLOS2_lane0.push_back(ELEC_vif.lane_0_rx);
-	recieved_SLOS2_lane1.push_back(ELEC_vif.lane_1_rx);
-	@(negedge ELEC_vif.gen3_lane_clk);
-	if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)begin
-		$display("[ELEC MONITOR]%0t:the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send slos2 for GEN3",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
-		break;
-	end
-	end
+		while(1)    
+		 begin                                                 //repeat(16*TS_GEN_4_HEADER_SIZE)begin //collect the TS from the two lanes
+			@(negedge ELEC_vif.gen3_lane_clk);
+				recieved_SLOS2_lane0.push_back(ELEC_vif.lane_0_tx);
+				recieved_SLOS2_lane1.push_back(ELEC_vif.lane_1_tx);
+				if(recieved_SLOS2_lane0.size()==GEN3_Recieved_SLOS2.size())begin
+				if((recieved_SLOS2_lane0 ==GEN3_Recieved_SLOS2)&&(recieved_SLOS2_lane1 ==GEN3_Recieved_SLOS2))begin
+					$display("[ELEC MONITOR] ****************SLOS2 IS CORRECT ON GEN3****************");
+					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
+					mon_2_Sboard_trans.phase=3'd4;
+					mon_2_Sboard_trans.gen_speed=gen2;
+					mon_2_Sboard_trans.o_sets=SLOS2;
+					mon_2_Sboard_trans.sbtx='b1;
+					mon_2_Sboard_trans.tr_os=ord_set;
+					mon_2_Sboard_trans.lane=both;
+					ELEC_vif.data_incoming=0;
+					elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+					break;
+					end
+					else
+					begin
+						recieved_SLOS2_lane0.delete(0);
+						recieved_SLOS2_lane1.delete(0);
+					end
+					end
+
+					if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
+					begin
+					$error("[ELEC MONITOR]the value of ELEC_vif.sbtx is  %0d and ELEC_vif.enable_rs %0d during send TS2_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
+					break;
+					end
+		end
+
 	//$display("the value of recieved_SLOS2_lane0 is %p for GEN3",recieved_SLOS2_lane0);
 	$display("the size of recieved_SLOS2_lane0 is %0d for GEN3",recieved_SLOS2_lane0.size());
 	$display("the size of recieved_SLOS2_lane1 is %0d for GEN3",recieved_SLOS2_lane1.size());
 	end
-
-	//convert to packet
-		P_SLOS2_lane0={<< {recieved_SLOS2_lane0}};
-		P_SLOS2_lane1={<< {recieved_SLOS2_lane1}};
-	
-
-	case (speed)
-	gen2:begin
-	if(P_SLOS2_lane0 ==({2{SLOS2_64_1}}) && P_SLOS2_lane1 ==({2{SLOS2_64_1}}))
-	begin
-	$display("[ELEC MONITOR]SLOS2 is correct on gen2");
-	-> correct_OS;   //do that on all first OS on each gen
-	    mon_2_Sboard_trans.phase=3'd4;
-	    mon_2_Sboard_trans.gen_speed=gen2;
-		mon_2_Sboard_trans.o_sets=SLOS2;
-		mon_2_Sboard_trans.sbtx='b1;
-		mon_2_Sboard_trans.tr_os=ord_set;
-		mon_2_Sboard_trans.lane=both;
-		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-	end
-	else	
-	$display("[ELEC MONITOR]SLOS2 is not correct on gen2");
-	end
-	gen3:begin 
-		if(P_SLOS2_lane1 ==({2{SLOS2_128_1}}))
-	begin
-	$display("[ELEC MONITOR]SLOS2 is correct on gen3");
-	-> correct_OS;   //do that on all first OS on each gen
-	    mon_2_Sboard_trans.phase=3'd4;
-	    mon_2_Sboard_trans.gen_speed=gen3;
-		mon_2_Sboard_trans.o_sets=SLOS1;
-		mon_2_Sboard_trans.sbtx='b1;
-		mon_2_Sboard_trans.tr_os=ord_set;
-		mon_2_Sboard_trans.lane=both;
-		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-	end
-	else	
-	$display("[EKEC MONITOR]SLOS2 is not correct on gen3");
-	end
-	endcase
 endtask:recieved_SLOS2_gen23
 
 //task to recieved TS for gen4
@@ -504,36 +509,6 @@ if(!done_training)begin
 					end
 			end
 			//$stop;
-
-		
-          	/*repeat(16*TS_GEN_4_HEADER_SIZE)
-		    begin //collect the TS from the two lanes
-			@(negedge ELEC_vif.gen4_lane_clk);
-			recieved_TS_lane0.push_back(ELEC_vif.lane_0_rx);
-			recieved_TS_lane1.push_back(ELEC_vif.lane_1_rx);
-			if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)
-			begin
-			$display("[ELEC MONITOR] the value of ELEC_vif.sbtx is %0d and ELEC_vif.enable_rs %0d during send TS4_gen4 GEN4",ELEC_vif.sbtx,ELEC_vif.enable_rs);
-			break;
-			end
-		    end
-			$display("the size of recieved_TS2 GEN4 on lane0 is %0d and must be 32 on lane 0",recieved_TS_lane0.size());
-           
-
-			if((correct_TS4 ==recieved_TS_lane1) && (correct_TS4 ==recieved_TS_lane0))
-			begin
-			$display("[ELEC MONITOR]TS4 is correct on gen4");
-			env_cfg_class.correct_OS =1;   //do that on all first OS on each gen
-			mon_2_Sboard_trans.phase=3'd4;
-			mon_2_Sboard_trans.gen_speed=gen4;
-			mon_2_Sboard_trans.o_sets=TS4;
-			mon_2_Sboard_trans.sbtx='b1;
-			mon_2_Sboard_trans.tr_os=ord_set;
-			mon_2_Sboard_trans.lane=both;
-			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-			end
-			else
-			$display("[ELEC MONITOR]TS4 is not correct on gen4");*/
 		end
 
 	
@@ -559,7 +534,7 @@ logic		      		       TS1_total_lane0[$],
                                TS1_total_lane1[$],
 							   temp_q_lane0[$],
 							   temp_q_lane1[$];						   
-bit                            PRBS11_q_lane0[$],
+logic                          PRBS11_q_lane0[$],
                                PRBS11_q_lane1[$];
 
 temp_q_lane0={<<{HEADER_TS1_GEN4}};
@@ -637,7 +612,9 @@ for(int x=0;x<448;x++) begin
 $display("[ELEC MONITOR]*************TS1 IS CORRECT on GEN4*******************");
 env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 $display("[ELEC monitor correct_OS is trigger]");
-        @(done);
+        wait(env_cfg_mem.done == 1);
+		env_cfg_mem.done=0;
+		//@(done);
 		mon_2_Sboard_trans=new();
         mon_2_Sboard_trans.gen_speed=gen4;
 		mon_2_Sboard_trans.o_sets=TS1_gen4;
@@ -648,7 +625,7 @@ $display("[ELEC monitor correct_OS is trigger]");
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 end
 else	begin
-$error("[ELEC MONITOR]TS1 is not correct on gen4");
+$error("[ELEC MONITOR]TS1 is NOT CORRECT on GEN4");
 end
 recieved_TS1_lane0.delete();
 recieved_TS1_lane1.delete();
@@ -661,18 +638,23 @@ endtask:recieved_TS1_gen4
 	task  electrical_layer_monitor::recieved_SLOS1_gen23(input GEN speed);  //add check on sbtx=1 all the time of recieved
 	int i;
 	logic  			      recieved_SLOS1_lane0[$],
-						  recieved_SLOS1_lane1[$];  //check the rang is good or flip?
-	logic [0:7]		  	  SLOS1_total[$];
-	logic [2*SLOS_SIZE-1:0] P_SLOS1_lane0,
-	                      P_SLOS1_lane1;
+						  recieved_SLOS1_lane1[$],
+						  Temp_GEN3_Recieved_SLOS2[$],
+						  Temp_GEN2_Recieved_SLOS2[$];  //check the rang is good or flip?
+	logic		  		  SLOS1_total[$],
+					      SLOS1_Total_With_sync[$];
+	bit					  popped_bit;
 
+/////////////////////////////////////////////
 	if(speed==gen2) //collect the SLOS from the two lanes
 	begin
-	repeat(2*SLOS_SIZE)  
+    ////////////////this delay for difference clk edges////////////////////////
+    @(posedge ELEC_vif.gen2_lane_clk);
+	repeat(SLOS_SIZE)  
 	begin
 		@(negedge ELEC_vif.gen2_lane_clk);
-		recieved_SLOS1_lane0.push_back(ELEC_vif.lane_0_rx);
-		recieved_SLOS1_lane1.push_back(ELEC_vif.lane_1_rx);
+		recieved_SLOS1_lane0.push_back(ELEC_vif.lane_0_tx);
+		recieved_SLOS1_lane1.push_back(ELEC_vif.lane_1_tx);
 		if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)begin
 		   $display("at%0t:[ELEC MONITOR]the value of ELEC_vif.sbtx is %0d AND enable_rs equal %0d during send slos1 for GEN2 ",$time,ELEC_vif.sbtx,ELEC_vif.enable_rs);
 		   break;
@@ -684,11 +666,13 @@ endtask:recieved_TS1_gen4
 	end
 	else if(speed==gen3)
 	begin
-	repeat(2*SLOS_SIZE)	//collect the SLOS from the two lanes
+    ///////////////this delay for difference clk edges////////////////////////
+    @(posedge ELEC_vif.gen3_lane_clk);
+	repeat(SLOS_SIZE)	//collect the SLOS from the two lanes
 	begin
 	@(negedge ELEC_vif.gen3_lane_clk);
-	recieved_SLOS1_lane0.push_back(ELEC_vif.lane_0_rx);
-	recieved_SLOS1_lane1.push_back(ELEC_vif.lane_1_rx);
+	recieved_SLOS1_lane0.push_back(ELEC_vif.lane_0_tx);
+	recieved_SLOS1_lane1.push_back(ELEC_vif.lane_1_tx);
 	if(!ELEC_vif.enable_rs || !ELEC_vif.sbtx)begin
 		$display("[ELEC MONITOR]the value of ELEC_vif.sbtx is %0d during send slos1 for for GEN3",ELEC_vif.sbtx);
 		break;
@@ -699,18 +683,93 @@ endtask:recieved_TS1_gen4
 	$display("[ELEC MONITOR] the size of recieved_SLOS1_lane1 is %0d  for GEN3",recieved_SLOS1_lane1.size());
 	end
 
-	foreach(recieved_SLOS1_lane0[i]) //convert to packet
-	begin
-		P_SLOS1_lane0[i]=recieved_SLOS1_lane0[i];
-		P_SLOS1_lane1[i]=recieved_SLOS1_lane1[i];
+	//////////////////////////////////////////////////////////
+	PRSC11(PRBS11_lanes_seed,PRBS_SLOS_SIZE,SLOS1_total);
+	//TO Delete the first 10 bits
+	for (int j = 0; j < 10; j++) begin
+	popped_bit = SLOS1_total.pop_front();
 	end
+	//$display("[ELEC MONITOR]the size of SLOS1_total is %0d",SLOS1_total.size());
+	reverse_8bits_in_Gen4(SLOS1_total);   //to reverse bytes
+
+	foreach(SLOS1_total[i])begin
+		Temp_GEN2_Recieved_SLOS2[i]=!SLOS1_total[i];     //set slos 2
+	    Temp_GEN3_Recieved_SLOS2[i]=!SLOS1_total[i]; 
+	end
+	    //
+	//$display("[ELEC MONITOR]the size of SLOS1_total is %p",SLOS1_total);
+	
+//add sync bits
+if(speed==gen3)begin
+	i=0;
+	repeat(NO_SLOS_SYNC_GEN3)begin
+		SLOS1_Total_With_sync.push_back(1);
+		GEN3_Recieved_SLOS2.push_back(1);
+		SLOS1_Total_With_sync.push_back(0);
+		GEN3_Recieved_SLOS2.push_back(0);
+	    SLOS1_Total_With_sync.push_back(1);
+		GEN3_Recieved_SLOS2.push_back(1);
+	    SLOS1_Total_With_sync.push_back(0);
+		GEN3_Recieved_SLOS2.push_back(0);
+		repeat(128)begin
+			SLOS1_Total_With_sync.push_back(SLOS1_total[i]);
+			GEN3_Recieved_SLOS2.push_back(Temp_GEN3_Recieved_SLOS2[i]);
+			i++;
+		end
+	end
+end
+else if(speed==gen2)begin
+	i=0;
+	repeat(NO_SLOS_SYNC_GEN2)begin
+		SLOS1_Total_With_sync.push_back(1);
+		GEN2_Recieved_SLOS2.push_back(1);
+		SLOS1_Total_With_sync.push_back(0);
+		GEN2_Recieved_SLOS2.push_back(0);
+		repeat(64)begin
+			SLOS1_Total_With_sync.push_back(SLOS1_total[i]);
+			GEN2_Recieved_SLOS2.push_back(Temp_GEN2_Recieved_SLOS2[i]);
+			i++;
+		end
+	end
+
+end
+$display("SLOS1_Total_With_sync size =%0d and SLOS1_Total_With_sync is= %p",SLOS1_Total_With_sync.size(),SLOS1_Total_With_sync);
+//////////////////////////////
+
+$display("the value of recieved_SLOS1_lane1 is =%p",recieved_SLOS1_lane1);
+//----compare----//
+case (speed)
+	gen2:begin
+		foreach(SLOS1_Total_With_sync[k])
+		begin
+			if(SLOS1_Total_With_sync[k] ==recieved_SLOS1_lane1[k])begin
+			end
+			else
+			$display("[ELEC MONITOR] SLOS1_Total_With_sync[%0d] =%0d and recieved_SLOS1_lane1[%0d] =%0d on gen2",k,SLOS1_Total_With_sync[k],k,recieved_SLOS1_lane1[k]);
+		end
+		end
+	gen3:begin 
+		foreach(SLOS1_Total_With_sync[k])begin
+			if(SLOS1_Total_With_sync[k] ==recieved_SLOS1_lane1[k])begin
+			end
+			else
+			$display("[ELEC MONITOR] SLOS1_Total_With_sync[%0d] =%0d and recieved_SLOS1_lane1[%0d] =%0d on gen3",k,SLOS1_Total_With_sync[k],k,recieved_SLOS1_lane1[k]);
+		end
+		end
+	endcase
+
 
 	case (speed)
 	gen2:begin
-		if((P_SLOS1_lane0==({2{SLOS1_64_1}})) && (P_SLOS1_lane1==({2{SLOS1_64_1}})))	
+		if((SLOS1_Total_With_sync==recieved_SLOS1_lane1) && (SLOS1_Total_With_sync==recieved_SLOS1_lane0))	
 		begin
-		$display("SLOS1 is correct on gen2");
-		-> correct_OS;   //do that on all first OS on each gen
+		$display("[ELEC MONITOR]************** SLOS1 is CORRECT ON GEN2*******************");
+		foreach(SLOS1_Total_With_sync[i])begin
+		GEN2_Recieved_SLOS1[i] =SLOS1_Total_With_sync[i];
+		end
+		wait(env_cfg_mem.done == 1);
+		env_cfg_mem.done=0;
+		env_cfg_mem.correct_OS ='b1;    //do that on all first OS on each gen
 		mon_2_Sboard_trans.phase=3'd4;
 		mon_2_Sboard_trans.gen_speed=gen2;
 		mon_2_Sboard_trans.o_sets=SLOS1;
@@ -721,27 +780,35 @@ endtask:recieved_TS1_gen4
 
 		end
 		else	
-		$display("SLOS1 is not correct on gen2");
+		$error("[ELEC MONITOR]SLOS1 is NOT CORRECT ON GEN 2");
 		end
 	gen3:begin 
-			if(P_SLOS1_lane0==({2{SLOS2_128_1}}) && P_SLOS1_lane1==({2{SLOS2_128_1}}))
+			if((SLOS1_Total_With_sync==recieved_SLOS1_lane0) && (SLOS1_Total_With_sync==recieved_SLOS1_lane1))
 		begin
-		//$display("[ELEC MONITOR] SLOS1 is correct on gen3");
-		-> correct_OS;   //do that on all first OS on each gen
+		$display("[ELEC MONITOR]************** SLOS1 is CORRECT ON GEN3*******************");
+		foreach(SLOS1_Total_With_sync[i])begin
+		GEN3_Recieved_SLOS1[i] =SLOS1_Total_With_sync[i];
+		end
+		wait(env_cfg_mem.done == 1);
+		env_cfg_mem.done=0;
+		env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 		mon_2_Sboard_trans.phase=3'd4;
 		mon_2_Sboard_trans.gen_speed=gen3;
 		mon_2_Sboard_trans.o_sets=SLOS1;
 		mon_2_Sboard_trans.sbtx='b1;
 		mon_2_Sboard_trans.tr_os=ord_set;
 		mon_2_Sboard_trans.lane=both;
-		
 		elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 		end
 		else	
-		$display("SLOS1 is not correct on gen3");
+		$error("[ELEC MONITOR]SLOS1 is NOT CORRECT on gen3");
 	end
 	endcase
+	
+	
+	//$stop;
 	endtask:recieved_SLOS1_gen23
+
 
 	//task to check the AT transaction
 	task electrical_layer_monitor::check_AT_transaction(input  [9:0] q[$],tr_type trans_type);
@@ -781,13 +848,12 @@ endtask:recieved_TS1_gen4
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;  
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
-			->done;
+
+			env_cfg_mem.done = 1;
+			
 			end
 		else
 		begin
-		/*foreach(q[i])begin
-		$display("[ELEC MONITOR]AT_rsp transaction of q[%0d] =%0h",i,q[i]);
-		end*/
 			$display("[ELEC MONITOR]AT_rsp transaction is %0p",q);
 			$error("at time(%0t)[ELEC MONITOR]AT_rsp transaction is not correct",$time);
 		end
@@ -939,12 +1005,6 @@ endtask:recieved_TS1_gen4
 				     check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
 					end
 					begin
-						
-
-						/*while(1)begin  
-							@(posedge ELEC_vif.enable_rs)
-							break;
-						end*/
 						wait(ELEC_vif.enable_rs ==1)
 						$display("at time(%0d),[ELEC MONITOR]wait first OS after AT_rsp transaction at env_cfg_mem.gen_speed =%0p",$time,env_cfg_mem.gen_speed);
 						$display("at time(%0d)[ELEC MONITOR]enable_rs=1",$time);
@@ -1073,7 +1133,7 @@ endtask:recieved_TS1_gen4
 		  @(ready_to_recieved_data)  //note forget to put it up
 		  //speed_mailbox.get(speed);  //queue to get the speed
 		  $display("[ELEC MONITOR] readyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-		  $stop;
+		  //$stop;
 		  while(ELEC_vif.sbtx)begin
           if(ELEC_vif.enable_rs) //defind event 
           begin

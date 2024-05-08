@@ -113,7 +113,7 @@
 										SLOS2_64[7], SLOS2_64[6], SLOS2_64[5], SLOS2_64[4], SLOS2_64[3], SLOS2_64[2], SLOS2_64[1], SLOS2_64[0]};
 
 	
-	parameter [131:0] SLOS1_128 [0:15] = {132'b101001000000001010000001000100001010101001000000011010000011100100011011101011101010001010000101000100100010101101010000110000100111,
+	parameter [131:0] SLOS1_128 [0:15] = {  132'b101001000000001010000001000100001010101001000000011010000011100100011011101011101010001010000101000100100010101101010000110000100111,
 											132'b101010010111001110010111101110010010101110110000101011100100001011101001001010011011000111101110110010101011110000001001100001011111,
 											132'b101000100100011101101011010110001100011101111011010100101100001100111001111110111100001010011001000111111010110000100011100101011011,
 											132'b101010000110101100111000111110110110001011011101001101010011110000111001100110111111111010000000100100000101101000100110010101111110,
@@ -176,7 +176,7 @@
   parameter        indication_TS1=4'h4,
                    indication_TS2=4'h2,
                    indication_TS3=4'h6;
-  parameter        indication_TS4=8'hf0;
+  parameter        indication_TS4=8'h0f;
                   
   parameter        counter_TS1=8'hf0,   //check on sending the counter value from zakaria
                    counter_TS2=8'hf0,
@@ -192,15 +192,21 @@
 	// Seeds for the Pseudo Random Sequences
 	parameter [10:0] PRBS11_lane0_seed =11'b11111111111;
 	parameter [10:0] PRBS11_lane1_seed =11'b11101110000;
+	parameter [10:0] PRBS11_lanes_seed =11'h400;
 
 
 ///-------------------------///
 //Order sets TS1,2,3,4 for Gen4
 parameter [27:0]  HEADER_TS1_GEN4={counter_TS1,~(indication_TS1),indication_TS1,CURSOR};
-parameter [31:0]  HEADER_TS2_GEN4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
-parameter [31:0]  HEADER_TS3_GEN4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
-parameter [31:0]  HEADER_TS4_GEN4={4'd0,~(counter_TS4),counter_TS4,indication_TS4,CURSOR};
+parameter 		  HEADER_TS2_GEN4={4'd0,counter_TS2,~(indication_TS2),indication_TS2,CURSOR};
+parameter 		  HEADER_TS3_GEN4={4'd0,counter_TS3,~(indication_TS3),indication_TS3,CURSOR};
+parameter 		  HEADER_TS4_GEN4={4'd0,~(counter_TS4),counter_TS4,indication_TS4,CURSOR};
 
 ///------------------------///
 //parameters
 parameter No_TS_GEN4 =16;
+int       PRBS_SLOS_SIZE=2058;
+parameter NO_SLOS_SYNC_GEN3=16,
+          NO_SLOS_SYNC_GEN2=32;
+
+//parameter ;
