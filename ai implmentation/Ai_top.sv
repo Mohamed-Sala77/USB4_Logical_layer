@@ -28,14 +28,7 @@ module Ai_top;
 	parameter [63:0] freq_40 = 40 * 10 ** 9;			//40 GHz
 	parameter [63:0] freq_80 = 80 * 10 ** 9;			//80 GHz
 	
-    //Reset generation
-	task reset();
-		 SystemReset = 0;
-		 #(3*(1/SB_freq)); // 3 cycles of SB clock
-		SystemReset = 1;
-		
-		
-	endtask
+    
 
 
 
@@ -121,26 +114,29 @@ logical_layer_no_scr logical_layer (
 
 // TEST 
 initial begin 
-    TEST logical_layer_test;
-    logical_layer_test = new(e_if, c_if ,u_if); 
-    reset();
-
-	GEN speed = gen4 ;
-
-	GEN speed = gen4 ;
-
-	GEN speed = gen4 ;
+    //TEST logical_layer_test;
+	env envo ;
+    //logical_layer_test = new(e_if, c_if ,u_if); 
+    envo = new(e_if, c_if ,u_if); 
+	
+	
+    //reset();
 
     //-------main test----------//
-    USB3_test.run(speed);
-    //-------main test----------//
-    logical_layer_test.run();
-    USB3_test.run(speed);
+    //logical_layer_test.run(speed);
+    envo.run(gen4);
 
 end
 
 
+//Reset generation
+task reset();
+SystemReset = 0;
+#(3*(1/SB_freq)); // 3 cycles of SB clock
+SystemReset = 1;
 
+
+endtask
 
 
 

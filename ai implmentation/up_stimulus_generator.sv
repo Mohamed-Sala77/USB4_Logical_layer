@@ -23,7 +23,7 @@ class up_transport_generator;
     endfunction
 
     // Task to generate stimuli
-    task run( int num);
+    task run( input int num);
         repeat (num) begin
             
             // Create a new transaction object
@@ -31,10 +31,9 @@ class up_transport_generator;
             
             // Generate random variables for tr
             // Check if randomization was successful
-            if (!tr.randomize() with {T_Data, T_Data_1}) begin
-                $display("Randomization failed");
-                return;
-            end
+            tr.randomize(T_Data) ;
+            tr.randomize(T_Data_1) ;
+            
             
             $display("[UPPER GENERATOR] data sent to lane 0: %0d", tr.T_Data);
             $display("[UPPER GENERATOR] data sent to lane 1: %0d", tr.T_Data_1);

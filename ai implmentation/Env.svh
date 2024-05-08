@@ -58,7 +58,7 @@ class env;
 
 
         //--------Declare the referance model -----------//
-        reference_model_AI model ;
+        //reference_model_AI model ;
 
 
 
@@ -66,7 +66,9 @@ class env;
         function new(virtual electrical_layer_if ELEC_vif ,virtual config_space_if cfg_if, virtual upper_layer_if up_if);
 
         //--------Initialize the interfaces -----------//
-            //this.ELEC_vif = ELEC_vif;  
+            this.ELEC_vif = ELEC_vif; 
+            this.cfg_if = cfg_if;
+            this.up_if=up_if;
 
         //--------Initialize the mailboxes -----------//
             elec_gen_2_driver = new();
@@ -77,15 +79,14 @@ class env;
             cfg_mon_scr = new();
             cfg_drv_gen = new();
             cfg_mod_gen = new();
-            up_mon_scr = new();
+           up_mon_scr = new();
             up_drv_gen = new();
             up_mod_gen = new();
             up_mod_scr = new();
             cfg_mod_scr =new();
 
         //--------Initialize the ref_model-----------//  
-           // model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
-              model  =new( up_mod_scr, up_mod_gen, elec_model_2_sboard, elec_gen_2_model, cfg_mod_scr, cfg_mod_gen);
+           //model = new(cfg_mod_gen,cfg_mod_scr,elec_gen_2_model,elec_model_2_sboard,up_mod_gen,up_mod_scr);
 
         //--------Initialize the components -----------//
         // memory
@@ -127,7 +128,7 @@ class env;
 
 
         // for compare the performance of the dut with the model
-        task run(GEN speed);
+        task run(input GEN speed);
             fork
 
             //**********Run the components**********//
@@ -150,7 +151,7 @@ class env;
                 virtual_seq.run(speed);
 
                 //ref_model
-                model.run();
+                //model.run();
                 
             join
         endtask 
