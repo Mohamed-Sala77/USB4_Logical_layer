@@ -34,17 +34,17 @@ class up_transport_driver;
         repeat(4) wait_for_negedge(speed);
       
         // Assign T_Data to transport_layer_data_in
-        transport_layer_data_in = tr.T_Data;
+        vif.transport_layer_data_in = tr.T_Data;
       
         // Wait for 4 more clock cycles
         repeat(4) wait_for_negedge(speed);
       
         // Assign T_Data_1 to transport_layer_data_in
-        transport_layer_data_in = tr.T_Data_1;
+        vif.transport_layer_data_in = tr.T_Data_1;
         
         wait_for_negedge(speed);
       
-        ->driveDone.trigger();
+        ->driveDone;
   
     end
   
