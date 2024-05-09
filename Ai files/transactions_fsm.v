@@ -44,7 +44,7 @@ localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 	
     reg [3:0] des_count;
     // Define the storing element array
-    reg [7:0] storing_element [71:0];
+	reg [7:0] storing_element [9:0];
    wire [7:0] read_write;
     
     assign read_write = storing_element[3];
@@ -305,12 +305,12 @@ end
                 
 
                 /// Check if sbrx[8:1] is DLE_SYMBOL
-            if (sbrx[8:1] == DLE_SYMBOL) begin
+           /* if (sbrx[8:1] == DLE_SYMBOL) begin
                 // Discard stored LSE
                 storing_element[1] = 0;
-            end
+            end*/
             // Check if sbrx[8:1] is CLSE_SYMBOL
-            else if (sbrx[8:1] == CLSE_SYMBOL) begin
+            if (sbrx[8:1] == CLSE_SYMBOL) begin
                 // Store CLSE symbol after LSE
                 storing_element[2] = CLSE_SYMBOL;
                 disconnect_reg = 1;
@@ -411,9 +411,6 @@ end
                 storing_element[2 + data_count] = sbrx[8:1];
                 // Enable CRC detection
               end
-              else begin
-            storing_element[72]=0;
-          end
               
             end
             // Check if sbrx[8:1] is STX_COMMAND_SYMBOL or STX_RESPONSE_SYMBOL
