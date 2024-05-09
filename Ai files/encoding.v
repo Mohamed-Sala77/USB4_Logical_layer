@@ -79,7 +79,7 @@ always @(posedge enc_clk or negedge rst) begin
                     mem_1[mem_index] <= lane_1_tx;
                 end else begin
                     // Encoding
-			if (d_sel_reg != 8) begin
+			if (d_sel_reg != 8  && gen_speed==1 ) begin
                         // ordered sets data
                         lane_0_tx_enc_old <= {data_0[127:0],4'b0101};
                         lane_1_tx_enc_old <= {data_1[127:0],4'b0101};
@@ -87,7 +87,7 @@ always @(posedge enc_clk or negedge rst) begin
                          // Store lane_0_tx and lane_1_tx in mem_0[0] and mem_1[0]
                     mem_0[0] <= lane_0_tx;
                     mem_1[0] <= lane_1_tx;
-			end else if (d_sel_reg == 8)begin
+			end else if (d_sel_reg == 8 && gen_speed==1)begin
                         // Encoding transport data 
                         lane_0_tx_enc_old <= {data_0[127:0],4'b1010};
                         lane_1_tx_enc_old <= {data_1[127:0],4'b1010};
@@ -98,23 +98,24 @@ always @(posedge enc_clk or negedge rst) begin
                     mem_1[0] <= lane_1_tx;
                 end
             end
+          end
             2: begin // gen_speed = 2
                 if (mem_index <= 7) begin
                     d_sel_reg <= (mem_index == 1)? d_sel : d_sel_reg;
                     mem_0[mem_index] <= lane_0_tx;
                     mem_1[mem_index] <= lane_1_tx;
                   
-		end else if (d_sel_reg != 8) begin
+		end else if (d_sel_reg != 8 && gen_speed==2) begin
                   //ordered set
                         lane_0_tx_enc_old <= {data_0[63:0],2'b01};
-						            lane_1_tx_enc_old <= {data_1[63:0],2'b01]};
+						            lane_1_tx_enc_old <= {data_1[63:0],2'b01};
 						             enable_ser <= 1;
 						             mem_0 [0] <= lane_0_tx;
 					              	mem_1 [0] <= lane_1_tx;
 						             end
                   
                     
-		    else if (d_sel_reg  == 8) begin
+		    else if (d_sel_reg  == 8&& gen_speed==2) begin
                         // Transport layer data
                         lane_0_tx_enc_old <= {data_0[63:0],2'b10};
 					         	   lane_1_tx_enc_old <= {data_1[63:0],2'b10};
@@ -140,7 +141,7 @@ always @(posedge enc_clk or negedge rst) begin
 	else if(~enable ) begin 
         mem_index <=0;
     end
-	else if ( (gen_speed == 2 && mem_index <= 8 && d_sel != 9) || (gen_speed == 1 && mem_index <= 16 && d_sel != 9))) begin
+	else if ( (gen_speed == 2 && mem_index <= 8 && d_sel != 9) || (gen_speed == 1 && mem_index <= 16 && d_sel != 9)) begin
 	mem_index <= mem_index + 1;
 		end else if (d_sel != 9) begin
         mem_index <= 1;
@@ -171,3 +172,4 @@ end
 
 endmodule
 `resetall	
+
