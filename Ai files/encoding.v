@@ -63,7 +63,7 @@ always @(posedge enc_clk or negedge rst) begin
         case (gen_speed)
           
             0: begin //gen 4 as rx as byte
-                new_sym <= enc_clk;
+                
 				lane_0_tx_enc_old <= lane_0_tx;
 				lane_1_tx_enc_old <= lane_1_tx;
 				enable_ser <= 1;
