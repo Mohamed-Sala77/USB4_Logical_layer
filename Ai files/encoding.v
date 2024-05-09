@@ -125,10 +125,7 @@ always @(posedge enc_clk or negedge rst) begin
 						mem_1 [0] <= lane_1_tx;
                 end
             end
-            default: begin
-                // Other cases or default behavior
-                // You can add more cases or define the default behavior as needed
-            end
+            
         endcase
     end
 end
