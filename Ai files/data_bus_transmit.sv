@@ -23,13 +23,14 @@ module data_bus_transmit (
     reg        g4_ts1_header;    
     reg        g4_ts1_header_sent;    
     reg        slos1_sent, slos2_sent, prb_0_sent, prb_1_sent;    
+	reg		   delay;
     
     localparam GEN4_TS1    = 28'b011111100000_0010_1101_00001111,
                GEN4_TS2    = 64'b011111100000_0100_1011_00001111_0000_00000000000000000000000000000000,
                GEN4_TS3    = 64'b011111100000_0110_1001_00001111_0000_00000000000000000000000000000000,
                GEN4_TS4    = 64'b011111100000_11110000_0000_1111_0000_00000000000000000000000000000000, 
-               GEN3_TS1_L0 = 64'b00000_001_00000000_0000000000000000_000_001_0000000000_100110_0011110010,
-               GEN3_TS1_L1 = 64'b00000_001_00000001_0000000000000000_000_001_0000000000_100110_0011110010,
+               GEN3_TS1_L0 = 64'h01000000040098F2,
+               GEN3_TS1_L1 = 64'h01010000040098F2,
                GEN3_TS2_L0 = 64'b00000_001_00000000_0000000000000000_000_001_0000000000_011001_0011110010,
                GEN3_TS2_L1 = 64'b00000_001_00000001_0000000000000000_000_001_0000000000_011001_0011110010;
 
@@ -71,6 +72,7 @@ module data_bus_transmit (
             os_sent <= 0;
             tx_lanes_on <= 0;
 			enable_deser <= 0;
+			delay <= 0;
         end else if (d_sel == 8) begin
             lane_0_tx <= transport_layer_data_in;
             lane_1_tx <= 0;
@@ -97,40 +99,61 @@ module data_bus_transmit (
 			os_sent <= 0;
             case (byte_counter)
                 'h0: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[63:56];
                     lane_1_tx <= ordered_set1[63:56];
+					end
+					else begin
+					 lane_0_tx <= lane_0_tx;
+                    lane_1_tx <= lane_1_tx;
+					end
                 end
                 'h1: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[55:48];
                     lane_1_tx <= ordered_set1[55:48];
+					delay <= 1;
+					end
                 end
                 'h2: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[47:40];
                     lane_1_tx <= ordered_set1[47:40];
+					end
                 end
                 'h3: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[39:32];
                     lane_1_tx <= ordered_set1[39:32];
+					end
                     if(d_sel==5 || d_sel==6 || d_sel==7) begin
                         byte_counter <= (counter == 7)? 0 : 3;
                         os_sent <= (counter == 7)? 1 : 0;
                     end
                 end
                 'h4: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[31:24];
                     lane_1_tx <= ordered_set1[31:24];
+					end
                 end
                 'h5: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[23:16];
                     lane_1_tx <= ordered_set1[23:16];
+					end
                 end
                 'h6: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[15:8];
                     lane_1_tx <= ordered_set1[15:8];
+					end
                 end
                 'h7: begin
+					if (d_sel !=2 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[7:0];
                     lane_1_tx <= ordered_set1[7:0];
+					end
                     os_sent <= (counter == 7)? 1 : 0;
                 end
             endcase
@@ -181,15 +204,18 @@ module data_bus_transmit (
     end
 	
     always @(*) begin
-        if (d_sel == 'h0)
+        if (d_sel == 'h0) begin
             deser_0_in = slos1_out;
             deser_1_in = slos1_out;
-        if (d_sel == 'h1)
+		end	
+        if (d_sel == 'h1) begin
             deser_0_in = slos2_out;
             deser_1_in = slos2_out;
-        if (d_sel == 'h4)
+		end	
+        if (d_sel == 'h4) begin
             deser_0_in = (g4_ts1_header_sent) ? g4_prb_0_out : g4_ts1_header;
             deser_1_in = (g4_ts1_header_sent) ? g4_prb_1_out : g4_ts1_header;
+		end	
     end
 
     bus_deserializer #(.DATA_WIDTH(8)) deser_l0
