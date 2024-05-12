@@ -158,9 +158,9 @@
 					//v_if.enable_monitor = 1;
 					v_if.wait_cl0_s = 0;
 
-					$display("%%%%%%%%%%%%%%Disabling the monitor:%%%%%%%%%%%%%%%%%% \n time: %t", $time);
-					repeat (24) //Z said 24 !!!!!!!!!!!!!!!!!!
-					wait_negedge(UL_tr.gen_speed); 
+					//$display("%%%%%%%%%%%%%%Disabling the monitor:%%%%%%%%%%%%%%%%%% \n time: %t", $time);
+
+					disable_monitor(UL_tr.gen_speed); 
 					//v_if.generation_speed = UL_tr.gen_speed; 
 
 						wait_negedge(UL_tr.gen_speed); 
@@ -265,5 +265,23 @@
 				end
 		endtask
 
+		task disable_monitor(input GEN generation);
+
+			if (generation == gen2)
+			begin
+				repeat (75)
+					@(negedge v_if.gen2_fsm_clk);
+			end
+			else if (generation == gen3)
+			begin
+				repeat (140)
+					@(negedge v_if.gen3_fsm_clk);
+			end
+			else if (generation == gen4)
+			begin
+				repeat (24) // To give time (24 clk cycles) for the last byte to be recieved from the DUT
+					@(negedge v_if.gen4_fsm_clk);
+			end
+		endtask : disable_monitor
 		
-	endclass : upper_layer_driver
+endclass : upper_layer_driver

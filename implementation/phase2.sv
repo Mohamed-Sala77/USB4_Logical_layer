@@ -11,9 +11,9 @@
     endfunction
 
     task  get_transactions();
-    //$display ("in phase2 get_transactions");
+    ////$display ("in phase2 get_transactions");
     elec_ag_Rx.get(E_transaction); 
-    $display ("in phase 2 E_transaction = %p",E_transaction);
+    //$display ("in phase 2 E_transaction = %p",E_transaction);
         
 endtask
 
@@ -30,7 +30,7 @@ endtask
         
 
         elec_ag_Tx.put(E_transaction);
-        $display ("E_transaction in phase 2 sent to scoreboard = %p",E_transaction);
+        //$display ("E_transaction in phase 2 sent to scoreboard = %p",E_transaction);
         E_transaction = new();
 
       end

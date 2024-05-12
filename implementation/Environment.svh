@@ -149,6 +149,7 @@
 
 					"normal_scenario_gen_4": vseq_config.run();
 					"normal_scenario_gen_3": vseq_config.normal_scenario_gen_3();
+					"normal_scenario_gen_2": vseq_config.normal_scenario_gen_2();
 
 
 				endcase // scenario

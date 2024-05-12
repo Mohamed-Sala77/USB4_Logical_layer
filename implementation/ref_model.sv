@@ -40,43 +40,43 @@ class ref_model extends primary_steps;
 
         // if(UL_transaction.phase == 5)
         //     begin
-        //         $display("\n before run 5");
+        //         //$display("\n before run 5");
         //         phase_5.run_phase5();
-        //         $display("after run 5 \n");
+        //         //$display("after run 5 \n");
         //     end
            
-        //$display ("Run ref_model with phase = %d",E_transaction.phase);
+        ////$display ("Run ref_model with phase = %d",E_transaction.phase);
         case (E_transaction.phase)
             3'd1:begin
-                $display("\n before run 1");
+                //$display("\n before run 1");
                 phase_1.run_phase1 ();
-                $display("after run 1 \n");
+                //$display("after run 1 \n");
             end  
             
             3'd2:begin
-                $display("\n before run 2");
+                //$display("\n before run 2");
                 phase_2.run_phase2();
-                $display("after run 2 \n");
+                //$display("after run 2 \n");
             end  
             
             3'd3:begin
-                $display("\n before run 3");
+                //$display("\n before run 3");
                 phase_3.run_phase3();
-                $display("after run 3 \n");
+                //$display("after run 3 \n");
             end  
 
 
             3'd4:begin      
-                $display("\n before run 4");
+                //$display("\n before run 4");
                 phase_4.run_phase4();
-                $display("after run 4 \n");
+                //$display("after run 4 \n");
             end  
 
 
             3'd5:begin
-                $display("\n before run 5");
+                //$display("\n before run 5");
                 phase_5.run_phase5();
-                $display("after run 5 \n");
+                //$display("after run 5 \n");
             end  
 
             default: phase_1.run_phase1 (); 

@@ -32,10 +32,10 @@ class phase3 extends primary_steps;
         task  get_transactions();
             elec_ag_Rx.get(E_transaction);
             mem_ag.peek(m_transaction);
-            $display("m_transaction = %p",m_transaction);
+            //$display("m_transaction = %p",m_transaction);
             config_ag_Rx.try_get(C_transaction);
-            $display ("in phase3 E_transaction = %p",E_transaction);
-            //$display ("in phase3 C_transaction = %p",C_transaction);
+            //$display ("in phase3 E_transaction = %p",E_transaction);
+            ////$display ("in phase3 C_transaction = %p",C_transaction);
         endtask
 
         // task to handle phase 3 and error checking
@@ -63,7 +63,7 @@ class phase3 extends primary_steps;
         task  handle_command();
             if ((E_transaction.transaction_type==AT_cmd ) && (E_transaction.read_write==0) )     // we have a command  . out responce from sideband
             begin
-                ////$display ("in handle_command");
+                //////$display ("in handle_command");
                     i_transaction.sb_en    = 1;
                     i_transaction.tran_en = 1;                  
                     i_transaction.At_sel   = 0;         // out response 
@@ -98,8 +98,8 @@ class phase3 extends primary_steps;
                  if ((E_transaction.cmd_rsp_data[13]==0) && (E_transaction.cmd_rsp_data[18]==0))  //&& (E_transaction.gen_speed == gen2))
                     m_transaction.gen2 = 1;
                 join
-                    $display ("supported gens : gen2( %0d) gen3( %0d)  gen4( %0d)  ",m_transaction.gen2 , m_transaction.gen3 , m_transaction.gen4);
-                    $display ("put m_transaction = %p",m_transaction);
+                    //$display ("supported gens : gen2( %0d) gen3( %0d)  gen4( %0d)  ",m_transaction.gen2 , m_transaction.gen3 , m_transaction.gen4);
+                    //$display ("put m_transaction = %p",m_transaction);
                     mem_ag.put(m_transaction);
                     m_transaction = new();
                 end 
@@ -125,7 +125,7 @@ class phase3 extends primary_steps;
             end
 
             int_ag.put(i_transaction) ;         // first put in the mailbox 
-            $display ("send_command done . i_transaction = %p",i_transaction);
+            //$display ("send_command done . i_transaction = %p",i_transaction);
             i_transaction = new();
 
             extention.get_values ();
@@ -139,14 +139,14 @@ class phase3 extends primary_steps;
         task run_phase3() ;
             begin
                 create_transactions();
-                //$display ("done creat transactions ");
+                ////$display ("done creat transactions ");
                 get_transactions();
 
 
                 // ----------------------- handle actions ----------------------
                 if(!E_transaction.sbrx)      
                 begin
-                    $display ("we are in sbrx =0 case action");
+                    //$display ("we are in sbrx =0 case action");
                     // E_transaction.phase = 1;         //! should we go to phase 1 or 2 
                     E_transaction.sbtx = 0;         
                     elec_ag_Tx.put(E_transaction) ;
@@ -154,7 +154,7 @@ class phase3 extends primary_steps;
                 end
                 else if (C_transaction.lane_disable && (E_transaction.phase == 3) ) 
                 begin       
-                    $display ("we are in lane disable case action");
+                    //$display ("we are in lane disable case action");
                    E_transaction.sbtx  = 0;
                    elec_ag_Tx.put(E_transaction) ;
                    E_transaction = new();
