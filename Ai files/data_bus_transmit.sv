@@ -99,7 +99,7 @@ module data_bus_transmit (
 			os_sent <= 0;
             case (byte_counter)
                 'h0: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 ||counter == 7 ) begin
                     lane_0_tx <= ordered_set0[63:56];
                     lane_1_tx <= ordered_set1[63:56];
 					end
@@ -109,20 +109,20 @@ module data_bus_transmit (
 					end
                 end
                 'h1: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[55:48];
                     lane_1_tx <= ordered_set1[55:48];
 					delay <= 1;
 					end
                 end
                 'h2: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[47:40];
                     lane_1_tx <= ordered_set1[47:40];
 					end
                 end
                 'h3: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[39:32];
                     lane_1_tx <= ordered_set1[39:32];
 					end
@@ -132,25 +132,25 @@ module data_bus_transmit (
                     end
                 end
                 'h4: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[31:24];
                     lane_1_tx <= ordered_set1[31:24];
 					end
                 end
                 'h5: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[23:16];
                     lane_1_tx <= ordered_set1[23:16];
 					end
                 end
                 'h6: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[15:8];
                     lane_1_tx <= ordered_set1[15:8];
 					end
                 end
                 'h7: begin
-					if (d_sel !=2 || counter == 7 ) begin
+					if (d_sel == 5 || d_sel == 6 || d_sel == 7 || counter == 7 ) begin
                     lane_0_tx <= ordered_set0[7:0];
                     lane_1_tx <= ordered_set1[7:0];
 					end
