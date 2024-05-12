@@ -120,7 +120,7 @@ initial begin
     envo = new(e_if, c_if ,u_if); 
 	
 	
-    //reset();
+    reset();
 
     //-------main test----------//
     //logical_layer_test.run(speed);

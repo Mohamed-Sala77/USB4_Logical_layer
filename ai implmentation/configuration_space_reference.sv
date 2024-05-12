@@ -32,7 +32,7 @@ class ConfigurationSpacesModel;
 
         // Send read request to the scoreboard
         scoreboard_mailbox.put(request);
-    	$display("[Config Space Ref] Read request sent to the scoreboard \n %p", request);
+    	//$display("[Config Space Ref] Read request sent to the scoreboard \n %p", request);
 
 
         // Construct response transaction
@@ -40,7 +40,7 @@ class ConfigurationSpacesModel;
 
         // Wait for response from the stimulus generator
         stimulus_mailbox.get(response);
-    	$display("[Config Space Ref] Read response received from the generator \n %p", response);
+    	//$display("[Config Space Ref] Read response received from the generator \n %p", response);
 
         data = response.c_data_in;
     endtask

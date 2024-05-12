@@ -32,9 +32,9 @@ class elec_scoreboard;
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                 
-                // elec_mod_sboard.get(model_tr);
-                // $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
-               /*
+                 elec_mod_sboard.get(model_tr);
+                 $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
+               
                 case (monitor_tr.phase)
                 3'd0: begin
                        assert (model_tr.sbtx == monitor_tr.sbtx)
@@ -110,7 +110,7 @@ class elec_scoreboard;
                 end
 
                 //***this thread check it after reciecve on descision***/
- /*               3'd5:begin
+                 3'd5:begin
                     assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
                             $display("[ELEC SCOREBOARD] transport data send is correct!");
                         else $error("[ELEC SCOREBOARD] case transport data CONNECT is failed!");
@@ -126,7 +126,7 @@ class elec_scoreboard;
                 end
 
                 endcase
-*/              env_cfg_mem.recieved_on_elec_sboard=1;
+                env_cfg_mem.recieved_on_elec_sboard=1;
             end
 
             begin  
@@ -146,15 +146,6 @@ class elec_scoreboard;
 
 
 
-//--------for test model only -----------//
-    
-    // Main task to run the scoreboard
-    task run_m();
-            begin
-                elec_mod_sboard.get(monitor_tr);
-                $display("\n[ELEC SCOREBOURD FROM MODEL]at time (%t) is : %p", $time ,model_tr.convert2string());
-            end
-    endtask
 endclass
  
 

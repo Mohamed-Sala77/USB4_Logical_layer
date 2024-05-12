@@ -35,25 +35,6 @@ class config_scoreboard;
     endtask
 
 
-//--------for test model only -----------//
-
-    task run_m();
-    forever begin
-        // Get transactions from both mailboxes
-        get_transactions_m();
-    end
-    endtask
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -69,10 +50,6 @@ class config_scoreboard;
        
     endtask
 
-    task get_transactions_m();
-    ref_mbox.get(ref_trans);
-    $display("\n[Config Scoreboard] received at time (%0t) data of --> %p", $time, ref_trans );
-    endtask
 
     // Function to check for specific condition and trigger event
     task check_condition();

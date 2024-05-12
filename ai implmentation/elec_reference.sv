@@ -27,6 +27,7 @@ class elec_ref_AI;
           elec_layer_inst = new();
 
           elec_G.get(elec_layer_inst);
+          $display("elec_layer_inst : %p", elec_layer_inst);
           // CONDITION TO BE ADDED HERE TO SAVE THE GEN SPEED TO BE USED (AS REQUESTED BY KIMO)
           // CONDTION WILL CHECK THE CMD_RSP_DATA TO SAVE THE GEN SPEED IN A LOCALLY CREATED VARIABLE
           case (elec_layer_inst.phase)
@@ -67,15 +68,15 @@ class elec_ref_AI;
                     elec_layer_inst.crc_received = 0;
                     elec_layer_inst.cmd_rsp_data = 24'h053303; // WRONG INPUT FROM ME (6'h053303) should be 24'h053303
                     CRC_generator(STX_rsp, {8'd78,7'd3,1'b0,24'h033305},6); // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-                    $display("ALIIIIIIIIIIII");
+                    //$display("ALIIIIIIIIIIII");
                     elec_S.put(elec_layer_inst);
                     elec_layer_inst = new();
                 end
             end
 
             5: begin
-                  $display("DATA OBTAINED from electrical layer");
-                  $display("electrical_to_transport = %0D, phase = %0D",elec_layer_inst.electrical_to_transport, elec_layer_inst.phase);
+                  //$display("DATA OBTAINED from electrical layer");
+                  //$display("electrical_to_transport = %0D, phase = %0D",elec_layer_inst.electrical_to_transport, elec_layer_inst.phase);
                   elec_to_upper.put(elec_layer_inst);
                end
               
@@ -118,7 +119,7 @@ class elec_ref_AI;
     crc = 16'hFFFF;
 
     //!!!!!!!!!!!!!!!! PLEASEE NOTE: data_symbol's cmd_rsp_data mafrood ne3ks el input bytes (lel function input bas msh el elec_reference kolo) 3ashan terg3 tet3ks we teb2a least to most significant tanii (24'h033305 badal 24'h053303)
-    //$display("data_symbol %b",data_symbol);
+    ////$display("data_symbol %b",data_symbol);
     data_symbol = data_symbol << 8*(6-size);
     // Concatenate STX and data_symbol
     data = {STX,data_symbol};

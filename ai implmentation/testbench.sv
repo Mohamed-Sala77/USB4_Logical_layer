@@ -18,10 +18,10 @@
 
 
 // REFERENCE MODEL
-	//`include "configuration_space_reference.sv"
-	//`include "elec_reference.sv"
-	//`include "upper_reference.sv"
-	//`include"Reference_model_wrapper.sv"
+	`include "configuration_space_reference.sv"
+	`include "elec_reference.sv"
+	`include "upper_reference.sv"
+	`include"reference_model_AI.sv"
 
 	/*`include "int_packet.sv"
 	`include "R_Mod_extentions.sv"

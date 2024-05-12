@@ -13,21 +13,18 @@ class config_agent;
 
     // Events to signal when driving and monitoring are done
     event driverDone;
-    event next_stimulus;
 
     // Constructor
     function new(
         virtual config_space_if vif, 
         mailbox #(config_transaction) mb_mon_scr,
         mailbox #(config_transaction) mb_drv_gen, 
-        event driverDone,
-        event next_stimulus
+        event driverDone
     );
         this.vif = vif;
         this.mb_mon_scr = mb_mon_scr;
         this.mb_drv_gen = mb_drv_gen;
         this.driverDone = driverDone;
-        this.next_stimulus = next_stimulus;
         // Initialize agent components
         cfg_drv = new( mb_drv_gen,vif,driverDone);
         cfg_mon = new(vif, mb_mon_scr);
