@@ -43,7 +43,8 @@ module control_fsm (
     output reg c_read,
     output reg c_write,
     output reg s_read_o,
-    output reg s_write_o
+    output reg s_write_o,
+	output wire cl0_s
 );
 
 // Define states
@@ -221,11 +222,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
         TS1_GEN4: begin
             if (next_state == TS1_GEN4) begin
 			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h4)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h4)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+				  os_sent_count <= (os_sent_count==16)? os_sent_count : os_sent_count + 1;
+				if (os_in_l0 == 'h4)
+				  os_receive_count_l0 <= (os_receive_count_l0==1)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h4)
+				  os_receive_count_l1 <= (os_receive_count_l1==1)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -239,11 +240,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
         TS2_GEN4: begin
             if (next_state == TS2_GEN4) begin
 			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h5)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h5)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+				  os_sent_count <= (os_sent_count==16)? os_sent_count : os_sent_count + 1;
+				if (os_in_l0 == 'h5)
+				  os_receive_count_l0 <= (os_receive_count_l0==1)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h5)
+				  os_receive_count_l1 <= (os_receive_count_l1==1)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -257,11 +258,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
         TS3_GEN4: begin
             if (next_state == TS3_GEN4) begin
 			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h6)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h6)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+				  os_sent_count <= (os_sent_count==16)? os_sent_count : os_sent_count + 1;
+				if (os_in_l0 == 'h6)
+				  os_receive_count_l0 <= (os_receive_count_l0==1)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h6)
+				  os_receive_count_l1 <= (os_receive_count_l1==1)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -272,12 +273,12 @@ always @(posedge fsm_clk or negedge reset_n) begin
         end
         TS4_GEN4: begin
             if (next_state == TS4_GEN4) begin
-			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h7)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h7)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+			  if (os_sent)
+				  os_sent_count <= (os_sent_count==17)? os_sent_count : os_sent_count + 1;
+				if (os_in_l0 == 'h7)
+				  os_receive_count_l0 <= (os_receive_count_l0==1)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h7)
+				  os_receive_count_l1 <= (os_receive_count_l1==1)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -294,11 +295,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
 		SLOS1_GEN3 : begin		
 			if (next_state == SLOS1_GEN3) begin
 				if (os_sent)
-				  os_sent_count <= os_sent_count + 1;
+				  os_sent_count <= (os_sent_count==2)? os_sent_count : os_sent_count + 1;
 				if (os_in_l0 == 'h0)
-				  os_receive_count_l0 <= os_receive_count_l0 + 1;
+				  os_receive_count_l0 <= (os_receive_count_l0==2)? os_receive_count_l0 : os_receive_count_l0 + 1;
 				if (os_in_l1 == 'h0)
-				  os_receive_count_l1 <= os_receive_count_l1 + 1;
+				  os_receive_count_l1 <= (os_receive_count_l1==2)? os_receive_count_l1 : os_receive_count_l1 + 1;
 			end
 			else begin
 				os_sent_count <= 'h0;
@@ -313,11 +314,11 @@ always @(posedge fsm_clk or negedge reset_n) begin
 			if (next_state ==SLOS2_GEN3)
 			  begin
 				if (os_sent)
-				  os_sent_count <= os_sent_count + 1;
+				  os_sent_count <= (os_sent_count==2)? os_sent_count : os_sent_count + 1;
 				if (os_in_l0 == 'h1)
-				  os_receive_count_l0 <= os_receive_count_l0 + 1;
+				  os_receive_count_l0 <= (os_receive_count_l0==2)? os_receive_count_l0 : os_receive_count_l0 + 1;
 				if (os_in_l1 == 'h1)
-				  os_receive_count_l1 <= os_receive_count_l1 + 1;
+				  os_receive_count_l1 <= (os_receive_count_l1==2)? os_receive_count_l1 : os_receive_count_l1 + 1;
 			  end
 			else 
 			  begin
@@ -332,11 +333,15 @@ always @(posedge fsm_clk or negedge reset_n) begin
         TS1_GEN3: begin // Clock edge sensitive always block for counting sent and received TS1 in TS1_GEN3 state
             if (next_state == TS1_GEN3) begin
 			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h2)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h2)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+					if (gen_speed == GEN3) 
+						os_sent_count <= (os_sent_count==16)? os_sent_count : os_sent_count + 1;
+					else	
+						os_sent_count <= (os_sent_count==32)? os_sent_count : os_sent_count + 1;
+
+				if (os_in_l0 == 'h2)
+				  os_receive_count_l0 <= (os_receive_count_l0==2)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h2)
+				  os_receive_count_l1 <= (os_receive_count_l1==2)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -348,11 +353,15 @@ always @(posedge fsm_clk or negedge reset_n) begin
         TS2_GEN3: begin // Clock edge sensitive always block for counting sent and received TS2 in TS2_GEN3 state
             if (next_state == TS2_GEN3) begin
 			    if (os_sent)
-                os_sent_count <= os_sent_count + 1;
-                if (os_in_l0 == 4'h3)
-                    os_receive_count_l0 <= os_receive_count_l0 + 1;
-                if (os_in_l1 == 4'h3)
-                    os_receive_count_l1 <= os_receive_count_l1 + 1;
+					if (gen_speed == GEN3) 
+						os_sent_count <= (os_sent_count==8)? os_sent_count : os_sent_count + 1;
+					else	
+						os_sent_count <= (os_sent_count==16)? os_sent_count : os_sent_count + 1;
+
+				if (os_in_l0 == 'h3)
+				  os_receive_count_l0 <= (os_receive_count_l0==2)? os_receive_count_l0 : os_receive_count_l0 + 1;
+				if (os_in_l1 == 'h3)
+				  os_receive_count_l1 <= (os_receive_count_l1==2)? os_receive_count_l1 : os_receive_count_l1 + 1;
             end else begin
                 os_sent_count <= 4'h0;
                 os_receive_count_l0 <= 4'h0;
@@ -389,6 +398,7 @@ always @(posedge fsm_clk or negedge reset_n) begin
     endcase
 	end
 end
+assign cl0_s = (current_state == CL0);
 //Transactions
 always @ (posedge fsm_clk or negedge reset_n) begin
     if (!reset_n) begin
@@ -552,7 +562,7 @@ always @(*) begin
                 next_state = CLD_DETECT;
             else if (ttraining_error_timeout)
                 next_state = CLD_EXCHANGE_1;
-            else if (os_sent_count == 16 && os_receive_count_l0 == 1 && os_receive_count_l1 == 1 && new_sym)
+            else if (os_sent_count == 17 && new_sym)
                 next_state = CL0; // Transition to CL0 after fulfilling the condition
             else
                 next_state = TS4_GEN4;
@@ -564,7 +574,7 @@ always @(*) begin
                 next_state = CLD_DETECT;
             else if (ttraining_error_timeout)
                 next_state = CLD_EXCHANGE_1;
-            else if (os_sent_count == 2 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2)
+            else if (os_sent_count == 2 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2&& new_sym)
                 next_state = SLOS2_GEN3; // Transition to SLOS2_GEN3 after fulfilling the condition
             else
                 next_state = SLOS1_GEN3;
@@ -576,7 +586,7 @@ always @(*) begin
                 next_state = CLD_DETECT;
             else if (ttraining_error_timeout)
                 next_state = CLD_EXCHANGE_1;
-            else if (os_sent_count == 2 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2)
+            else if (os_sent_count == 2 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2&& new_sym)
                 next_state = TS1_GEN3; // Transition to TS1_GEN3 after fulfilling the condition
             else
                 next_state = SLOS2_GEN3;
@@ -589,7 +599,7 @@ always @(*) begin
             else if (ttraining_error_timeout)
                 next_state = CLD_EXCHANGE_1;
             else if ((gen_speed == 2'b01 && os_sent_count == 16 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2) ||
-                     (gen_speed == 2'b10 && os_sent_count == 32 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2))
+                     (gen_speed == 2'b10 && os_sent_count == 32 && os_receive_count_l0 == 2 && os_receive_count_l1 == 2)&& new_sym)
                 next_state = TS2_GEN3; // Transition to TS2_GEN3 after fulfilling the condition
             else
                 next_state = TS1_GEN3;
