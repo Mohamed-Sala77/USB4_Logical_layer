@@ -18,8 +18,8 @@ reg [7:0] mem_0 [15:0];
 reg [7:0] mem_1 [15:0];
 
 // Define data registers
-reg [127:0] data_0;
-reg [127:0] data_1;
+wire [127:0] data_0;
+wire [127:0] data_1;
 
 // Index of the current memory location
 	reg [4:0] mem_index;
