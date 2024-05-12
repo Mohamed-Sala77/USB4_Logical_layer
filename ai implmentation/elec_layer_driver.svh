@@ -9,6 +9,10 @@ static logic GEN3_Recieved_SLOS1[$];
 static logic GEN2_Recieved_SLOS1[$];
 static logic GEN3_Recieved_SLOS2[$];
 static logic GEN2_Recieved_SLOS2[$];
+static logic TS1_gen23_lane0[$];
+static logic TS1_gen23_lane1[$];
+static logic TS2_gen23_lane0[$];
+static logic TS2_gen23_lane1[$];
 //TASKS for genetate PRBS11 
     task automatic PRSC11(input bit [10:0] seed, input int size, output logic PRBS11_OUT[$]);
  
@@ -225,6 +229,7 @@ end
        // $display("[ELEC DRIVER] at(%0p)send_data_symb[%0d][%0d]=[%0b]",trans_type,i,9-j,send_data_symb[i][9-j]);
         end
 data_symb.delete();
+//ELEC_vif.data_incoming <=1;
 endtask: send_AT_cmd_OR_res_2_DUT
 
 task electrical_layer_driver::send_LT_fall_2_DUT(); //correct send no need to flip
@@ -270,104 +275,135 @@ endtask: send_LT_fall_2_DUT
 task electrical_layer_driver::SLOS1_2_DUT(input GEN gen_speed);  //check it send 2 on each lane or 2 no both lanes 
 
 if(gen_speed ==gen2) begin
-      
-      ELEC_vif.data_incoming <=1;
+      ELEC_vif.data_incoming <=0;
+      repeat(2)begin
       foreach (GEN2_Recieved_SLOS1[i])
       begin
-        @(posedge ELEC_vif.gen2_lane_clk);
+        @(negedge ELEC_vif.gen2_lane_clk);
+        ELEC_vif.data_incoming <=1;
         ELEC_vif.lane_0_rx <=GEN2_Recieved_SLOS1[i];
         ELEC_vif.lane_1_rx <=GEN2_Recieved_SLOS1[i];
         
       end
+      end
     end
 else if(gen_speed ==gen3) begin
-     @(posedge ELEC_vif.gen3_lane_clk);
-      ELEC_vif.data_incoming <=1;
+       ELEC_vif.data_incoming <=0;
+      $display("[ELEC DEICER]READY AT SLOS1 TIME(%0t)",$time);
+      repeat(2)begin
       foreach (GEN3_Recieved_SLOS1[i])
         begin
-          @(posedge ELEC_vif.gen3_lane_clk);
+          @(negedge ELEC_vif.gen3_lane_clk);
+          ELEC_vif.data_incoming <=1; 
           ELEC_vif.lane_0_rx <=GEN3_Recieved_SLOS1[i];
           ELEC_vif.lane_1_rx <=GEN3_Recieved_SLOS1[i];
     end
+      end
+      // ELEC_vif.data_incoming <=0;
+      $display("[ELEC DEICER]finish AT TIME(%0t)",$time);
+      
 end
-$display("the value ofGEN3_Recieved_SLOS1;%p",GEN3_Recieved_SLOS1); 
-    //ELEC_vif.data_incoming <=0;
+//$display("the value ofGEN3_Recieved_SLOS1;%p",GEN3_Recieved_SLOS1); 
 endtask: SLOS1_2_DUT
 
 task electrical_layer_driver::SLOS2_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
-   @(posedge ELEC_vif.gen2_lane_clk);
-   ELEC_vif.data_incoming <=1;
+  ELEC_vif.data_incoming <=0;
+
+  repeat(2)begin
    foreach (GEN2_Recieved_SLOS2[i])
    begin
-    @(posedge ELEC_vif.gen2_lane_clk);
+    @(negedge ELEC_vif.gen2_lane_clk);
+     ELEC_vif.data_incoming <=1;
     ELEC_vif.lane_0_rx <=GEN2_Recieved_SLOS2[i];
     ELEC_vif.lane_1_rx <=GEN2_Recieved_SLOS2[i];
    end
     end
-  else if(gen_speed ==gen3) begin
-  @(posedge ELEC_vif.gen3_lane_clk);
-  ELEC_vif.data_incoming <=1;
-  foreach (GEN3_Recieved_SLOS2[i])
-    begin
-      @(posedge ELEC_vif.gen3_lane_clk);
-      ELEC_vif.lane_0_rx <=GEN3_Recieved_SLOS2[i];
-      ELEC_vif.lane_1_rx <=GEN3_Recieved_SLOS2[i];
     end
-  end
-
-  $display("the value ofGEN3_Recieved_SLOS1;%p",GEN3_Recieved_SLOS1); 
-    //ELEC_vif.data_incoming <=0;
+  else if(gen_speed ==gen3) begin
+     
+     $display("[ELEC DEICER]READY AT SLOS2 TIME(%0t)",$time);
+     //ELEC_vif.data_incoming <=1;
+     ELEC_vif.data_incoming <=0;
+        ELEC_vif.lane_0_rx <='bx;
+        ELEC_vif.lane_1_rx <='bx;
+     repeat(2)begin
+      foreach (GEN3_Recieved_SLOS2[i])
+      begin
+        @(negedge ELEC_vif.gen3_lane_clk);
+        ELEC_vif.data_incoming <=1;
+        ELEC_vif.lane_0_rx <=GEN3_Recieved_SLOS2[i];
+        ELEC_vif.lane_1_rx <=GEN3_Recieved_SLOS2[i];
+      end
+    end
+   end
+   //$display("[ELEC DRIVER]the value ofGEN3_Recieved_SLOS2;%p",GEN3_Recieved_SLOS2); 
 endtask: SLOS2_2_DUT
 
 
 task electrical_layer_driver::TS1_gen23_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
-    @(posedge ELEC_vif.gen2_lane_clk);
-    ELEC_vif.data_incoming <=1;
+    //@(posedge ELEC_vif.gen2_lane_clk);
+    ELEC_vif.data_incoming <=0;
 
-      foreach(TS1_gen2_3_lane0[i]) begin
-      ELEC_vif.lane_0_rx <=TS1_gen2_3_lane0[i];
-      ELEC_vif.lane_1_rx <=TS1_gen2_3_lane1[i];
-      @(posedge ELEC_vif.gen2_lane_clk);
+      foreach(TS1_gen23_lane0[i]) begin
+        @(negedge ELEC_vif.gen2_lane_clk);
+        ELEC_vif.data_incoming <=1;
+      ELEC_vif.lane_0_rx <=TS1_gen23_lane0[i];
+      ELEC_vif.lane_1_rx <=TS1_gen23_lane1[i];
       end
-    end
-    
+    end 
 else if(gen_speed ==gen3) begin
-    @(posedge ELEC_vif.gen3_lane_clk);
+   // @(posedge ELEC_vif.gen3_lane_clk);
+    //ELEC_vif.data_incoming <=0;
+    $display("[ELEC DRIVER] the size of TS1_gen23_lane0 is %0d",TS1_gen23_lane0.size());
+    $display("[ELEC DRIVER] the  TS1_gen23_lane1 is %p",TS1_gen23_lane1);
+    repeat(2)begin
+    foreach(TS1_gen23_lane0[i]) begin 
+    @(negedge ELEC_vif.gen3_lane_clk);
     ELEC_vif.data_incoming <=1;
-
-    foreach(TS1_gen2_3_lane0[i]) begin 
-    ELEC_vif.lane_0_rx <=TS1_gen2_3_lane0[i];
-    ELEC_vif.lane_1_rx <=TS1_gen2_3_lane1[i];
-    @(posedge ELEC_vif.gen3_lane_clk);
+    ELEC_vif.lane_0_rx <=TS1_gen23_lane0[i];
+    ELEC_vif.lane_1_rx <=TS1_gen23_lane1[i];
     end
+    end 
+    TS1_gen23_lane0.delete();
+    TS1_gen23_lane1.delete();
+    $display("[ELEC DRIVER]at time(%0t)done",$time);  
+    
+    
 end
-//ELEC_vif.data_incoming <=0;
+    
 endtask: TS1_gen23_2_DUT
 
 
 task electrical_layer_driver::TS2_gen23_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
-   @(posedge ELEC_vif.gen2_lane_clk);
-   ELEC_vif.data_incoming <=1;
-
-    foreach(TS2_gen2_3_lane0[i]) begin
-    ELEC_vif.lane_0_rx <=TS2_gen2_3_lane0[i];
-    ELEC_vif.lane_1_rx <=TS2_gen2_3_lane1[i];
-    @(posedge ELEC_vif.gen2_lane_clk);
-    end
-    end
-else if(gen_speed ==gen3) begin
-    @(posedge ELEC_vif.gen3_lane_clk);
-    ELEC_vif.data_incoming <=1;
-    foreach(TS2_gen2_3_lane0[i]) begin 
-    ELEC_vif.lane_0_rx <=TS2_gen2_3_lane0[i];
-    ELEC_vif.lane_1_rx <=TS2_gen2_3_lane1[i];
-    @(posedge ELEC_vif.gen3_lane_clk);
+   //@(posedge ELEC_vif.gen2_lane_clk);
+   ELEC_vif.data_incoming <=0;
+repeat(2)begin
+    foreach(TS2_gen23_lane0[i]) begin
+      @(negedge ELEC_vif.gen2_lane_clk);
+      ELEC_vif.data_incoming <=1;
+    ELEC_vif.lane_0_rx <=TS2_gen23_lane0[i];
+    ELEC_vif.lane_1_rx <=TS2_gen23_lane1[i];
     end
 end
-  ELEC_vif.data_incoming <=0;
+    end
+else if(gen_speed ==gen3) begin
+   // @(posedge ELEC_vif.gen3_lane_clk);
+    //ELEC_vif.data_incoming <=0;
+    repeat(2)begin
+    foreach(TS2_gen23_lane0[i]) begin 
+      ELEC_vif.data_incoming <=1;
+    @(negedge ELEC_vif.gen3_lane_clk);
+    ELEC_vif.lane_0_rx <=TS2_gen23_lane0[i];
+    ELEC_vif.lane_1_rx <=TS2_gen23_lane1[i];
+    end
+    end
+end
+  //ELEC_vif.data_incoming <=0;
+  TS2_gen23_lane0.delete();
+  TS2_gen23_lane1.delete();
 endtask: TS2_gen23_2_DUT
 
 task electrical_layer_driver::TS1_gen4_2_DUT();
@@ -425,7 +461,8 @@ $display("[ELEC DRIVER] the size GEN4_recieved_TS1_LANE1f is %0d and value =%p",
     $display("[elec monitor] at(%0t)",$time);
 
     foreach(GEN4_recieved_TS1_LANE0[i]) begin
-    @(posedge ELEC_vif.gen4_lane_clk);
+    //@(posedge ELEC_vif.gen4_lane_clk);
+    @(negedge ELEC_vif.gen4_lane_clk);
     ELEC_vif.lane_0_rx <=GEN4_recieved_TS1_LANE0[i];
     ELEC_vif.lane_1_rx <=GEN4_recieved_TS1_LANE1[i];
     ELEC_vif.data_incoming <=1;
@@ -456,10 +493,13 @@ endtask: TS2_gen4_2_DUT
 
 task electrical_layer_driver::TS3_2_DUT();
 
-  ELEC_vif.data_incoming <=1;
+  //ELEC_vif.data_incoming <=1;
     foreach(HEADER_TS3_GEN4[i])
     begin
-    @(posedge ELEC_vif.gen4_lane_clk)
+   // @(posedge ELEC_vif.gen4_lane_clk)
+     @(negedge ELEC_vif.gen4_lane_clk)
+   // ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[31-i];
+    //ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.data_incoming <=1;

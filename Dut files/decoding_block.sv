@@ -97,7 +97,7 @@ reg flag;
 			lane_1_rx <= 'h0;
 			flag <= 0;
 			
-		end else if(~enable_dec && byte_numb == 0) begin
+		end else if(~enable_dec) begin
 
 			enable_deskew <= 0;
 			flag <= 0;

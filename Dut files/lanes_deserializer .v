@@ -47,7 +47,7 @@ module lanes_deserializer #(parameter WIDTH = 132) (
 			started <= 0;
 		end	
 		
-		else if (!enable_deser && count == 0) begin
+	    else if (!enable_deser) begin
             lane_0_rx_parallel <= 'b0;
 			lane_1_rx_parallel <= 'b0;
 			temp0 <= 'b0;

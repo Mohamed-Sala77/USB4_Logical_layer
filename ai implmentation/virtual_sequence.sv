@@ -47,14 +47,14 @@ task run(input GEN speed);
     wait(cfg_class.recieved_on_elec_sboard ==1);  //  wait AT_rsp from dut to trigger 
     cfg_class.recieved_on_elec_sboard =0;
   //$display("[virtual_sequence]:waittttttttttttttttttttttttttttttttttttttt");
-   /*
+   
    ///phase 4///
     //@(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
      //virtual_elec_gen.wake_up(4,speed);
-    virtual_elec_gen.Send_OS(TS1_gen4,speed);
-    virtual_elec_gen.Send_OS(TS2_gen4,speed);
-    virtual_elec_gen.Send_OS(TS3,speed);
-    virtual_elec_gen.Send_OS(TS4,speed);
+    virtual_elec_gen.Send_OS(TS1_gen4,gen4);
+    virtual_elec_gen.Send_OS(TS2_gen4,gen4);
+    virtual_elec_gen.Send_OS(TS3,gen4);
+    virtual_elec_gen.Send_OS(TS4,gen4);
 
     ///phase 5///
     wait(vif.cl0_s === 1'b1);         // transport is ready to send and recieve data  //! i think that should be in the virtual sequence
@@ -92,7 +92,7 @@ task run(input GEN speed);
     end
 
   join
-    */
+    
 endtask
 
 

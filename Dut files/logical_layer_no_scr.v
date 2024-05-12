@@ -308,7 +308,7 @@ transactions_gen_fsm trans_gen
   .sbtx_sel                ( sbtx_sel                )            
 );
 
-serializer #(.WIDTH(10)) sbtx_serializer
+serializer /*#(.WIDTH(10))*/ sbtx_serializer
 (
   .clk                     ( sb_clk                  ), 
   .rst                     ( rst                     ),

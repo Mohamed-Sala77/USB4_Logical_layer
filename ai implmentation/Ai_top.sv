@@ -159,7 +159,7 @@ endtask
 
 	always #((10**15)/(2*freq_80)) local_clk = ~local_clk;
 
-	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
+	always #((10**15)/(10*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
 	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
 	
