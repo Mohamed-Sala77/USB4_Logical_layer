@@ -122,8 +122,15 @@
 									v_if.lane_1_rx = elec_to_trans_enc_1_gen_2[i];
 								end
 
-								wait_negedge (elec_tr.gen_speed);
-								v_if.data_incoming = 0;
+								//  ****** In case we will send only 8 bytes ******
+
+								// repeat (2)
+								// begin
+								// 	wait_negedge (elec_tr.gen_speed);
+								// end
+
+								// v_if.data_incoming = 0;
+
 								elec_to_trans_enc_0 = {};
 								elec_to_trans_enc_1 = {};
 							end
@@ -157,8 +164,15 @@
 									v_if.lane_1_rx = elec_to_trans_enc_1_gen_3[i];
 								end
 
-								wait_negedge (elec_tr.gen_speed);
-								v_if.data_incoming = 0;
+								//  ****** In case we will send only 16 bytes ******
+
+								// repeat (2)
+								// begin
+								// 	wait_negedge (elec_tr.gen_speed);
+								// end
+								
+								// v_if.data_incoming = 0;
+
 								elec_to_trans_enc_0 = {};
 								elec_to_trans_enc_1 = {};
 							end
@@ -275,7 +289,7 @@
 								$display("[ELEC DRIVER] Sending AT_cmd");
 								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data};
 								$display("data_symbol: %p", data_symbol);
-								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); // Aliiiiiiiiiiiiiiiiiii
+								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); 
 								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
 
@@ -292,7 +306,7 @@
 								// modified version for debugging			 
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(STX_cmd), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
-											 {start_bit, reverse_data({elec_tr.read_write, elec_tr.len}), stop_bit}, 		// data symbol // check order // ALIIIIIIIIIIIIIIIIIIIIIIIII
+											 {start_bit, reverse_data({elec_tr.read_write, elec_tr.len}), stop_bit}, 		// data symbol 
 											 {start_bit, reverse_data(low_crc), stop_bit}, {start_bit, reverse_data(high_crc), stop_bit}, // crc bits
 											 {start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(ETX), stop_bit}};
 
@@ -360,7 +374,7 @@
 										v_if.data_incoming = 1'b1;
 										v_if.lane_0_rx = TS_Symbols.SLOS1_64_enc[i][j];		
 										v_if.lane_1_rx = TS_Symbols.SLOS1_64_enc[i][j];
-										$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_64_enc[i][j]);		
+										//$display("[ELEC DRIVER] SLOS1 BITS: [%0b]",TS_Symbols.SLOS1_64_enc[i][j]);		
 									end
 								end	
 								
@@ -956,7 +970,7 @@
 
 			if (generation == gen2)
 			begin
-				repeat (8 + 66)
+				repeat (8 + 66 ) //8 + 66 !!!
 					@(negedge v_if.gen2_lane_clk);
 			end
 			else if (generation == gen3)

@@ -114,7 +114,7 @@
 			 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
 									(elec_tr_model.lane === elec_tr.lane) &&
 									(elec_tr_model.o_sets === elec_tr.o_sets)
-									) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
+									) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN2/3 Ordered Set received ");
 
 							// Detailed assertions
 							assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
