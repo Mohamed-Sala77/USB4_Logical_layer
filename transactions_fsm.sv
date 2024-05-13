@@ -229,10 +229,7 @@ always @(*) begin
 		LT: begin 
 
 
-			if (error) begin
-				ns=IDLE;
-
-			end else if (tdisconnet) begin
+			if (tdisconnet) begin
 
 				ns=DISCONNECT;
 
@@ -406,13 +403,8 @@ always @(*) begin
 			valid_reg = 0;
 			disconnect_reg = 0;
 			crc_det_en = 0;
-
-			if (error) begin
-				trans_error_reg=1;
-			end else begin
-
-				trans_error_reg=0;
-				case (sbrx [8:1])		
+			trans_error_reg=0;				
+			   case (sbrx [8:1])		
 
 					CLSE_SYMBOL: begin 
 						disconnect_reg = 1;
@@ -420,7 +412,8 @@ always @(*) begin
 
 
 				endcase
-			end if (tdisconnet) begin
+			
+			if (tdisconnet) begin
 				disconnect_reg=1;
 			end
 
