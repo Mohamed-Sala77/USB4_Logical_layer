@@ -30,13 +30,12 @@ always @(posedge local_clk or negedge rst) begin
         ser_clk <= 1'b0;
         enc_clk <= 1'b0;
         fsm_clk <= 1'b0;
-		ms_clk <= 1'b0;
         fsm_counter <= 7'b0;
         factor_counter <= 6'b0;
 		count_en_gen2  <= 0;
 		count_en_gen3  <= 0;
 		r_reg33_pos <= 0;
-		clk_div_33 <= 0;
+
 
     end else begin
 		if (r_reg33_pos == 32) begin //clk/33
@@ -119,7 +118,7 @@ always @(posedge local_clk or negedge rst) begin
                     ser_clk <= ~ser_clk;
                     ser_counter <= 4'b0;
                 end
-                if (enc_counter == 33) begin
+                if (enc_counter == 32) begin
                     enc_clk <= ~enc_clk;
                     enc_counter <= 8'b0;
                 end
@@ -200,6 +199,7 @@ always @(posedge sb_clk or negedge rst) begin
 
     if (~rst) begin
         ms_counter <= 0;
+		ms_clk <= 1'b0;
     end else begin
          ms_counter <= ms_counter + 1'b1;
                 
