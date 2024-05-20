@@ -24,31 +24,33 @@ class up_transport_driver;
 
 
     task run(input GEN speed);
-
-        while (vif.enable_sending == 1) begin
-            
+forever
+begin
+        if (vif.enable_sending == 1) begin
          // Get the transaction from the mailbox
         drv_gen_mbx.get(tr);
-
         // Wait for 4 clock cycles
         repeat(4) wait_for_negedge(speed);
       
         // Assign T_Data to transport_layer_data_in
         vif.transport_layer_data_in = tr.T_Data;
-      
+      $display ("[UPPER DRIVER] data sent to transport layer in lane 0 : %0d", vif.transport_layer_data_in);
         // Wait for 4 more clock cycles
         repeat(4) wait_for_negedge(speed);
       
         // Assign T_Data_1 to transport_layer_data_in
         vif.transport_layer_data_in = tr.T_Data_1;
+      $display ("[UPPER DRIVER] data sent to transport layer in lane 1 : %0d", vif.transport_layer_data_in);
         
         wait_for_negedge(speed);
       
         ->driveDone;
   
     end
+
+    wait_for_negedge(speed);
   
-        
+end
     endtask
 
 

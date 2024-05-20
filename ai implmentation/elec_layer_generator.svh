@@ -31,21 +31,13 @@ class electrical_layer_generator;
     extern task send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0,input bit [7:0] address = 0,
                                           input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0,input GEN generation = gen4);
     extern task Send_OS(input OS_type OS, input GEN generation);
-    extern task send_data(input logic [7:0] data, input GEN gen_speed,input LANE lane);
+    extern task send_data(input GEN gen_speed,input int num);
     extern task wake_up(input bit [2:0] phase, input GEN speed = gen4);
     extern task Disconnect();
 
 
 
-    //--------for test model only -----------//
-    
-    // Declare the task as extern
-    extern task sbrx_after_sbtx_high_m();
-    extern task send_transaction_2_driver_m(input tr_type trans_type = None, input bit read_write = 0,input bit [7:0] address = 0,
-                                          input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0,input GEN generation = gen4);
-    extern task Send_OS_m(input OS_type OS, input GEN generation);
-    extern task send_data_m(input logic [7:0] data, input GEN gen_speed,input LANE lane);
-    extern task Disconnect_m();
+ 
   endclass : electrical_layer_generator
 
 
@@ -113,7 +105,10 @@ class electrical_layer_generator;
 	    	transaction.phase ='d4;
         elec_gen_drv.put(transaction);        // Sending transaction to the Driver
         elec_gen_mod.put(transaction);        // Sending transaction to the Reference model
-         elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
+        // elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
+         if(OS != TS4)begin 
+          elec_gen_2_scoreboard.put(transaction);
+         end
         $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
@@ -123,18 +118,22 @@ class electrical_layer_generator;
 
     
     
-    task electrical_layer_generator::send_data(input logic [7:0] data, input GEN gen_speed,input LANE lane);  //discuss on the width of the input data later
+    task electrical_layer_generator::send_data(input GEN gen_speed,input int num);  //discuss on the width of the input data later
+      repeat(num)
+      begin
       transaction = new();                     // Instantiate the transaction object using the default constructor
       transaction.sbrx = 1;
       transaction.phase = 3'd5;                //not real phase but for env only
-      transaction.lane = lane;
+      //transaction.lane = lane;
       transaction.gen_speed = gen_speed;
-      transaction.electrical_to_transport = data;
+      transaction.randomize(electrical_to_transport);
+      $display("[ELEC GENERATOR] sending data to lane 0 =%d and to lane 1 =%d",transaction.electrical_to_transport[7:0],transaction.electrical_to_transport[15:8]);
       elec_gen_drv.put(transaction);           // Sending transaction to the Driver
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
        elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
+      end
       endtask
 
   
@@ -158,105 +157,6 @@ class electrical_layer_generator;
 		  transaction.gen_speed = speed;
       elec_gen_mod.put(transaction);           // Sending transaction to the Driver
     endtask
-
-
-
-
-    //--------------------------------------//
-    //--------------------------------------//
-    //--------------------------------------//
-    //--------------------------------------//
-    //-----------for test model only -----------//
-    //--------------------------------------//
-    //--------------------------------------//
-    //--------------------------------------//
-  
-
-
-
-    
-   task electrical_layer_generator::sbrx_after_sbtx_high_m();
-   // @(sbtx_transition_high); // Blocking with the event sbtx_transition_high (do it on sequance)
-    //$display("[ELEC GENERATOR] : sbtx is high");
-    transaction = new();                    // Construct the transaction
-    transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
-    transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
-    elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
-    elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-    $display("[ELEC GENERATOR] : sbrx send high");
-   endtask
-
-
-
-     //task to send ordered sets
-    task electrical_layer_generator::Send_OS_m(input OS_type OS, input GEN generation);
-      //$display("[ELEC GENERATOR] waiting for correct recieved order_sets from type [%p] ", OS);
-      @correct_OS; // Blocking with the correct_OS event "this event on sboard"
-      $display("[ELEC GENERATOR] correct recieved order_sets from type [%p] ", OS);
-      
-      repeat (1) begin        
-        transaction = new();                 // Instantiate a new transaction object
-        transaction.o_sets = OS;             // type of the ordered set
-        transaction.tr_os = ord_set;         // indicates whether the driver will send transaction or ordered set
-        transaction.gen_speed = generation;  // to indicate the generation
-        transaction.sbrx = 1;
-	    	transaction.phase ='d4;
-        elec_gen_mod.put(transaction);        // Sending transaction to the Reference model
-         elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-        $display("[ELEC GENERATOR] SENDING [%p]", OS);
-      end
-    endtask
-
-    task electrical_layer_generator::send_transaction_2_driver_m(input tr_type trans_type = None, input bit read_write = 0, input bit [7:0] address = 0,
-                                                      input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0, input GEN generation = gen4);
-      transaction = new(); // Instantiate the transaction object using the default constructor
-      transaction.phase ='d3;
-      transaction.transaction_type = trans_type;
-      transaction.tr_os = tr;
-      transaction.sbrx = 1;
-      transaction.gen_speed = generation;
-      case(trans_type)
-        AT_cmd, AT_rsp: begin
-          transaction.read_write = read_write;
-          transaction.address = address;
-          transaction.len = len;
-          transaction.cmd_rsp_data = cmd_rsp_data;
-          $display("[ELEC GENERATOR] sending [%p] Transaction", trans_type);
-        end
-        LT_fall: begin
-          //transaction.sbrx = 0;  knew it from trans_type
-          $display("[ELEC GENERATOR] sending [LT_FALL] Transaction");
-        end
-      endcase
-
-      elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
-      elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-    endtask
-
-    
-    
-    task electrical_layer_generator::send_data_m(input logic [7:0] data, input GEN gen_speed,input LANE lane);  //discuss on the width of the input data later
-      transaction = new();                     // Instantiate the transaction object using the default constructor
-      transaction.sbrx = 1;
-      transaction.phase = 3'd5;                //not real phase but for env only
-      transaction.lane = lane;
-      transaction.gen_speed = gen_speed;
-      transaction.electrical_to_transport = data;
-      elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
-      $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
-      endtask
-
-  
-      task electrical_layer_generator::Disconnect_m();
-      transaction = new();                     // Instantiate the transaction object using the default constructor
-      transaction.sbrx = 0;
-      transaction.phase = 3'd6;                //not real phase but for env only
-      elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-      elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
-      $display("[ELEC GENERATOR] Disconnect order sent to driver");
-      endtask
-  
 
 
 

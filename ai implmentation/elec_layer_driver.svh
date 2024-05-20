@@ -94,12 +94,11 @@ endfunction
      extern task TS1_gen4_2_DUT();
      extern task TS2_gen4_2_DUT();
      extern task TS3_2_DUT();
-     //extern task TS4_2_DUT();
+     extern task TS4_2_DUT();
      ///---------------------------///
-
+  
      ///**tasks to send OS to DUT**//
-     extern task  send_data_2_DUT(input logic[7:0] data_2_DUT,input GEN gen_speed
-                                 ,input LANE lane);
+     extern task  send_data_2_DUT(input logic[15:0] data_2_DUT,input GEN gen_speed);
     ///---------------------------///
     //**tasks to send Disconnect_2_DUT to DUT**//
 
@@ -344,13 +343,14 @@ endtask: SLOS2_2_DUT
 task electrical_layer_driver::TS1_gen23_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
     //@(posedge ELEC_vif.gen2_lane_clk);
-    ELEC_vif.data_incoming <=0;
-
+   // ELEC_vif.data_incoming <=0;
+       repeat(2)begin
       foreach(TS1_gen23_lane0[i]) begin
         @(negedge ELEC_vif.gen2_lane_clk);
         ELEC_vif.data_incoming <=1;
-      ELEC_vif.lane_0_rx <=TS1_gen23_lane0[i];
-      ELEC_vif.lane_1_rx <=TS1_gen23_lane1[i];
+        ELEC_vif.lane_0_rx <=TS1_gen23_lane0[i];
+        ELEC_vif.lane_1_rx <=TS1_gen23_lane1[i];
+      end
       end
     end 
 else if(gen_speed ==gen3) begin
@@ -379,13 +379,13 @@ endtask: TS1_gen23_2_DUT
 task electrical_layer_driver::TS2_gen23_2_DUT(input GEN gen_speed);
 if(gen_speed ==gen2) begin
    //@(posedge ELEC_vif.gen2_lane_clk);
-   ELEC_vif.data_incoming <=0;
+   //ELEC_vif.data_incoming <=0;
 repeat(2)begin
     foreach(TS2_gen23_lane0[i]) begin
       @(negedge ELEC_vif.gen2_lane_clk);
       ELEC_vif.data_incoming <=1;
-    ELEC_vif.lane_0_rx <=TS2_gen23_lane0[i];
-    ELEC_vif.lane_1_rx <=TS2_gen23_lane1[i];
+      ELEC_vif.lane_0_rx <=TS2_gen23_lane0[i];
+      ELEC_vif.lane_1_rx <=TS2_gen23_lane1[i];
     end
 end
     end
@@ -457,6 +457,7 @@ $display("[ELEC DRIVER] the size GEN4_recieved_TS1_LANE1f is %0d and value =%p",
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
     @(posedge ELEC_vif.gen4_lane_clk);
+    @(posedge ELEC_vif.gen4_lane_clk);
     ELEC_vif.data_incoming <=1;
     $display("[elec monitor] at(%0t)",$time);
 
@@ -498,8 +499,6 @@ task electrical_layer_driver::TS3_2_DUT();
     begin
    // @(posedge ELEC_vif.gen4_lane_clk)
      @(negedge ELEC_vif.gen4_lane_clk)
-   // ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[31-i];
-    //ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.lane_0_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.lane_1_rx <=HEADER_TS3_GEN4[31-i];
     ELEC_vif.data_incoming <=1;
@@ -513,15 +512,58 @@ task electrical_layer_driver::TS3_2_DUT();
     $display;
 
 endtask: TS3_2_DUT
+
+
+
+task electrical_layer_driver::TS4_2_DUT();
+
+  bit		     [3:0]			counter;
+  logic 		            TS4_gen4[32];
+  logic 		            correct_TS4[$];
+  counter=4'd15;
+
+			//calculate the correct TS4
+			/*repeat(No_TS_GEN4-1)
+			begin
+			counter=counter+1;
+			$display("[ELEC MONITOR]the value of counter is %0d",counter);	
+			TS4_gen4={<<{4'd0,{<<{~(counter)}},{<<{counter}},indication_TS4,CURSOR}};
+			foreach(TS4_gen4[j])begin
+			 correct_TS4.push_back(TS4_gen4[j]);  //check the correct value
+			end 
+			end*/
+    correct_TS4={<<{4'd0,{<<{~(counter)}},{<<{counter}},indication_TS4,CURSOR}};
+
+    foreach(correct_TS4[i])
+    begin
+   // @(posedge ELEC_vif.gen4_lane_clk)
+     @(negedge ELEC_vif.gen4_lane_clk)
+   // ELEC_vif.lane_0_rx <=correct_TS4[$-i];
+    //ELEC_vif.lane_1_rx <=correct_TS4[$-i];
+    ELEC_vif.lane_0_rx <=correct_TS4[i];
+    ELEC_vif.lane_1_rx <=correct_TS4[i];
+    ELEC_vif.data_incoming <=1;
+   end
+   $display("[ELEC DRIVER] the value of GEN4_recieved_TS4_LANE0 is:");
+
+   foreach(correct_TS4[l])begin
+
+    $write (correct_TS4[l]);
+   end 
+    $display;
+
+
+endtask: TS4_2_DUT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //task send data to the DUT
-task electrical_layer_driver:: send_data_2_DUT(input logic[7:0] data_2_DUT,
-                                               input GEN gen_speed,input LANE lane);
+task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
+                                               input GEN gen_speed);
+      int i=0;                                       
       ELEC_vif.sbrx <=1; 
       ELEC_vif.data_incoming <=1;
       case(gen_speed)
         gen2: begin
-          case(lane)
+         /* case(lane)
             lane_0: begin  
                foreach(data_2_DUT[i]) begin
                 ELEC_vif.lane_0_rx <=data_2_DUT[i];
@@ -535,10 +577,10 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[7:0] data_2_DUT,
             end
             end
           
-          endcase
+          endcase*/
         end
         gen3: begin
-          case(lane)
+          /*case(lane)
             lane_0: begin  
                foreach(data_2_DUT[i]) begin
                 ELEC_vif.lane_0_rx <=data_2_DUT[i];
@@ -551,11 +593,17 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[7:0] data_2_DUT,
                 @(posedge ELEC_vif.gen3_lane_clk);
             end
             end
-          endcase
+          endcase*/
         end
 
         gen4: begin
-           case(lane)
+            repeat(data_width)begin
+            @(posedge ELEC_vif.gen4_lane_clk);
+            ELEC_vif.lane_0_rx <=data_2_DUT[i];
+            ELEC_vif.lane_1_rx <=data_2_DUT[i+data_width];
+            i++;
+          end
+           /*case(lane)
             lane_0: begin  
                foreach(data_2_DUT[i]) begin
                 ELEC_vif.lane_0_rx <=data_2_DUT[i];
@@ -569,7 +617,7 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[7:0] data_2_DUT,
             end
             end
           
-          endcase
+          endcase*/
         end
       endcase
 endtask: send_data_2_DUT
@@ -639,7 +687,7 @@ endcase
           $display("[ELEC DRIVER] salahhhhhhhhhhhhhhhhh");
         end
         TS4: begin
-          //TS4_2_DUT();  no need to this task as no response in case TS4 
+          TS4_2_DUT(); 
         end
         default: begin
         end
@@ -649,7 +697,7 @@ endcase
       3'b101:begin   //added phase represent send data from electrical layer to the DUT
         ELEC_vif.sbrx <=1;           //drive sbrx to 1
         send_data_2_DUT( transaction.electrical_to_transport
-                         ,transaction.gen_speed,transaction.lane);
+                         ,transaction.gen_speed);
       end
       3'b110:begin //added phase to represent disconnect phase (drive sbrx to zero)
         Disconnect_2_DUT();

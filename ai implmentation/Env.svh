@@ -142,8 +142,8 @@ class env;
                 cfg_scoreboard.run();
 
                 // Upper layer components
-                //up_agent.run(speed);
-                //up_scoreboard.run_scr();
+                up_agent.run(speed);
+                up_scoreboard.run_scr();
 
                 
 

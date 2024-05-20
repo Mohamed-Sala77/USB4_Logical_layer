@@ -62,7 +62,7 @@ task run(input GEN speed);
     @(vif.cl0_s);         // transport is ready to send and recieve data  
     $display("[virtual_sequence]:cl0_s event triggered");
     // sending from transport to electrical layer
-  fork
+  /*fork
 
     begin
         // start sending data from the transport layer
@@ -75,19 +75,19 @@ task run(input GEN speed);
     end
 
     begin
-        //* electrical should recieve here 
+        //* start receiving data on the transport layer
     end
     join
 
 
     @(vif.cl0_s);         // transport is ready to send and recieve data  
 
-
+*/
 // sending from electrical to transport layer
   fork
 
     begin
-        //* electrical should send here 
+      virtual_elec_gen.send_data(speed,5);
     end
 
     begin

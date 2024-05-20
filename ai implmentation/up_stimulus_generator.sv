@@ -34,8 +34,8 @@ class up_transport_generator;
             tr.randomize(T_Data_1) ;
             
             
-            $display("[UPPER GENERATOR] data sent to lane 0: %0d", tr.T_Data);
-            $display("[UPPER GENERATOR] data sent to lane 1: %0d", tr.T_Data_1);
+            $display("[UPPER GENERATOR] data sent to lane 0: %0d      at %t", tr.T_Data, $time);
+            $display("[UPPER GENERATOR] data sent to lane 1: %0d      at %t ", tr.T_Data_1, $time);
             // Put the transaction into the mailboxes
             ub_gen_mod.put(tr);
             ub_gen_drv.put(tr);
@@ -43,7 +43,7 @@ class up_transport_generator;
             vif.enable_sending = 1'b1;
 
             // Wait for drive_done event to be triggered
-            wait (drive_done.triggered);
+            @ (drive_done);
         end
 
                 // Disable sending

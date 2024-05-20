@@ -29,6 +29,7 @@ class elec_scoreboard;
 
          fork
             begin
+                $display("\n[ELEC SCOREBOARD] waiting for monitor transaction");
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                 

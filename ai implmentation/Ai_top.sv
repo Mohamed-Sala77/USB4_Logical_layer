@@ -113,6 +113,8 @@ logical_layer_no_scr logical_layer (
 
 
 
+assign e_if.cl0_s = u_if.cl0_s;
+
 
 // TEST 
 initial begin 
@@ -161,7 +163,7 @@ endtask
 
 	always #((10**15)/(2*freq_80)) local_clk = ~local_clk;
 
-	always #((10**15)/(10*SB_freq)) SB_clock = ~SB_clock; // sideband clock
+	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
 	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
 	
