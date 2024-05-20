@@ -98,7 +98,7 @@ class env;
         up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone);
                       
         //Sequences
-        virtual_seq =new(env_cfg_mem);
+        virtual_seq =new(env_cfg_mem,up_if);
 
         // Scoreboards
         elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem);

@@ -13,8 +13,9 @@ class virtual_sequence;
     /*event sbtx_transition_high,  //connect with elec_monitor
       sbtx_response;  //connect with elec_scoreboard to indecate recieve transaction*/
 
-function new(env_cfg_class cfg_class);
+function new(env_cfg_class cfg_class ,virtual upper_layer_if vif);
     this.cfg_class=cfg_class;
+    this.vif=vif;
 endfunction: new
 
 
@@ -51,19 +52,22 @@ task run(input GEN speed);
    ///phase 4///
     //@(recieved_on_elec_sboard); // Blocking with the event recieved_on_elec_sboard
      //virtual_elec_gen.wake_up(4,speed);
-    virtual_elec_gen.Send_OS(TS1_gen4,gen4);
-    virtual_elec_gen.Send_OS(TS2_gen4,gen4);
-    virtual_elec_gen.Send_OS(TS3,gen4);
-    virtual_elec_gen.Send_OS(TS4,gen4);
+    virtual_elec_gen.Send_OS(TS1_gen4,speed);
+    virtual_elec_gen.Send_OS(TS2_gen4,speed);
+    virtual_elec_gen.Send_OS(TS3,speed);
+    virtual_elec_gen.Send_OS(TS4,speed);
 
     ///phase 5///
-    wait(vif.cl0_s === 1'b1);         // transport is ready to send and recieve data  //! i think that should be in the virtual sequence
+    $display("[virtual_sequence]:waiting for cl0_s event");
+    @(vif.cl0_s);         // transport is ready to send and recieve data  
+    $display("[virtual_sequence]:cl0_s event triggered");
     // sending from transport to electrical layer
   fork
 
     begin
         // start sending data from the transport layer
         vif.enable_sending = 1'b1;
+        $display("[virtual_sequence]:enable_sending data from transport layer");
          // Send data 5 times
             virtual_up_gen.run(5);
 
@@ -76,8 +80,8 @@ task run(input GEN speed);
     join
 
 
+    @(vif.cl0_s);         // transport is ready to send and recieve data  
 
-      wait(vif.cl0_s === 1'b1);         // transport is ready to send and recieve data  //! i think that should be in the virtual sequence
 
 // sending from electrical to transport layer
   fork

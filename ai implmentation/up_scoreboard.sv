@@ -17,8 +17,8 @@ class up_transport_scoreboard;
 
     forever begin
       // Get transactions from both mailboxes
-      UL_mod_scr.get(mod_tr);
-      $display("\n[Scoreboard Upper layer From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
+      //UL_mod_scr.get(mod_tr);
+      //$display("\n[Scoreboard Upper layer From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
       
       UL_mon_scr.get(mon_tr);
       $display("\n[Scoreboard Upper layer From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());

@@ -29,8 +29,7 @@ class up_transport_generator;
             // Create a new transaction object
             tr = new();
             
-            // Generate random variables for tr
-            // Check if randomization was successful
+            // Generate random variables for the transaction
             tr.randomize(T_Data) ;
             tr.randomize(T_Data_1) ;
             

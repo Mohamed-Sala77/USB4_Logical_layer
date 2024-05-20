@@ -106,7 +106,9 @@ logical_layer_no_scr logical_layer (
 	.sbrx(e_if.sbrx),		
 	.lane_0_tx_o(e_if.lane_0_tx),
 	.lane_1_tx_o(e_if.lane_1_tx),
-	.enable_scr(e_if.enable_rs)
+	.enable_scr(e_if.enable_rs),
+	.cl0_s(u_if.cl0_s),
+	.transport_data_flag(u_if.transport_data_flag)
 );
 
 
