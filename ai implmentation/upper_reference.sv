@@ -47,7 +47,10 @@ class upper_ref_AI;
                     elec_to_upper.get(elec_layer_tr_inst); // Get operation before the if condition
                     if (elec_layer_tr_inst.phase == 5) 
                     begin
-                        upper_layer_tr_inst.T_Data = elec_layer_tr_inst.electrical_to_transport;
+                        upper_layer_tr_inst.T_Data = elec_layer_tr_inst.electrical_to_transport[7:0];
+                        upper_S.put(upper_layer_tr_inst); // Put operation inside the if condition
+                        upper_layer_tr_inst = new(); 
+                        upper_layer_tr_inst.T_Data = elec_layer_tr_inst.electrical_to_transport[15:8];
                         upper_S.put(upper_layer_tr_inst); // Put operation inside the if condition
                     end
                 end

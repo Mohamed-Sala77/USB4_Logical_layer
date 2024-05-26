@@ -600,8 +600,9 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
             repeat(data_width)begin
             @(posedge ELEC_vif.gen4_lane_clk);
             $display("[ELECTRIC DRIVER] data_2_DUT to lane0 =%d  and to lane1 =%d",data_2_DUT[7:0],data_2_DUT[15:8]);
-            ELEC_vif.lane_0_rx <=data_2_DUT[i];
-            ELEC_vif.lane_1_rx <=data_2_DUT[i+data_width];
+            $displayb(data_2_DUT);
+            ELEC_vif.lane_0_rx <=data_2_DUT[7-i];
+            ELEC_vif.lane_1_rx <=data_2_DUT[15-i];
             $display("[ELECTRIC DRIVER] the date sent from the electrical to lane0 =%d  and to lane1 =%d",ELEC_vif.lane_0_rx,ELEC_vif.lane_1_rx);
             i++;
           end

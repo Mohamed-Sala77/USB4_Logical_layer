@@ -21,7 +21,7 @@ class up_transport_monitor;
                 wait_for_negedge(speed);
 
                 @ (posedge vif.transport_data_flag ); // wait for the transport layer to send data
-                        if ((vif.transport_layer_data_out!=0) && (vif.transport_layer_data_out!=8'd255) )  //! that line sould be deleted to get the  values of ff and 00
+                        if ((vif.transport_layer_data_out!=0) && (vif.transport_layer_data_out!=8'd255) )  //! that line sould be deleted to get the  values of ff and 00  you should replace that with knowing the num. of the cycle after it the data begin to be sent and after what stop
                         begin
                         tr = new; 
                         tr.T_Data = vif.transport_layer_data_out; 

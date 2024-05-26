@@ -29,12 +29,14 @@ task run(input GEN speed);
    ///phase 2///
    //@(sbtx_transition_high); // Blocking with the event sbtx_transition_high 
    //->sbtx_response;
-
+    virtual_elec_gen.wake_up(2,speed);
     wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd from dut to trigger
     cfg_class.recieved_on_elec_sboard =0;
    virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
     
    ///phase 3///
+   virtual_elec_gen.wake_up(3,speed);
+
     wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
     cfg_class.recieved_on_elec_sboard =0;
     //virtual_elec_gen.wake_up(3);

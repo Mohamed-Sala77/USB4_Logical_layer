@@ -51,7 +51,7 @@ class electrical_layer_generator;
     transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
     transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
     elec_gen_drv.put(transaction);          // Put the transaction on the elec_gen_drv mailbox
-    elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
+    //elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
@@ -152,7 +152,6 @@ class electrical_layer_generator;
 
       task  electrical_layer_generator::wake_up(input bit [2:0] phase, input GEN speed = gen4);
       transaction = new();                     // Instantiate the transaction object using the default constructor
-      transaction.sbrx = 1;
       transaction.phase = phase;                //not real phase but for env only
 		  transaction.gen_speed = speed;
       elec_gen_mod.put(transaction);           // Sending transaction to the Driver
