@@ -18,10 +18,9 @@ reg flag; //to prevent counting os_sent before starting the first round
 wire is_seed;
 wire [10:0] seed;
 reg [8:0] counter;
-reg enable_prbs;
 
 assign seed = (lane0_lane1)? 11'h7ff : 11'h770;
-assign is_seed = 0;
+assign is_seed = (reg_val == seed);
 assign os_sent = (counter == 9'h1bf);
 assign data_out = reg_val[10];
 
@@ -31,15 +30,8 @@ always @(posedge clk or negedge reset) begin
         round_started <= 0;
         flag <= 0;
         counter <= 0;
-		enable_prbs <= 1'b0;
     end else begin
-		if(enable) begin
-		enable_prbs <= 1'b1;
-		end
-		else begin
-		enable_prbs <= 1'b0;
-		end
-        if (enable_prbs) begin
+        if (enable) begin
             if (is_seed && !round_started) begin
                 reg_val <= seed;
                 round_started <= 1;

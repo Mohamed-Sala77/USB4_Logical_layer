@@ -15,78 +15,84 @@ module lanes_deserializer
 );
 
     // Internal variables
-    reg [131:0] shift_reg0;    // Shift register for Lane 0 data being deserialized
-    reg [131:0] shift_reg1;    // Shift register for Lane 1 data being deserialized
-    reg [7:0] counter;         // Extended counter size for synchronization
-    reg [7:0] max_count;       // Maximum count based on gen_speed
-
-    always @(*) begin
-        // Assign max_count based on gen_speed
-        case (gen_speed)
-            2'b00: max_count = 8;
-            2'b01: max_count = 132;
-            2'b10: max_count = 66;
-            default: max_count = 8; // Default to gen_speed=2'b00
-        endcase
-    end
-
-    always @(posedge clk or negedge rst) begin
-        if (!rst) begin
-            // Reset logic
-            shift_reg0 <= 0;
-            shift_reg1 <= 0;
-            counter <= 0;
-            Lane_0_rx_out <= 0;
-            Lane_1_rx_out <= 0;
-            enable_dec <= 1'b0;
-        end else if (enable) begin
-            // Deserialize the data, shifting in each clock cycle
-            shift_reg0 <= {Lane_0_rx_in, shift_reg0[131:1]};
-            shift_reg1 <= {Lane_1_rx_in, shift_reg1[131:1]};
-            
-            if (counter == 0) begin
-                 // Adjust based on gen_speed and prepare for the next bit
-                case(gen_speed)
-                    2'b00: begin // Gen4
-                        Lane_0_rx_out <= {124'b0, shift_reg0[131:124]};
-                        Lane_1_rx_out <= {124'b0, shift_reg1[131:124]};
-                    end
-                    2'b01: begin // Gen3
-                        Lane_0_rx_out <= shift_reg0;
-                        Lane_1_rx_out <= shift_reg1;
-                    end
-                    2'b10: begin // Gen2
-                        Lane_0_rx_out <= {66'b0, shift_reg0[131:66]};
-                        Lane_1_rx_out <= {66'b0, shift_reg1[131:66]};
-                    end
-                    default: begin
-                        // Handle other speeds or default case
-                        Lane_0_rx_out <= {124'b0, shift_reg0[131:124]};
-                        Lane_1_rx_out <= {124'b0, shift_reg1[131:124]};
-                    end
-                endcase
-                counter <= counter + 1;
-                enable_dec <= 1'b1; // Enable descrambler for the next stage
-            end else begin
-                if (counter == max_count-1) begin
-                    counter <= 0;
-				end else begin
-				    counter <= counter + 1'b1;
-				end
-            end
-        end else begin
-            // When enable is low, reset the deserializer
-            shift_reg0 <= 0;
-            shift_reg1 <= 0;
-            counter <= 0;
-            Lane_0_rx_out <= 0;
-            Lane_1_rx_out <= 0;
-            enable_dec <= 1'b0;
-        end
-    end
+    reg [131:0] shift_reg0;
+    reg [131:0] shift_reg1;
+    reg [7:0] counter, max_numb;
+	reg start;
 	
-assign descr_rst = (counter == max_count-2);
+	
+	always @(*)
+	  begin
+	    case(gen_speed)
+		2'b00: max_numb = 8;
+		2'b01: max_numb = 132;
+		2'b10: max_numb = 66;
+		default: max_numb = 8;
+		endcase
+	  end
+	
+	always @(posedge clk or negedge rst) begin
+	    if (!rst) begin
+            Lane_0_rx_out <= 'b0;
+			Lane_1_rx_out <= 'b0;
+			shift_reg0 <= 'b0;
+			shift_reg1 <= 'b0;
+			counter <= 'b0;
+			enable_dec <= 0;
+			start <= 0;
+		end	
+		
+	    else if (!enable) begin
+            Lane_0_rx_out <= 'b0;
+			Lane_1_rx_out <= 'b0;
+			shift_reg0 <= 'b0;
+			shift_reg1 <= 'b0;
+			counter <= 'b0;
+			enable_dec <= 0;
+			start <= 0;
+		end	
+		
+		else begin
+			if (gen_speed == 2'b00) begin
+			    shift_reg0 <= {shift_reg0[6:0], Lane_0_rx_in};
+			    shift_reg1 <= {shift_reg1[6:0], Lane_1_rx_in};
+			end else begin
+			    shift_reg0 <= {Lane_0_rx_in, shift_reg0[131:1]};
+			    shift_reg1 <= {Lane_1_rx_in, shift_reg1[131:1]};
+			end
+			
+			if (counter == max_numb-1)
+			  counter <= 0;
+			  
+			else if (counter == 0) begin
+			    counter <= counter + 1;
+				start <= 1;
+				enable_dec <= start;
+				case (gen_speed)
+			    2'b00 : begin
+				         Lane_0_rx_out <= {124'h0, shift_reg0[7 : 0]};
+				         Lane_1_rx_out <= {124'h0, shift_reg1[7 : 0]};
+					   end
+					   
+			    2'b01 : begin
+				         Lane_0_rx_out <= shift_reg0;
+				         Lane_1_rx_out <= shift_reg1;
+					   end
+					   
+			    2'b10 : begin
+				         Lane_0_rx_out <= {66'h0, shift_reg0[131 : 66]};
+				         Lane_1_rx_out <= {66'h0, shift_reg1[131 : 66]};
+					   end
+				endcase
+			end	
+			
+			else begin	
+			    counter <= counter + 1;
+			end	
+		end	
+	end	
 
+    assign descr_rst = (counter == max_numb-2);
 endmodule
 
 `resetall

@@ -25,9 +25,9 @@ reg [3:0] max_byte_num;
 
 integer i;
 
-parameter GEN4 = 'b00;
-parameter GEN2 = 'b10;
-parameter GEN3 = 'b01;
+localparam GEN4 = 'b00,
+               GEN3 = 'b01,
+		       GEN2 = 'b10;
 
 
 
@@ -52,7 +52,7 @@ always @(posedge enc_clk or negedge rst) begin
         mem_index <= 0;
         flag <= 0;
         
-    end else if(~enable_dec) begin
+    end else if(~enable_dec&& mem_index == 0) begin
 
 			enable_deskew <= 0;
 			flag <= 0;
@@ -66,14 +66,12 @@ always @(posedge enc_clk or negedge rst) begin
 			
 			if (mem_index == 0) begin
             flag <= 1;
-        end else begin
-            flag <= 0;
-        end
         if (gen_speed == 0) begin
             enable_deskew <= flag;
         end else begin
             enable_deskew <= 1;
         end
+			end
 
 			
         case (gen_speed)

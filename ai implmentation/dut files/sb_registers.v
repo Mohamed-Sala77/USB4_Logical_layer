@@ -29,8 +29,11 @@ always @(posedge fsm_clk or negedge rst) begin
       	sb_read <= link_configuration;
       end else if (s_write) begin // Write operation
       	sb_memory[s_address] <= s_data;
-	sb_read <= sb_read;
+	sb_read <= 24'b0;
       end
+	  else begin
+ sb_read <= sb_read;
+	  end
   end
 end
 

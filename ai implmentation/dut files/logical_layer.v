@@ -19,7 +19,9 @@ module logical_layer(
     output wire c_read, c_write,
     output wire [7:0] c_address,
     output wire [31:0] c_data_out,
-    output wire enable_scr
+    output wire enable_scr,
+	output wire cl0_s,
+    output wire transport_data_flag
 );
 wire [3:0]   d_sel;
 wire [3:0]   os_in_l0, os_in_l1;
@@ -121,7 +123,8 @@ control_fsm ctrl_fsm(
     .s_address_o(s_address_o),                   // Connects to s_address_o
     .s_read_o(s_read_o),                         // Connects to s_read_o
     .s_write_o(s_write_o),                        // Connects to s_write_o
-	.c_data_out(c_data_out)
+	.c_data_out(c_data_out),
+	.cl0_s     ( cl0_s)
     // Add other connections here
 );
 
@@ -155,7 +158,8 @@ lane_distributer lane_dist_inst(
     .lane_0_rx_out(lane_0_rx_parallel),
     .lane_1_rx_out(lane_1_rx_parallel),
     .enable_enc(enable_enc),
-    .rx_lanes_on(rx_lanes_on)
+    .rx_lanes_on(rx_lanes_on),
+	.transport_data_flag(transport_data_flag)
 );
 encoding_block encoding_block_inst(
     .enc_clk(enc_clk),

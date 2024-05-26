@@ -23,7 +23,8 @@ module lane_distributer (
     output reg  [7:0] lane_1_rx_out, //data output to data bus
     output reg        enable_enc, //enable encoder next stage
     output reg        rx_lanes_on, //enable data bus rx side
-	output reg        data_os_o 
+	output reg        data_os_o,
+    output reg        transport_data_flag 
 );
 
 // Transmitter
@@ -113,6 +114,7 @@ always @(posedge clk or negedge rst) begin
         rx_flip_flop <= 1'b0;
 		rx_lanes_on <= 1'b0;
 		data_os_o <= 1'b0;
+		transport_data_flag <= 1'b0;
 		
     end
     else begin
@@ -123,12 +125,15 @@ always @(posedge clk or negedge rst) begin
             rx_flip_flop <= 1'b0;
             rx_lanes_on <= 1'b0; // Disable output lanes
 			data_os_o <= 1'b0;
+			transport_data_flag <= 1'b0;
+
         end
         else begin
             rx_lanes_on <= 1'b1; // Enable output lanes
             
             if (data_os_i) begin
 			    data_os_o <= 1'b1;
+				transport_data_flag <= (rx_counter == 'h2);
                 if (rx_counter == 2'b11) begin
                     rx_flip_flop <= ~rx_flip_flop; // Flip the flip-flop when counter is 3
                     rx_counter <= 2'b00; // Reset counter
@@ -153,6 +158,7 @@ always @(posedge clk or negedge rst) begin
                 lane_1_rx_out <= lane_1_rx_in;
                 rx_flip_flop <= 1'b0; // Reset flip_flop
 				data_os_o <= 1'b0;
+				transport_data_flag <= 1'b0;
             end
         end
     end

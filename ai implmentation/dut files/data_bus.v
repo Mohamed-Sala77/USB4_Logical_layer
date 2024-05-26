@@ -48,4 +48,3 @@ module data_bus (
 endmodule
 
 `resetall
-

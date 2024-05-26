@@ -232,8 +232,8 @@ module data_bus_receive (
 	(
         .clk(clk),                  
         .rst(rst),              
-        .enable(enable_ser_l0),     
-        .parallel_data(lane_0_rx),
+        .enable(enable_ser_l1),     
+        .parallel_data(lane_1_rx),
 		.serial_out(ser_out_l1)
     );
 
