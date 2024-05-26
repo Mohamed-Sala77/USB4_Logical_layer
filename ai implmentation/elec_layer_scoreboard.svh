@@ -33,7 +33,7 @@ class elec_scoreboard;
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                
-                if (monitor_tr.phase!=4) begin
+                if (monitor_tr.phase!=4) begin      //! this should be deleted after adding phase 4 in model
                  elec_mod_sboard.get(model_tr);
                  $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
                 end

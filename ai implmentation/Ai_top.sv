@@ -114,6 +114,7 @@ logical_layer_no_scr logical_layer (
 
 
 assign e_if.cl0_s = u_if.cl0_s;
+parameter num =7 ;  //number of the sending data in phase 5
 
 
 // TEST 
@@ -128,7 +129,7 @@ initial begin
 
     //-------main test----------//
     //logical_layer_test.run(speed);
-    envo.run(gen4);
+    envo.run(gen4,num);
 
 end
 

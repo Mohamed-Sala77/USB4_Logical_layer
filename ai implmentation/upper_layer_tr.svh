@@ -6,6 +6,9 @@ rand var [7:0] T_Data_1;	//for model  data for 8 -> 15
 rand var [2:0] phase; // specifies current initialization phase 
 GEN gen_speed;
 
+logic cl0_s;
+logic 	enable_sending ; // signal to enable sending data from transport layer
+logic 	enable_receive; // signal sent by the driver to enable the monitor to receive data from transport_layer_data_out
 
 //bit send_to_elec_enable; //to enable sending data to the electrical layer
 //bit enable_receive; // to enable the monitor of the UL to start receiving data from transport_data_out

@@ -7,7 +7,6 @@ class virtual_sequence;
 
 
     env_cfg_class cfg_class;
-    virtual upper_layer_if vif ;
 
 ////***event declaration***////
     /*event sbtx_transition_high,  //connect with elec_monitor
@@ -19,10 +18,9 @@ function new(env_cfg_class cfg_class ,virtual upper_layer_if vif);
 endfunction: new
 
 
-task run(input GEN speed);
+task run(input GEN speed, input int num);
 /////////////////////////gen4////////////////////////
     ///phase 1///
-    //virtual_elec_gen.wake_up(1);
     virtual_cfg_gen.generate_stimulus() ;
     $display("[virtual_sequence]:waiting for sbtx_transition_high event");
 
@@ -64,14 +62,14 @@ task run(input GEN speed);
     @(vif.cl0_s);         // transport is ready to send and recieve data  
     $display("[virtual_sequence]:cl0_s event triggered");
     // sending from transport to electrical layer
-  /*fork
+  fork
 
     begin
         // start sending data from the transport layer
         vif.enable_sending = 1'b1;
         $display("[virtual_sequence]:enable_sending data from transport layer");
-         // Send data 5 times
-            virtual_up_gen.run(5);
+         // Send data num times
+            virtual_up_gen.run(num);
 
             @(negedge  vif.gen4_fsm_clk);
     end
@@ -84,12 +82,12 @@ task run(input GEN speed);
 
     @(vif.cl0_s);         // transport is ready to send and recieve data  
 
-*/
+
 // sending from electrical to transport layer
   fork
 
     begin
-      virtual_elec_gen.send_data(speed,5);
+      virtual_elec_gen.send_data(speed,num);
     end
 
     begin

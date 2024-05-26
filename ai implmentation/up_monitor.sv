@@ -5,33 +5,38 @@ class up_transport_monitor;
         virtual upper_layer_if vif;
         upper_layer_tr tr;
         mailbox #(upper_layer_tr) mb_mon_scr;
+        int counter = 0;
 
         ///////// Constructor \\\\\\\\\\
         function new(virtual upper_layer_if vif, mailbox #(upper_layer_tr) mb_mon_scr);
             this.vif = vif;
             this.mb_mon_scr = mb_mon_scr;
+            
         endfunction
     
 
         ///////// Main Task \\\\\\\\\\
-        task run(input GEN speed);
-        forever begin
+        task run(input GEN speed , input int num);
+         begin
 
-            if(vif.enable_receive==1) begin    
+                     
                 wait_for_negedge(speed);
-
-                @ (posedge vif.transport_data_flag ); // wait for the transport layer to send data
-                        if ((vif.transport_layer_data_out!=0) && (vif.transport_layer_data_out!=8'd255) )  //! that line sould be deleted to get the  values of ff and 00  you should replace that with knowing the num. of the cycle after it the data begin to be sent and after what stop
-                        begin
+                while (counter<4) begin
+                      @ (posedge vif.transport_data_flag ); // wait for the transport layer to send data
+                        counter++;  
+                end
+                repeat(2*num) begin
+                        @ (posedge vif.transport_data_flag ); // wait for the transport layer to send data
+                        
                         tr = new; 
                         tr.T_Data = vif.transport_layer_data_out; 
                         mb_mon_scr.put(tr); 
                         $display("[UPPER MONITOR ]data recieved on transport : %0d at %t", tr.T_Data , $time);
-                        end
+                        
+                end
                 end
 
         wait_for_negedge(speed);
-        end
 
         endtask
 

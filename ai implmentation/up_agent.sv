@@ -33,10 +33,10 @@ class up_transport_agent;
     endfunction
 
     // Main task that runs the agent components
-    task run(input GEN speed);
+    task run(input GEN speed, input int num);
         fork
             up_drv.run(speed);
-            up_mon.run(speed);
+            up_mon.run(speed,num);
         join
     endtask
 

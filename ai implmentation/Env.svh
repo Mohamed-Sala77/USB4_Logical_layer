@@ -62,6 +62,7 @@ class env;
 
 
 
+
         //--------Declare the constructor -----------//
         function new(virtual electrical_layer_if ELEC_vif ,virtual config_space_if cfg_if, virtual upper_layer_if up_if);
 
@@ -128,7 +129,7 @@ class env;
 
 
         // for compare the performance of the dut with the model
-        task run(input GEN speed);
+        task run(input GEN speed, input int num);
             fork
 
             //**********Run the components**********//
@@ -142,13 +143,13 @@ class env;
                 cfg_scoreboard.run();
 
                 // Upper layer components
-                up_agent.run(speed);
+                up_agent.run(speed,num);
                 up_scoreboard.run_scr();
 
                 
 
                 //Virtual Sequence
-                virtual_seq.run(speed);
+                virtual_seq.run(speed,num);
 
                 //ref_model
                 model.run();
