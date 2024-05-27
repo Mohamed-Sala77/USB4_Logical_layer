@@ -58,9 +58,9 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 		//$display("period: %0d", ((10**12)/freq_10));
 	
 	end
-
+/*
 	//Instantiate the logical layer
-	/*logical_layer l_layer(
+	logical_layer l_layer(
                                     .local_clk(local_clk),
 									.sb_clk(SB_clock),
 									.rst(SystemReset),
@@ -80,9 +80,11 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 									.sbrx(e_if.sbrx),		
 									.lane_0_tx_o(e_if.lane_0_tx),
 									.lane_1_tx_o(e_if.lane_1_tx),
-									.enable_scr(e_if.enable_rs)
-);    
-*/
+									.enable_scr(e_if.enable_rs),
+									.cl0_s(u_if.cl0_s),
+	.transport_data_flag(u_if.transport_data_flag)
+);    */
+
 
 								//--for old dut files --//
 								//Instantiate the logical layer

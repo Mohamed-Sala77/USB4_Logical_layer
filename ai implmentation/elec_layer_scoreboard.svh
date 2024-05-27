@@ -96,7 +96,7 @@ class elec_scoreboard;
                                 (model_tr.o_sets== monitor_tr.o_sets) &&
                                 (model_tr.gen_speed== monitor_tr.gen_speed))
                                 $display("[ELEC SCOREBOARD] (%p)OS send is correct!",model_tr.o_sets);
-                        else $error("[ELEC SCOREBOARD] (SLOS1)case sbtx is failed!");
+                        else $error("[ELEC SCOREBOARD](%p)OS send is wrong!",model_tr.o_sets);
                     end
                     TS1_gen4, TS2_gen4, TS3, TS4:begin
                         assert ((model_tr.sbtx == monitor_tr.sbtx)&&
@@ -105,7 +105,7 @@ class elec_scoreboard;
                                 (model_tr.o_sets== monitor_tr.o_sets) &&
                                 (model_tr.gen_speed== monitor_tr.gen_speed))
                                 $display("[ELEC SCOREBOARD] (%p)OS send is correct!",model_tr.o_sets);
-                        else $error("[ELEC SCOREBOARD] (SLOS2)case sbtx is failed!");
+                        else $error("[ELEC SCOREBOARD] (%p)OS send is wrong!",model_tr.o_sets);
                     end
 
                     endcase

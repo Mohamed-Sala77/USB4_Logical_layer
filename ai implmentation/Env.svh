@@ -62,7 +62,6 @@ class env;
 
 
 
-
         //--------Declare the constructor -----------//
         function new(virtual electrical_layer_if ELEC_vif ,virtual config_space_if cfg_if, virtual upper_layer_if up_if);
 
@@ -96,7 +95,7 @@ class env;
         // Agents
         elec_agent =new(ELEC_vif,elec_gen_2_driver,elec_monitor_2_Sboard,elec_gen_driver_done,correct_OS,env_cfg_mem);
         cfg_agent = new(cfg_if, cfg_mon_scr, cfg_drv_gen, cfg_driverDone);
-        up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone);
+        up_agent = new(up_if, up_mon_scr, up_drv_gen, up_driveDone, env_cfg_mem);
                       
         //Sequences
         virtual_seq =new(env_cfg_mem,up_if);
@@ -109,7 +108,7 @@ class env;
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard,env_cfg_mem);
         cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
-        up_gen = new(up_mod_gen, up_drv_gen, up_driveDone, up_if);
+        up_gen = new(up_mod_gen, up_drv_gen, up_driveDone, up_if, env_cfg_mem);
 
        
 
@@ -156,6 +155,7 @@ class env;
                 
             join
         endtask 
+
 
         
 

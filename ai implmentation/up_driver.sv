@@ -9,6 +9,9 @@ class up_transport_driver;
     // Transaction object for the upper layer
     upper_layer_tr tr;
 
+    env_cfg_class env_cfg_mem;
+
+
     // Mailbox for communication between monitor and scoreboard
     mailbox #(upper_layer_tr) drv_gen_mbx;
 
@@ -16,42 +19,48 @@ class up_transport_driver;
     event driveDone;
 
     // Constructor
-    function new(virtual upper_layer_if vif, mailbox #(upper_layer_tr) drv_gen_mbx, event doneEvent);
+    function new(virtual upper_layer_if vif, mailbox #(upper_layer_tr) drv_gen_mbx, event doneEvent, env_cfg_class env_cfg_mem);
         this.vif = vif;
         this.drv_gen_mbx = drv_gen_mbx;
         this.driveDone = doneEvent;
+        this.env_cfg_mem = env_cfg_mem;
     endfunction
 
 
     task run(input GEN speed);
+    repeat(3) @ (posedge vif.gen4_fsm_clk);
+     ///@ (posedge vif.gen4_fsm_clk);
 forever
 begin
-        if (vif.enable_sending == 1) begin
-         // Get the transaction from the mailbox
-        drv_gen_mbx.get(tr);
-        // Wait for 4 clock cycles
-        repeat(4) wait_for_negedge(speed);
-      
-        // Assign T_Data to transport_layer_data_in
-        vif.transport_layer_data_in = tr.T_Data;
-      $display ("[UPPER DRIVER] data sent to transport layer in lane 0 : %0d", vif.transport_layer_data_in);
-        // Wait for 4 more clock cycles
-        repeat(4) wait_for_negedge(speed);
-      
-        // Assign T_Data_1 to transport_layer_data_in
-        vif.transport_layer_data_in = tr.T_Data_1;
-      $display ("[UPPER DRIVER] data sent to transport layer in lane 1 : %0d", vif.transport_layer_data_in);
-        
-        wait_for_negedge(speed);
-      
-        ->driveDone;
-  
-    end
+     if (vif.enable_sending == 1) begin
+      // Get the transaction from the mailbox
+     drv_gen_mbx.get(tr);
+     // Wait for 4 clock cycles
+    // repeat(1) wait_for_negedge(speed);
+   
+     // Assign T_Data to transport_layer_data_in
+     vif.transport_layer_data_in = tr.T_Data;
+   $display ("[UPPER DRIVER] data sent to transport layer in lane 0 : %0d", vif.transport_layer_data_in);
+     // Wait for 4 more clock cycles
+     repeat(4) wait_for_negedge(speed);
+   
+     // Assign T_Data_1 to transport_layer_data_in
+     vif.transport_layer_data_in = tr.T_Data_1;
+   $display ("[UPPER DRIVER] data sent to transport layer in lane 1 : %0d", vif.transport_layer_data_in);
+     
+     repeat(3) wait_for_negedge(speed);
+   
+     ->driveDone;
+    
+    //wait_for_negedge(speed);
+  $display("[UP_driver]at time(%0t)env_cfg_mem.Data_flag :%0b",$time,env_cfg_mem.Data_flag);
+  env_cfg_mem.Data_flag=1;
 
-    wait_for_negedge(speed);
-  
+ end
+ wait_for_negedge(speed);
+ 
 end
-    endtask
+ endtask
 
 
 

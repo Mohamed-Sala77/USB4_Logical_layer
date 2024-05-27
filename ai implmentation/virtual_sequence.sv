@@ -7,6 +7,7 @@ class virtual_sequence;
 
 
     env_cfg_class cfg_class;
+    virtual upper_layer_if vif ;
 
 ////***event declaration***////
     /*event sbtx_transition_high,  //connect with elec_monitor
@@ -57,13 +58,33 @@ task run(input GEN speed, input int num);
     virtual_elec_gen.Send_OS(TS3,speed);
     virtual_elec_gen.Send_OS(TS4,speed);
 
+
+
     ///phase 5///
     $display("[virtual_sequence]:waiting for cl0_s event");
     @(vif.cl0_s);         // transport is ready to send and recieve data  
     $display("[virtual_sequence]:cl0_s event triggered");
-    // sending from transport to electrical layer
-  fork
+    
+    // sending from electrical to transport layer
+      fork
+    
+        begin
+          virtual_elec_gen.send_data(speed,num);
+        end
+    
+        begin
+            // start receiving data on the transport layer
+          vif.enable_receive = 1'b1;    // enable the monitor to start receiving data from transport_data_out
+        end
+        
+      join
+      
+      @(negedge  vif.gen4_fsm_clk);
+    
+      vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
 
+      
+    // sending from transport to electrical layer
     begin
         // start sending data from the transport layer
         vif.enable_sending = 1'b1;
@@ -71,32 +92,15 @@ task run(input GEN speed, input int num);
          // Send data num times
             virtual_up_gen.run(num);
 
-            @(negedge  vif.gen4_fsm_clk);
     end
-
-    begin
-        //* start receiving data on the transport layer
-    end
-    join
-
-
-    @(vif.cl0_s);         // transport is ready to send and recieve data  
+          
+        
+        
+        @(negedge  vif.gen4_fsm_clk);
 
 
-// sending from electrical to transport layer
-  fork
 
-    begin
-      virtual_elec_gen.send_data(speed,num);
-    end
-
-    begin
-        // start receiving data on the transport layer
-        vif.enable_receive = 1'b1;
-    end
-
-  join
-    
+  $stop;
 endtask
 
 
@@ -127,8 +131,8 @@ endtask
     //$stop;
 
 
-endtask
-*/
+        */
+//endtask
 
 
     

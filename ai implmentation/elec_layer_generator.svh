@@ -16,9 +16,7 @@ class electrical_layer_generator;
 
     // Constructor
     function new(event elec_gen_driver_done, correct_OS,mailbox #(elec_layer_tr) elec_gen_drv,elec_gen_mod ,elec_gen_2_scoreboard,env_cfg_class env_cfg_mem);
-      //this.sbrx_transition_high = sbrx_transition_high;
       this.elec_gen_driver_done = elec_gen_driver_done;
-      //this.sbtx_transition_high = sbtx_transition_high;
       this.correct_OS = correct_OS; // Assign the correct_OS event
       this.elec_gen_drv = elec_gen_drv;
       this.elec_gen_mod = elec_gen_mod;
@@ -51,17 +49,18 @@ class electrical_layer_generator;
     transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
     transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
     elec_gen_drv.put(transaction);          // Put the transaction on the elec_gen_drv mailbox
-    //elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
+    elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
     $display("[ELEC GENERATOR] : SENDING SBRX  high IS SUCCESSFUL");
-   endtask
+   endtask: sbrx_after_sbtx_high
 
 
     // Transaction methods
     task electrical_layer_generator::send_transaction_2_driver(input tr_type trans_type = None, input bit read_write = 0, input bit [7:0] address = 0,
                                                       input bit [6:0] len = 0, input bit [23:0] cmd_rsp_data = 0, input GEN generation = gen4);
+
       transaction = new(); // Instantiate the transaction object using the default constructor
       transaction.phase ='d3;
       transaction.transaction_type = trans_type;
@@ -126,11 +125,11 @@ class electrical_layer_generator;
       transaction.phase = 3'd5;                //not real phase but for env only
       //transaction.lane = lane;
       transaction.gen_speed = gen_speed;
-      transaction.randomize(electrical_to_transport);
+      void'(transaction.randomize(electrical_to_transport));
       $display("[ELEC GENERATOR] sending data to lane 0 =%d and to lane 1 =%d",transaction.electrical_to_transport[7:0],transaction.electrical_to_transport[15:8]);
       elec_gen_drv.put(transaction);           // Sending transaction to the Driver
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
+      elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("[ELEC GENERATOR] data sent SUCCESSFULLY");
       end
@@ -152,6 +151,7 @@ class electrical_layer_generator;
 
       task  electrical_layer_generator::wake_up(input bit [2:0] phase, input GEN speed = gen4);
       transaction = new();                     // Instantiate the transaction object using the default constructor
+      transaction.sbrx = 1;
       transaction.phase = phase;                //not real phase but for env only
 		  transaction.gen_speed = speed;
       elec_gen_mod.put(transaction);           // Sending transaction to the Driver

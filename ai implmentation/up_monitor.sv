@@ -19,7 +19,9 @@ class up_transport_monitor;
         task run(input GEN speed , input int num);
          begin
 
-                     
+                     @ (vif.enable_receive) 
+                     begin
+                $display ("enable_receiveEEEEEEEEEEEEEEE");
                 wait_for_negedge(speed);
                 while (counter<4) begin
                       @ (posedge vif.transport_data_flag ); // wait for the transport layer to send data
@@ -35,6 +37,7 @@ class up_transport_monitor;
                         
                 end
                 end
+        end
 
         wait_for_negedge(speed);
 

@@ -12,9 +12,8 @@ class electrical_layer_agent;
     env_cfg_class env_cfg_mem;
     ///**** events declaration****///
      event elec_gen_driver_done;
-     event sbtx_transition_high;
      event correct_OS;
-     event sbtx_response;
+  
 
     // Declare the components
     electrical_layer_driver driver;     
@@ -31,8 +30,8 @@ class electrical_layer_agent;
         this.correct_OS = correct_OS;     
         this.env_cfg_mem = env_cfg_mem;
         // handle the components
-        driver = new(elec_gen_driver_done, elec_gen_2_driver, vif); 
-        monitor = new(elec_mon_2_Sboard,vif, correct_OS,env_cfg_mem);              
+        driver = new(elec_gen_driver_done, elec_gen_2_driver, vif,this.env_cfg_mem); 
+        monitor = new(elec_mon_2_Sboard,vif, correct_OS,this.env_cfg_mem);              
     endfunction: new
 
     // Method to run the components
