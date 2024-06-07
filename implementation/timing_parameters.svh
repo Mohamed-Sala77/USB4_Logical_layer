@@ -9,6 +9,7 @@
 	parameter [63:0] tGen4TS1 			=  400 	* 10 ** 12;
 	parameter [63:0] tGen4TS2 			=  200 	* 10 ** 12;
 	parameter [63:0] tSSCActivated 		=  2 	* 10 ** 9;
+	parameter [63:0] AT_cmd_duration	=  80 	* 10 ** 9;
 
 
 	logic [63:0] sbrx_raised_time;

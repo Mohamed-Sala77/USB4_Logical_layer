@@ -3,7 +3,7 @@
 	typedef enum logic [1:0] {none = 2'b00, tr, ord_set} tr_os_type; // indicates whether the driver will send transaction or ordered set
 	typedef enum logic [1:0] {gen2, gen3, gen4} GEN; // indicates the generation
 	typedef enum logic [1:0] {NONE = 2'b00, lane_0, lane_1, both} LANE; // indicates which lane received the transaction
-	typedef enum logic [4:0] {No_error, short_SBRX, Early_AT_Command, No_AT_response} WRONG_TYPE;
+	typedef enum logic [4:0] {No_error, short_SBRX, Early_AT_Command, Wrong_CRC} WRONG_TYPE;
 	class elec_layer_tr;
 
 		//General Components

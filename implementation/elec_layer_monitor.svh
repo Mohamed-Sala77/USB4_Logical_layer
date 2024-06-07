@@ -121,7 +121,7 @@
 
 						//wait( v_if.SB_clock == 0);
 						@(negedge v_if.SB_clock);
-						#1 // needed to detect changes correctly
+						//#1 // needed to detect changes correctly while debugging (driver connected to monitor)
 
 						SB_data_received.push_back(v_if.sbtx); // sbrx for debugging
 						
@@ -747,41 +747,12 @@
 					
 				end
 
-				if (v_if.phase == 3'b011)
-					begin
-						sbtx_high_flag = 0;
-					end
-
-				// if(v_if.phase == 3'b110) // Disconnection
-				// begin
-				// 	if (!v_if.sbtx && sbtx_low_flag)
-				// 		begin
-				// 			sbtx_lowered_time = $time;
-				// 			//$display("[ELEC MON] sbtx_raised_time:%t", sbtx_raised_time);
-				// 			sbtx_low_flag = 1;
-				// 		end
-
-				// 		if (v_if.sbtx)
-				// 		begin
-				// 			sbtx_low_flag = 0;
-				// 		end
-
-				// 		if (sbtx_low_flag && ($time >= (sbtx_lowered_time + tDisconnectTx_min) ) && !sent_to_scr ) // sbtx high from DUT
-				// 		begin
-				// 			//-> sbtx_high_recieved;
-				// 			//$display("[ELEC MON] sbtx_high_recieved:%t", $time);
-				// 			elec_tr.sbtx = 0; 
-				// 			elec_tr.phase = 3'b010;
-				// 			sent_to_scr = 1'b1;
-				// 			elec_mon_scr.put(elec_tr);
-				// 			elec_tr = new();
-
-				// 		end
-				// end
+				if (v_if.phase == 3'd3)
+				begin
+					sbtx_high_flag = 0;
+				end
 				
-		
-				
-
+	
 			end
 			
 
@@ -948,7 +919,7 @@
 							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
 							elec_tr.phase = 3;
 							elec_tr.sbtx = 1'b1;
-							Early_AT_Command: assert($time >= sbrx_raised_time + tConnectRx + 80us) else $error("AT Command Received before completion of phase 2");
+							Early_AT_Command: assert($time >= sbrx_raised_time + tConnectRx + AT_cmd_duration) else $error("AT Command Received before completion of phase 2");
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};

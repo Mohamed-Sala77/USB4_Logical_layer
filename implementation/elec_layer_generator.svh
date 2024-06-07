@@ -59,7 +59,7 @@
 
 				$display("[ELEC GENERATOR] Waiting for SBTX high");
 				@(sbtx_high_received);
-
+				
 				transaction.sbrx = 1'b1;
 				transaction.electrical_to_transport = 0;
 				transaction.error = wrong; 
@@ -92,25 +92,24 @@
 
 	endtask : sbrx_high
 
-
 	task sbrx_low ( input WRONG_TYPE wrong = No_error);
 
 		transaction = new();
 
 		
-				transaction.sbrx = 1'b0;
-				transaction.electrical_to_transport = 0;
-				transaction.phase = 3'b110; // phase 6
-				transaction.error = wrong; 
-				elec_gen_drv.put(transaction); // Sending transaction to the Driver
+		transaction.sbrx = 1'b0;
+		transaction.electrical_to_transport = 0;
+		transaction.phase = 3'b110; // phase 6
+		transaction.error = wrong; 
+		elec_gen_drv.put(transaction); // Sending transaction to the Driver
 
-				if (wrong != short_SBRX)
-				begin
-					//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
-				end
+		if (wrong != short_SBRX)
+		begin
+			//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+		end
 
-				$display("[ELEC GENERATOR] SENDING phase 2 SBRX low to DISCONNECT");
-				@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
+		$display("[ELEC GENERATOR] SENDING phase 2 SBRX low to DISCONNECT");
+		@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
 
 
 	endtask
@@ -146,32 +145,20 @@
 					transaction.cmd_rsp_data = cmd_rsp_data;
 					transaction.error = Wrong;
 					transaction.tr_os = tr; 
-
 					if (trans_type == AT_rsp)
 					begin
 						@(elec_AT_cmd_received); //  wait for an AT command to respond to it
 					end
 						
 					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
-
-					if (Wrong != No_AT_response) // used in fault injection scenario
-					begin
-						elec_gen_drv.put(transaction); // Sending transaction to the Driver
-					end
-					
-
-					if (Wrong == No_error)
+					elec_gen_drv.put(transaction); // Sending transaction to the Driver
+					if ( (Wrong == No_error) || (Wrong == Wrong_CRC) )
 					begin
 						elec_gen_mod.put(transaction); // Sending transaction to the Reference model	
 					end
 
-
-					if (Wrong != No_AT_response) // used in fault injection scenario
-					begin
-						@(elec_gen_drv_done);
-					end
-
-
+					@(elec_gen_drv_done);
+					
 					if (trans_type == AT_cmd && Wrong == No_error)
 					begin
 						@(elec_AT_rsp_received); //  wait for an AT response to be received

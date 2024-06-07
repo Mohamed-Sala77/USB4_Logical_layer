@@ -106,43 +106,18 @@
 
 			 	4:
 			 	begin
-			 		case (elec_tr.o_sets)
+			 		
+	 				ELEC_Phase_4: 	assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
+											(elec_tr_model.lane === elec_tr.lane) &&
+											(elec_tr_model.o_sets === elec_tr.o_sets)
+											) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) Ordered Set received ");
+	 								else $error ("[ELEC SCOREBOARD] INCORRECT (PHASE 4) Ordered Set received   !!!");
 
-			 			SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3:  // GEN2/ GEN3 CHECKING
-			 			begin
-
-			 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
-									(elec_tr_model.lane === elec_tr.lane) &&
-									(elec_tr_model.o_sets === elec_tr.o_sets)
-									) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN2/3 Ordered Set received ");
-
-							// Detailed assertions
-							assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
-							assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
-							assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");
-								
-							
-			 			end
-
-			 			TS1_gen4, TS2_gen4, TS3, TS4:  //GEN4 CHECKING
-			 			begin
-
-			 				assert(	(elec_tr_model.sbtx === elec_tr.sbtx) &&
-									(elec_tr_model.lane === elec_tr.lane) &&
-									(elec_tr_model.o_sets === elec_tr.o_sets) /*&&
-									(elec_tr_model.order === elec_tr.order)*/
-									) $display("[ELEC SCOREBOARD] CORRECT (PHASE 4) GEN4 Ordered Set received ");
-
-							// Detailed assertions
-							assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
-							assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
-							assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");
-							//assert (elec_tr_model.order === elec_tr.order) 		else $error("[ELEC SCOREBOARD] INCORRECT order !!!");
-							
-							
-		 				end
-
-			 		endcase	
+					// Detailed assertions
+					ELEC_Phase_4_sbtx: 		assert (elec_tr_model.sbtx === elec_tr.sbtx) 		else $error("[ELEC SCOREBOARD] INCORRECT sbtx !!!");
+					ELEC_Phase_4_lane: 		assert (elec_tr_model.lane === elec_tr.lane) 		else $error("[ELEC SCOREBOARD] INCORRECT lane !!!");
+					ELEC_Phase_4_o_sets:	assert (elec_tr_model.o_sets === elec_tr.o_sets)	else $error("[ELEC SCOREBOARD] INCORRECT o_sets !!!");		
+			 			
 			 	end
 
 				5:

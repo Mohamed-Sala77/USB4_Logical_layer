@@ -151,10 +151,11 @@
 					"normal_scenario_gen_3"		: vseq_config.normal_scenario_gen_3();
 					"normal_scenario_gen_2"		: vseq_config.normal_scenario_gen_2();
 					"Early_AT_CMD"				: vseq_config.Early_AT_CMD();
+					"AT_Command_to_AT_Command"	: vseq_config.AT_Command_to_AT_Command();
 					"Pulse_SBRX_HIGH"			: vseq_config.Pulse_SBRX_HIGH();
-					"SBRX_low_Scenario"			: vseq_config.SBRX_low_Scenario();
 					"LT_fall_gen_4"				: vseq_config.LT_fall_gen_4();
-					"Late_AT_rsp"				: vseq_config.Late_AT_rsp();
+					//"mix_ordered_set_2_gen_3"	: vseq_config.mix_ordered_set_2_gen_3();
+					"corrupted_AT_rsp_gen4"		: vseq_config.corrupted_AT_rsp_gen4();
 
 				endcase // scenario
 				
