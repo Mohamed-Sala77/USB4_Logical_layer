@@ -147,10 +147,14 @@
 				// Virtual Sequence run phase
 				case (scenario)
 
-					"normal_scenario_gen_4": vseq_config.run();
-					"normal_scenario_gen_3": vseq_config.normal_scenario_gen_3();
-					"normal_scenario_gen_2": vseq_config.normal_scenario_gen_2();
-
+					"normal_scenario_gen_4"		: vseq_config.run();
+					"normal_scenario_gen_3"		: vseq_config.normal_scenario_gen_3();
+					"normal_scenario_gen_2"		: vseq_config.normal_scenario_gen_2();
+					"Early_AT_CMD"				: vseq_config.Early_AT_CMD();
+					"Pulse_SBRX_HIGH"			: vseq_config.Pulse_SBRX_HIGH();
+					"SBRX_low_Scenario"			: vseq_config.SBRX_low_Scenario();
+					"LT_fall_gen_4"				: vseq_config.LT_fall_gen_4();
+					"Late_AT_rsp"				: vseq_config.Late_AT_rsp();
 
 				endcase // scenario
 				

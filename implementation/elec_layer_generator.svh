@@ -41,7 +41,7 @@
 		
 
 	
-	task sbrx_high (input string router_type);
+	task sbrx_high (input string router_type, input WRONG_TYPE wrong = No_error);
 
 		transaction = new();
 
@@ -50,14 +50,19 @@
 				host_device = 0;
 				transaction.phase = 3'b010; // phase 2
 				transaction.sbrx = 1'b0;
+				
 				elec_gen_drv.put(transaction); // Sending transaction to the Driver
-				elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+				if(wrong == No_error)
+				begin
+					elec_gen_mod.put(transaction); // Sending transaction to the Reference model	
+				end
 
 				$display("[ELEC GENERATOR] Waiting for SBTX high");
 				@(sbtx_high_received);
 
 				transaction.sbrx = 1'b1;
 				transaction.electrical_to_transport = 0;
+				transaction.error = wrong; 
 				transaction.phase = 3'b010; // phase 2
 				elec_gen_drv.put(transaction); // Sending transaction to the Driver
 				//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
@@ -88,8 +93,31 @@
 	endtask : sbrx_high
 
 
+	task sbrx_low ( input WRONG_TYPE wrong = No_error);
 
-	task send_transaction (input tr_type trans_type = None , input int phase = 3, read_write = 0, address = 0, len = 0, cmd_rsp_data = 0);
+		transaction = new();
+
+		
+				transaction.sbrx = 1'b0;
+				transaction.electrical_to_transport = 0;
+				transaction.phase = 3'b110; // phase 6
+				transaction.error = wrong; 
+				elec_gen_drv.put(transaction); // Sending transaction to the Driver
+
+				if (wrong != short_SBRX)
+				begin
+					//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+				end
+
+				$display("[ELEC GENERATOR] SENDING phase 2 SBRX low to DISCONNECT");
+				@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
+
+
+	endtask
+
+
+
+	task send_transaction (input tr_type trans_type = None , input int phase = 3, read_write = 0, address = 0, len = 0, cmd_rsp_data = 0, input WRONG_TYPE Wrong = No_error);
 
 		// Logical layer transactions is sent by default in phase 3 (except LT fall: any phase)
 		transaction = new();
@@ -116,20 +144,35 @@
 					transaction.address = address;
 					transaction.len = len;
 					transaction.cmd_rsp_data = cmd_rsp_data;
-
+					transaction.error = Wrong;
 					transaction.tr_os = tr; 
+
 					if (trans_type == AT_rsp)
 					begin
 						@(elec_AT_cmd_received); //  wait for an AT command to respond to it
 					end
 						
 					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
-					elec_gen_drv.put(transaction); // Sending transaction to the Driver
-					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
 
-					@(elec_gen_drv_done);
+					if (Wrong != No_AT_response) // used in fault injection scenario
+					begin
+						elec_gen_drv.put(transaction); // Sending transaction to the Driver
+					end
 					
-					if (trans_type == AT_cmd)
+
+					if (Wrong == No_error)
+					begin
+						elec_gen_mod.put(transaction); // Sending transaction to the Reference model	
+					end
+
+
+					if (Wrong != No_AT_response) // used in fault injection scenario
+					begin
+						@(elec_gen_drv_done);
+					end
+
+
+					if (trans_type == AT_cmd && Wrong == No_error)
 					begin
 						@(elec_AT_rsp_received); //  wait for an AT response to be received
 					end

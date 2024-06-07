@@ -318,6 +318,13 @@
 							//		$display("[DRIVER] AT_cmd data sent[%0d]",data_sent[i][j]);
 									v_if.sbrx = data_sent[i][j];
 								end
+
+								if(elec_tr.error == Early_AT_Command) // Lower SBRX After Sending AT command in a Wrong phase (to prevent SBRX going high for tConnectRX)
+								begin
+									@(negedge v_if.SB_clock);
+									v_if.sbrx = 0;
+								end
+
 								//v_if.generation_speed = gen4; // ALIIIIIIIIIIIIIIIII (TO keep up with DUT (DUT to be changed))
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -843,27 +850,31 @@
 						v_if.sbrx = elec_tr.sbrx;
 						v_if.phase = elec_tr.phase;
 						sbrx_raised_time = $time;
+						
 						#(tConnectRx);
 						-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 						$display("elec_gen_drv_done at time: %0t", $time);
 					end
-					/*
-					3'b011: begin // phase 3
-
+					
+					3'b110: begin // phase 6 (DISCONNECTION PHASE)
+						@(posedge v_if.SB_clock);
+						v_if.sbrx = elec_tr.sbrx;
+						//v_if.phase = 6;
+						sbrx_lowered_time = $time;
+						
+						if (elec_tr.error == short_SBRX)
+						begin
+							@(posedge v_if.SB_clock);
+							v_if.sbrx = 1;
+						end
+						else
+						begin
+							#(tDisconnectRx_min);	
+						end
+						-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+						$display("elec_gen_drv_done at time: %0t", $time);
 					end
-
-					3'b110: begin // phase 4
-
-					end
-
-					3'b101: begin // phase 5
-
-					end
-
-					default: begin
-
-					end
-					*/
+						
 
 				endcase // elec_tr.phase
 				
@@ -1001,7 +1012,7 @@
 			end
 			else if (generation == gen4)
 			begin
-				repeat (8) // To give time (8 clk cycles) for the last byte to be recieved from the DUT
+				repeat (10) // To give time (10 clk cycles) for the last byte to be recieved from the DUT
 					@(negedge v_if.gen4_lane_clk);
 			end
 
