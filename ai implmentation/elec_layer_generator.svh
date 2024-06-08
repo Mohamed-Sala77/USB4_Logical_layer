@@ -111,7 +111,7 @@ class electrical_layer_generator;
         $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
-        
+
       end
     endtask
 

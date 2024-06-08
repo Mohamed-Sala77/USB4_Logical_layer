@@ -5,8 +5,6 @@ class elec_scoreboard;
                   gen_tr;
     env_cfg_class env_cfg_mem;
 
-    event recieved_on_elec_sboard;
-
     // Mailboxes for module and monitor transactions
     mailbox #(elec_layer_tr) elec_mod_sboard,
                              elec_mon_sboard,
@@ -15,11 +13,12 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem);
+                           env_cfg_class env_cfg_mem,elec_layer_tr monitor_tr);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
+        this.monitor_tr=monitor_tr;
         
     endfunction: new
 
@@ -40,23 +39,26 @@ class elec_scoreboard;
 
                 case (monitor_tr.phase)
                 3'd0: begin
-                       assert (model_tr.sbtx == monitor_tr.sbtx)
+                      PH2_SBTX: assert (model_tr.sbtx == monitor_tr.sbtx)
                             $display("[ELEC SCOREBOARD] CORRECT SBTX HIGH ");
                         else $error("[[ELEC SCOREBOARD] case sbtx=1 is failed!");
+
+                        env_cfg_mem.recieved_on_elec_sboard =1;
                 end
                3'd2:begin                  //check on AT_Cmd transaction 
-                    assert (model_tr.transaction_type == monitor_tr.transaction_type)
+                    PH3_AT_TYPE:assert (model_tr.transaction_type == monitor_tr.transaction_type)
                         else $error("[ELEC SCOREBOARD] case transaction_type is failed!");
-                    assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
+                    PH3_AT_CMR:assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                         else $error("[ELEC SCOREBOARD] case cmd_rsp_data is failed!");
-                    assert (model_tr.crc_received == monitor_tr.crc_received)
+                    PH3_AT_CRC:assert (model_tr.crc_received == monitor_tr.crc_received)
                         else $error("[ELEC SCOREBOARD] case crc_received is failed!");
-                    assert (model_tr.len == monitor_tr.len)
+                    PH3_AT_LEN:assert (model_tr.len == monitor_tr.len)
                         else $error("[ELEC SCOREBOARD] case len is failed!");
-                    assert (model_tr.address == monitor_tr.address)
+                    PH3_AT_ADD:assert (model_tr.address == monitor_tr.address)
                         else $error("[ELEC SCOREBOARD] case address is failed!");
-                    assert (model_tr.read_write == monitor_tr.read_write)
+                    PH3_AT_RW:assert (model_tr.read_write == monitor_tr.read_write)
                         else $error("[ELEC SCOREBOARD] case read_write is failed!");
+                        env_cfg_mem.recieved_on_elec_sboard =1;
 
                 end
 
@@ -81,8 +83,9 @@ class elec_scoreboard;
                         begin
                             assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                             else $error("[ELEC SCOREBOARD] (%p)case cmd_rsp_data is failed!",model_tr.transaction_type);
+                            env_cfg_mem.recieved_on_elec_sboard =1;
                         end 
-                        ->recieved_on_elec_sboard;
+                       
                     end
                     endcase
                 end
@@ -109,7 +112,7 @@ class elec_scoreboard;
                     end
 
                     endcase
-                    ->recieved_on_elec_sboard;
+                   
                 end
 
                 //***this thread check it after reciecve on descision***/

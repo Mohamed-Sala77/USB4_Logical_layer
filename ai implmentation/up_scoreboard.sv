@@ -5,12 +5,12 @@ class up_transport_scoreboard;
 
   upper_layer_tr mod_tr, mon_tr; 
 
-  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr);
+  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr, upper_layer_tr mon_tr);
     this.UL_mod_scr = UL_mod_scr;
     this.UL_mon_scr = UL_mon_scr;
-    mod_tr = new();
-    mon_tr = new();
-
+    //mod_tr = new();
+    //mon_tr = new();
+    this.mon_tr = mon_tr;
   endfunction: new
 
   task run_scr();

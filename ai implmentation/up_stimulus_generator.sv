@@ -51,6 +51,7 @@ class up_transport_generator;
             @ (drive_done);
         end
 
+
                 // Disable sending
             vif.enable_sending = 1'b0;
             repeat(2)@(posedge vif.gen4_fsm_clk);

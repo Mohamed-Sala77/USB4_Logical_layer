@@ -60,6 +60,8 @@
 //include the virtual sequence classes
 `include "virtual_sequence.sv"
 
+//include the subscriber classes
+`include "env_subscriber.sv"
 
 //include the test environment classes
 `include "Env.svh"

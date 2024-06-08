@@ -20,6 +20,10 @@ endfunction: new
 
 
 task run(input GEN speed, input int num);
+
+case (speed)
+
+gen4: begin
 /////////////////////////gen4////////////////////////
     ///phase 1///
     virtual_cfg_gen.generate_stimulus() ;
@@ -59,64 +63,54 @@ task run(input GEN speed, input int num);
     virtual_elec_gen.Send_OS(TS4,speed);
 
 
-
+  
     ///phase 5///
     $display("[virtual_sequence]:waiting for cl0_s event");
     @(vif.cl0_s);         // transport is ready to send and recieve data  
     $display("[virtual_sequence]:cl0_s event triggered");
     
-    // sending from electrical to transport layer
-      fork
-    
-        begin
-          virtual_elec_gen.send_data(speed,num);
-        end
-    
-        begin
-            // start receiving data on the transport layer
-          vif.enable_receive = 1'b1;    // enable the monitor to start receiving data from transport_data_out
-        end
-        
-      join
+    //****** sending from electrical to transport layer*******//
+  fork
+
+    begin
+      virtual_elec_gen.send_data(speed,5);
+    end
+
+    begin
+        // start receiving data on the transport layer
+        vif.enable_receive = 1'b1;
+    end
+
+    join
       
       @(negedge  vif.gen4_fsm_clk);
     
       vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
 
-      
-    // sending from transport to electrical layer
-    begin
+   ////////////////////////////////////////////////////////////////
+     //**** sending from transport to electrical layer****//
         // start sending data from the transport layer
         vif.enable_sending = 1'b1;
         $display("[virtual_sequence]:enable_sending data from transport layer");
          // Send data num times
             virtual_up_gen.run(num);
-
-    end
-          
-        
-        
-        @(negedge  vif.gen4_fsm_clk);
-
+            @(negedge  vif.gen4_fsm_clk);
 
 
   $stop;
-endtask
+end
 
+gen3:begin
 
-/*
-/////////////////////////////////////////////////////
-/////////////////////////gen3////////////////////////
-/////////////////////////////////////////////////////
-
+      /////////////////////////gen3////////////////////////
         virtual_elec_gen.wake_up(1);
         virtual_cfg_gen.generate_stimulus() ;
         $display("[virtual_sequence]:waiting for sbtx_transition_high event");
-///phase 2///
+      ///phase 2///
         wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
         cfg_class.recieved_on_elec_sboard =0;
         virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
- ///phase 3///
+     ///phase 3///
         wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
         cfg_class.recieved_on_elec_sboard =0;
         virtual_elec_gen.wake_up(3);
@@ -125,14 +119,45 @@ endtask
         
         wait(cfg_class.recieved_on_elec_sboard ==1);  //  wait AT_rsp from dut to trigger 
         cfg_class.recieved_on_elec_sboard =0;
- ///phase 4///                                      
-               
+      ///phase 4///                                      
+              virtual_elec_gen.Send_OS(SLOS1,gen3);
+              virtual_elec_gen.Send_OS(SLOS2,gen3);
+              virtual_elec_gen.Send_OS(TS1_gen2_3,gen3);
+              virtual_elec_gen.Send_OS(TS2_gen2_3,gen3); 
+end
+gen2:begin
+
+/////////////////////////gen2////////////////////////
+        virtual_elec_gen.wake_up(1);
+        virtual_cfg_gen.generate_stimulus() ;
+        $display("[virtual_sequence]:waiting for sbtx_transition_high event");
+     ///phase 2///
+        wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
+        cfg_class.recieved_on_elec_sboard =0;
+        virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
+     ///phase 3///
+        wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
+        cfg_class.recieved_on_elec_sboard =0;
+        virtual_elec_gen.wake_up(3);
+        virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,24'h011303,gen2);  
+        virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen2);
+        
+        wait(cfg_class.recieved_on_elec_sboard ==1);  //  wait AT_rsp from dut to trigger 
+        cfg_class.recieved_on_elec_sboard =0;
+        
+     ///phase 4///                                      
+              virtual_elec_gen.Send_OS(SLOS1,gen2);
+              virtual_elec_gen.Send_OS(SLOS2,gen2);
+              //$stop;
+              virtual_elec_gen.Send_OS(TS1_gen2_3,gen2);
+              virtual_elec_gen.Send_OS(TS2_gen2_3,gen2);
     // Stop the simulation
-    //$stop;
+    $stop; 
+end
+endcase
 
+endtask
 
-        */
-//endtask
 
 
     
