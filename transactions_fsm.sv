@@ -100,7 +100,7 @@ localparam STX_RESPONSE_SYMBOL = 8'b00000100;
 localparam ETX_SYMBOL = 8'h40;
 
 
-localparam LSE_SYMBOL = 8'b10000000;
+localparam LSE_SYMBOL = 8'b10100000;
 localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 
 
