@@ -151,13 +151,22 @@
 					end
 						
 					$display("[ELEC GENERATOR] Time:%0t sending [%0p] Transaction",$time, trans_type);
-					elec_gen_drv.put(transaction); // Sending transaction to the Driver
+
+					if (Wrong != No_AT_response) // used in fault injection scenario
+					begin
+						elec_gen_drv.put(transaction); // Sending transaction to the Driver
+					end
+
+					//elec_gen_drv.put(transaction); // Sending transaction to the Driver
 					if ( (Wrong == No_error) || (Wrong == Wrong_CRC) )
 					begin
 						elec_gen_mod.put(transaction); // Sending transaction to the Reference model	
 					end
 
-					@(elec_gen_drv_done);
+					if (Wrong != No_AT_response) // used in fault injection scenario
+					begin
+						@(elec_gen_drv_done);
+					end
 					
 					if (trans_type == AT_cmd && Wrong == No_error)
 					begin

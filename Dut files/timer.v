@@ -21,22 +21,26 @@ module timer
   input  wire ts1_gen4_s,
   input  wire ts2_gen4_s,
   input  wire sbrx,
+  input  wire cmd_cnt_start,
+  input  wire cmd_cnt_end,
   output reg  tdisconnect_tx_min,
   output reg  tdisconnect_rx_min,
   output reg  tconnect_rx_min,
   output reg  tdisabled_min,
   output reg  ttraining_error_timeout,
   output reg  tgen4_ts1_timeout,
-  output reg  tgen4_ts2_timeout      
+  output reg  tgen4_ts2_timeout,      
+  output reg  tCmdResponse_timeout      
 );
 
 localparam TDISCONNECT_TX  = 'd1,
            TDISCONNECT_RX  = 'd14,
            TCONNECT_RX     = 'd25,
-           TDISABLED      = 'd10,
+           TDISABLED       = 'd10,
 		   TTRAINING_ERROR = 'd500,
 		   TGEN4_TS1       = 'd400,
-		   TGEN4_TS2       = 'd200;
+		   TGEN4_TS2       = 'd200,
+		   tCmdResponse    = 'd200;
 
 reg [5:0]  tdisconnect_tx_cnt;
 reg [3:0]  tdisconnect_rx_cnt;
@@ -45,6 +49,8 @@ reg [3:0]  tdisabled_cnt;
 reg [8:0]  ttraining_error_cnt;
 reg [8:0]  tgen4_ts1_cnt;
 reg [7:0]  tgen4_ts2_cnt;
+reg [7:0]  tCmdResponse_cnt;
+reg        cmd_cnt_on;
 	
 always @(posedge sb_clk or negedge rst)
   begin
@@ -53,6 +59,8 @@ always @(posedge sb_clk or negedge rst)
         tdisconnect_rx_cnt  <= 'd0;
         tconnect_rx_cnt     <= 'd0;
         ttraining_error_cnt <= 'd0;
+        tCmdResponse_cnt <= 'd0;
+        cmd_cnt_on <= 0;
 	  end
 	  
 	else
@@ -67,10 +75,23 @@ always @(posedge sb_clk or negedge rst)
 		  tconnect_rx_cnt <= 0;
 		  tdisconnect_rx_cnt <= tdisconnect_rx_cnt + 1;
 		  end
-		if(fsm_training)
+		  
+		if (fsm_training)
 		  ttraining_error_cnt <= ttraining_error_cnt + 1;
         else
 		  ttraining_error_cnt <= 'd0;
+		
+		if (cmd_cnt_start) 
+		  cmd_cnt_on <= 1;
+		else if (cmd_cnt_end || tCmdResponse_cnt == tCmdResponse)
+		  cmd_cnt_on <= 0;
+		else 
+		  cmd_cnt_on <= cmd_cnt_on;
+		  
+		if (cmd_cnt_on)
+		  tCmdResponse_cnt <= tCmdResponse_cnt + 1;
+		else
+		  tCmdResponse_cnt <= 'd0;
 	  end
   end
   
@@ -117,6 +138,7 @@ always @(posedge sb_clk or negedge rst)
         tdisconnect_rx_min  <= 'd0;
         tconnect_rx_min     <= 'd0;
         ttraining_error_timeout <= 'd0;
+        tCmdResponse_timeout <= 'd0;
 	  end
 	  
 	else
@@ -124,6 +146,7 @@ always @(posedge sb_clk or negedge rst)
         tdisconnect_rx_min <= (tdisconnect_rx_cnt == TDISCONNECT_RX);
         tconnect_rx_min <= (tconnect_rx_cnt == TCONNECT_RX);
 		ttraining_error_timeout <= (ttraining_error_cnt == TTRAINING_ERROR);
+		tCmdResponse_timeout <= (tCmdResponse_cnt == tCmdResponse);
 	  end
   end
   

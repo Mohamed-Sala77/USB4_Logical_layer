@@ -83,9 +83,10 @@ DISCONNECT=3'b000,
 
 IDLE = 3'b001,
 DLE1 = 3'b010,
-AT = 3'b011,
-LT = 3'b100,
-DLE2 = 3'b101
+AT   = 3'b011,
+LT   = 3'b100,
+FALL = 3'b101,
+DLE2 = 3'b110
 
 } state;
 
@@ -100,7 +101,7 @@ localparam STX_RESPONSE_SYMBOL = 8'b00000100;
 localparam ETX_SYMBOL = 8'h40;
 
 
-localparam LSE_SYMBOL = 8'b10000000;
+localparam LSE_SYMBOL = 8'b10100000;
 localparam CLSE_SYMBOL = ~LSE_SYMBOL;
 
 
@@ -239,11 +240,25 @@ always @(*) begin
 
 					DLE_SYMBOL: ns=DLE1;
 
-					CLSE_SYMBOL: ns=IDLE;
+					CLSE_SYMBOL: ns=FALL;
 
 					default: ns=LT;
 
 				endcase
+			end
+		end
+		
+		
+		FALL: begin 
+
+
+			if (tdisconnet) begin
+
+				ns=DISCONNECT;
+
+			end else begin
+
+				ns=FALL;
 			end
 		end
 
@@ -416,6 +431,16 @@ always @(*) begin
 			if (tdisconnet) begin
 				disconnect_reg=1;
 			end
+
+		end
+		
+		
+		FALL: begin 
+
+			valid_reg = 0;
+			disconnect_reg = 1;
+			crc_det_en = 0;
+			trans_error_reg=0;	
 
 		end
 

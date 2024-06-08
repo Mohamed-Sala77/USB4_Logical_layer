@@ -34,6 +34,7 @@ module control_fsm
   input  wire        ttraining_error_timeout,
   input  wire        tgen4_ts1_timeout,
   input  wire        tgen4_ts2_timeout, 
+  input  wire        tCmdResponse_timeout, 
   input  wire        trans_sent, 
   input  wire        new_sym,
   output reg  [2:0]  trans_sel,
@@ -691,7 +692,7 @@ always @ (posedge fsm_clk or negedge reset_n)
 			s_write_o <= 0;
           end
 		
-		else if ((AT_req_trans_send_flag && !AT_req_trans_sent_flag) || (cs == CLD_PARAMETERS_1 && trans_error))
+		else if ((AT_req_trans_send_flag && !AT_req_trans_sent_flag) || (cs == CLD_PARAMETERS_1 && trans_error) || (cs == CLD_PARAMETERS_1 && tCmdResponse_timeout))
 		  begin
 		    if(!sync_busy)
 			  trans_sel <= 'h2; //to send AT transaction to obtain parameters from other lane
