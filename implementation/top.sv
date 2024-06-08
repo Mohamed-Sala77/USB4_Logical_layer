@@ -123,7 +123,8 @@ module top;
 		Test test;
 		test = new (UL_if, elec_if, config_if);
 		reset();
-		test.run("normal_scenario_gen_4");
+		//test.run("normal_scenario_gen_4");
+		test.run("corrupted_AT_rsp_gen4");
 		
 	end
 

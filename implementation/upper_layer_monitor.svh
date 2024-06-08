@@ -56,8 +56,11 @@
 						@(posedge v_if.transport_data_flag);
 						UL_tr.T_Data = v_if.transport_layer_data_out; //transport_layer_data_in for debugging
 					end
-				
-					UL_mon_scr.put(UL_tr);	//Sending the transaction to the scoreboard
+					
+					if (v_if.enable_monitor) // to check that the enable is still 1
+					begin
+						UL_mon_scr.put(UL_tr);	//Sending the transaction to the scoreboard
+					end
 
 					//wait_negedge(v_if.generation_speed);
 					/*if(!x)

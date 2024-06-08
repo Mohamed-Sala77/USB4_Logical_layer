@@ -21,7 +21,7 @@
 
 		logic [65:0] expected;
 		// Flags
-		logic sbtx_high_flag; // to indicate that sbtx high was received
+		logic sbtx_high_flag = 0; // to indicate that sbtx high was received
 		logic sent_to_scr; // to indicate that the transaction was already sent to the scoreboard 
 
 		//TS and payload gen2/3 Size Parameters
@@ -121,7 +121,7 @@
 
 						//wait( v_if.SB_clock == 0);
 						@(negedge v_if.SB_clock);
-						#1 // needed to detect changes correctly
+						//#1 // needed to detect changes correctly while debugging (driver connected to monitor)
 
 						SB_data_received.push_back(v_if.sbtx); // sbrx for debugging
 						
@@ -746,10 +746,13 @@
 					endcase
 					
 				end
-				
-		
-				
 
+				if (v_if.phase == 3'd3)
+				begin
+					sbtx_high_flag = 0;
+				end
+				
+	
 			end
 			
 
@@ -916,6 +919,7 @@
 							// elec_tr.phase = v_if.phase;  // Must be changed later !!!!!!!!!!!!!!
 							elec_tr.phase = 3;
 							elec_tr.sbtx = 1'b1;
+							Early_AT_Command: assert($time >= sbrx_raised_time + tConnectRx + AT_cmd_duration) else $error("AT Command Received before completion of phase 2");
 							elec_mon_scr.put(elec_tr);
 
 							SB_data_received = {};

@@ -261,6 +261,7 @@
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(LSE_lane0), stop_bit }, {start_bit, reverse_data(~(LSE_lane0)), stop_bit}};
 
 								$display("[ELEC DRIVER] LT_Fall lane 0 Data  to be sent: [%0p]",data_sent);
+								
 								foreach (data_sent[i,j])
 								begin
 									@(negedge v_if.SB_clock);
@@ -268,16 +269,21 @@
 									v_if.sbrx = data_sent[i][j];
 								end
 
+								$display("LT_FALL sent for lane 0: %0t", $time);
 								
 								// To disable Lane 1
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit, reverse_data(LSE_lane1) ,stop_bit }, {start_bit, reverse_data(~(LSE_lane1)), stop_bit }};
 								//$display("[DRIVER] LT Data sent: [%0p]",data_sent);
 								$display("[ELEC DRIVER] LT_Fall lane 1 Data  to be sent: [%0p]",data_sent);
+							 	
 							 	foreach (data_sent[i,j])
 						 		begin
 						 			@(negedge v_if.SB_clock);
 						 			v_if.sbrx = data_sent[i][j];
 						 		end
+
+								$display("LT_FALL sent for lane 1: %0t", $time);
+
 
 							 	-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -287,10 +293,10 @@
 
 							AT_cmd: begin
 								$display("[ELEC DRIVER] Sending AT_cmd");
-								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}, elec_tr.cmd_rsp_data};
+								data_symbol = {elec_tr.address, {elec_tr.read_write, elec_tr.len}};
 								$display("data_symbol: %p", data_symbol);
-								CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); 
-								//crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
+								//CRC_generator_Ali(STX_cmd,{elec_tr.address, {elec_tr.read_write, elec_tr.len}}, 3, high_crc, low_crc); 
+								crc_calculation(STX_cmd, data_symbol, high_crc, low_crc); // ALIIIIIIIIIIIIIIIIIIIIIIIIII
 								//high_crc = 8'b0; low_crc = 8'b0;
 
 
@@ -318,6 +324,13 @@
 							//		$display("[DRIVER] AT_cmd data sent[%0d]",data_sent[i][j]);
 									v_if.sbrx = data_sent[i][j];
 								end
+
+								if(elec_tr.error == Early_AT_Command) // Lower SBRX After Sending AT command in a Wrong phase (to prevent SBRX going high for tConnectRX)
+								begin
+									@(negedge v_if.SB_clock);
+									v_if.sbrx = 0;
+								end
+
 								//v_if.generation_speed = gen4; // ALIIIIIIIIIIIIIIIII (TO keep up with DUT (DUT to be changed))
 								-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 								$display("elec_gen_drv_done at time: %0t", $time);
@@ -331,6 +344,15 @@
 								$display("&&&&&&&&&&&&AT RESP DATA SYMBOL %p",data_symbol);
 
 								crc_calculation(STX_rsp, data_symbol, high_crc, low_crc);
+
+								if(elec_tr.error == Wrong_CRC) // corrupt the crc bits
+								begin
+									$display("Correct CRC: High_crc: %b  Low_crc:%b", high_crc, low_crc);
+									high_crc = ~high_crc;
+									low_crc = ~low_crc;
+									$display("Corrupted CRC: High_crc: %b  Low_crc:%b", high_crc, low_crc);
+								end
+
 								// ALIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII LINE 173
 								data_sent = {{start_bit, reverse_data(DLE), stop_bit}, {start_bit,reverse_data(STX_rsp), stop_bit},
 											 {start_bit, reverse_data(elec_tr.address), stop_bit}, 						// data symbol
@@ -843,32 +865,40 @@
 						v_if.sbrx = elec_tr.sbrx;
 						v_if.phase = elec_tr.phase;
 						sbrx_raised_time = $time;
+						// if (elec_tr.error == short_SBRX)
+						// begin
+						// 	repeat (15) @(posedge v_if.SB_clock);
+						// 	v_if.sbrx = 0;
+						// 	repeat (5) @(posedge v_if.SB_clock);
+						// 	v_if.sbrx = 1;
+						// 	repeat (10) @(posedge v_if.SB_clock);
+						// 	v_if.sbrx = 1;
+						// end
 						#(tConnectRx);
 						-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
 						$display("elec_gen_drv_done at time: %0t", $time);
 					end
-					/*
-					3'b011: begin // phase 3
 
+					3'b110: begin // phase 6 (DISCONNECTION PHASE)
+						@(posedge v_if.SB_clock);
+						v_if.sbrx = elec_tr.sbrx;
+						//v_if.phase = 6;
+						sbrx_lowered_time = $time;
+						
+						if (elec_tr.error == short_SBRX)
+						begin
+							@(posedge v_if.SB_clock);
+							v_if.sbrx = 1;
+						end
+						else
+						begin
+							#(tDisconnectRx_min);	
+						end
+						-> elec_gen_drv_done; // Triggering Event to notify stimulus generator
+						$display("elec_gen_drv_done at time: %0t", $time);
 					end
-
-					3'b110: begin // phase 4
-
-					end
-
-					3'b101: begin // phase 5
-
-					end
-
-					default: begin
-
-					end
-					*/
 
 				endcase // elec_tr.phase
-				
-
-				
 
 			end
 			
@@ -877,7 +907,7 @@
 
 
 
-		task crc_calculation (input bit [7:0] stx, bit [7:0] data_symb[$], output bit [7:0] high_crc_task, low_crc_task);
+		task crc_calculation (input bit [7:0] stx, bit [7:0] data_symb[$], /*int size,*/ output bit [7:0] high_crc_task, low_crc_task);
 			
 			//***********************************************************
 			
@@ -890,16 +920,19 @@
 			//bit [crc_length-1:0] POLY = 'hA001;
 
 			//bit [data_length-1:0] data_for_crc;
+			bit data_for_crc [$] ;
 			bit [crc_length-1:0] crc;
 			bit crc_last;
+
+			//int size = 8 * ($size(data_symb) + 1);
 			
 			//***********************************************************
 
-			bit [47:0] data_for_crc;  
+			//bit [ size-1 :0] data_for_crc;  
 			bit [7:0] temp;
 
 			data_for_crc = {<< 8 { {<<{stx, data_symb}} } };
-			$display("data_for_crc: %h", data_for_crc);
+			$display("data_for_crc: %p", data_for_crc);
 			
 			crc = SEED;
 
@@ -1001,7 +1034,7 @@
 			end
 			else if (generation == gen4)
 			begin
-				repeat (8) // To give time (8 clk cycles) for the last byte to be recieved from the DUT
+				repeat (10) // To give time (10 clk cycles) for the last byte to be recieved from the DUT
 					@(negedge v_if.gen4_lane_clk);
 			end
 
@@ -1009,18 +1042,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-  task CRC_generator_Ali(input [7:0] STX, input [39:0] data_symbol, input [2:0] size, output bit [7:0] high_crc_task, low_crc_task );
+ /* task CRC_generator_Ali(input [7:0] STX, input [39:0] data_symbol, input [2:0] size, output bit [7:0] high_crc_task, low_crc_task );
     reg [15:0] crc;
     reg [47:0] data;
     integer i;
@@ -1061,7 +1083,7 @@
     low_crc_task = crc[7:0];
     high_crc_task = crc[15:8];
 
-  endtask
+  endtask*/
 
 
 
