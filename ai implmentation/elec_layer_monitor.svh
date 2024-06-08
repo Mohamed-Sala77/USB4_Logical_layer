@@ -983,18 +983,16 @@ case (speed)
 			$display("[ELEC MONITOR]AT_rsp transaction is correct");
 			mon_2_Sboard_trans.transaction_type=AT_rsp;
 			mon_2_Sboard_trans.read_write=recieved_transaction_data_symb[3][1];
-			
+
+			mon_2_Sboard_trans.crc_received[15:8] = {<<{recieved_transaction_data_symb[8][8:1]}}; //check crc on scoreboard
+			mon_2_Sboard_trans.crc_received[7:0] = {<<{recieved_transaction_data_symb[7][8:1]}};
 			mon_2_Sboard_trans.address = {<<{recieved_transaction_data_symb[2][8:1]}};
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
-			mon_2_Sboard_trans.crc_received[7:0] = {<<{recieved_transaction_data_symb[7][8:1]}};
-			mon_2_Sboard_trans.crc_received[15:8] = {<<{recieved_transaction_data_symb[8][8:1]}}; //check crc on scoreboard
 			mon_2_Sboard_trans.phase=3'd3;  
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
-			$display("[ELEC MONITOR]THE VALUE OF CRC IS =%b",mon_2_Sboard_trans.crc_received);
-            $display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%b ",mon_2_Sboard_trans.cmd_rsp_data);
-			$display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%p ",mon_2_Sboard_trans);
+
 			env_cfg_mem.done = 1;
-			//$stop;
+			
 			end
 		else
 		begin
@@ -1026,6 +1024,7 @@ case (speed)
 						end*/
 						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane0}};
 						mon_2_Sboard_trans.lane=lane_0;
+						mon_2_Sboard_trans.phase=6;
 						$display("[ELEC MONITOR]the value of data from %p : %d",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
 						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 						
@@ -1033,6 +1032,7 @@ case (speed)
 						
 						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane1}};
 						mon_2_Sboard_trans.lane=lane_1;
+						mon_2_Sboard_trans.phase=6;
 						$display("[ELEC MONITOR]the value of data from %p : %d",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
 						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 					
@@ -1132,21 +1132,18 @@ case (speed)
 						begin
 							//$display("[ELEC MONITOR]the value of recieved_transaction_byte=%p",recieved_transaction_byte);
 							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
-							if(recieved_transaction_data_symb.size()==4)
-							$display("[ELEC MONITOR]{%0t}time for receive cmd rsp",$time);
 							recieved_transaction_byte.delete();
 							///////////////////////////////////////////////////////////////////////////////////////////
 							if(recieved_transaction_data_symb.size()==11 /*&&recieved_transaction_data_symb[10]=={<<{1'b1,ETX,1'b0}}*/) 
 							 begin
 								$display("[ELEC MONITOR]reiceved AT_rsp with size of AT 11 symbols");
-								$display("[ELEC MONITOR]the value of AT_rsp with size of AT 11 symbols =%p",recieved_transaction_data_symb);
 								break;
 							 end
 							else if(recieved_transaction_data_symb.size()>11)
 							 begin
 								$error("[ELEC MONITOR]the size of AT rsp transaction is more than 11 symbols");
 							 end
-    
+
 						end
 					end
 				     check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
@@ -1277,17 +1274,17 @@ case (speed)
             gen2: begin
 				// @(negedge ELEC_vif.gen2_lane_clk);
                 get_transport_data();
-                
+               
             end
             gen3: begin
 				@(negedge ELEC_vif.gen3_lane_clk);
                  get_transport_data();
-                 
+                
             end
             gen4: begin
 				 get_transport_data();
 				 @(negedge ELEC_vif.gen4_lane_clk);
-                 
+               
             end
           endcase
 		  end

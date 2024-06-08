@@ -51,14 +51,16 @@ class elec_ref_AI;
                 elec_layer_inst.len = 3;
                 elec_layer_inst.read_write = 0;
                 elec_layer_inst.crc_received = 0;
-                CRC_generator(STX_cmd, {8'd78,7'd3,1'h0},3);// ALIIIIIIIIIIIIIIIIIIIIIIIII
+                CRC_generator(STX_cmd, {8'd78,1'h0,7'd3},3);// ALIIIIIIIIIIIIIIIIIIIIIIIII
                 elec_layer_inst.cmd_rsp_data = 0;
                 elec_S.put(elec_layer_inst);
                 elec_layer_inst = new();
+                $display("Aliiiiiiiiiiiii 666666666");
                 elec_G.get(elec_layer_inst);
-                
+                $display("Aliiiiiiiiiiiii 777777777");
                 if (elec_layer_inst.tr_os == tr && elec_layer_inst.transaction_type == AT_cmd && elec_layer_inst.address == 78 && elec_layer_inst.len == 3 && elec_layer_inst.read_write == 0) 
                 begin
+                    elec_layer_inst = new();
                     elec_layer_inst.tr_os = tr;
                     elec_layer_inst.transaction_type = AT_rsp;
                     elec_layer_inst.address = 78;
@@ -66,13 +68,36 @@ class elec_ref_AI;
                     elec_layer_inst.read_write = 0;
                     elec_layer_inst.crc_received = 0;
                     elec_layer_inst.cmd_rsp_data = 24'h053303; // WRONG INPUT FROM ME (6'h053303) should be 24'h053303
-                    CRC_generator(STX_rsp, {8'd78,7'd3,1'b0,24'h033305},6); // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+                    CRC_generator(STX_rsp, {8'd78,1'b0,7'd3,24'h033305},6); // ALIIIIIIIIIIIIIIIIIIIIIIIIIIIII
                     $display("ALIIIIIIIIIIII");
                     elec_S.put(elec_layer_inst);
                     elec_layer_inst = new();
                 end
             end
 
+            4: begin
+              elec_layer_inst.sbtx = 1;
+              case (elec_layer_inst.o_sets)
+                  SLOS1,SLOS2,TS1_gen2_3,TS2_gen2_3: 
+                  begin
+                      elec_layer_inst.tr_os = ord_set;
+                      elec_S.put(elec_layer_inst);
+                   end
+
+
+                   TS1_gen4, TS2_gen4, TS3, TS4: 
+                   begin
+                      elec_layer_inst.tr_os = ord_set;
+                      elec_layer_inst.gen_speed = gen4;
+                      elec_S.put(elec_layer_inst); 
+                   end
+
+                   default: begin
+                     // Code for unknown o_sets
+                   end
+                endcase
+
+              end
             5: begin
                   $display("DATA OBTAINED from electrical layer");
                   $display("electrical_to_transport = %0D, phase = %0D",elec_layer_inst.electrical_to_transport, elec_layer_inst.phase);

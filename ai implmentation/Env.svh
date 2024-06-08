@@ -21,18 +21,11 @@ class env;
         config_scoreboard cfg_scoreboard ;
         up_transport_scoreboard up_scoreboard ;
 
-        //Declare the subscriber to collect the coverage
-        logical_layer_subscriber env_subscriber;
-
         // Declare memory
         env_cfg_class env_cfg_mem;
 
         virtual_sequence virtual_seq;
 
-        //////// Declare the scoreboards transaction to coverage class //////////
-        elec_layer_tr                elec_sboard_subscriber_tr;
-        upper_layer_tr               transport_sboard_subscriber_tr;   //this transaction for the subscriber to collect the coverage 
-        config_transaction           config_sboard_subscriber_tr;
 
          //--------Declare the events -----------//
          
@@ -108,17 +101,16 @@ class env;
         virtual_seq =new(env_cfg_mem,up_if);
 
         // Scoreboards
-        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,elec_sboard_subscriber_tr);
-        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem,config_sboard_subscriber_tr);
-        up_scoreboard  = new(up_mod_scr, up_mon_scr,transport_sboard_subscriber_tr);
+        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem);
+        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem);
+        up_scoreboard  = new(up_mod_scr, up_mon_scr);
         
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard,env_cfg_mem);
         cfg_gen = new(cfg_drv_gen, cfg_mod_gen, cfg_driverDone, cfg_next_stimulus);
         up_gen = new(up_mod_gen, up_drv_gen, up_driveDone, up_if, env_cfg_mem);
 
-       // Subscriber
-        env_subscriber = new(config_sboard_subscriber_tr,elec_sboard_subscriber_tr,transport_sboard_subscriber_tr);
+       
 
         
         // Virtual Sequence connections

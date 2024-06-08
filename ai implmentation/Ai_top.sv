@@ -18,10 +18,7 @@ module Ai_top;
 	logic gen2_fsm_clk, gen3_fsm_clk, gen4_fsm_clk;
 	logic SystemReset;
 
-    parameter num =7 ;  //number of the sending data in phase 5
-
-	parameter Sys_clock_cycle = 1 * 10**6; 
-	parameter Rx_clock_cycle = 50;
+	parameter Sys_clock_cycle = 1 * 10**6; parameter Rx_clock_cycle = 50;
 
 	parameter [63:0] SB_freq = 1 * 10**6;
 	parameter [63:0] freq_9_697 = 9.697 * 10 ** 9;		//9.697 GHz
@@ -88,10 +85,10 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	.transport_data_flag(u_if.transport_data_flag)
 );    
 
-
+/*
 								//--for old dut files --//
 								//Instantiate the logical layer
-/*logical_layer_no_scr logical_layer (
+logical_layer_no_scr logical_layer (
 	.local_clk(local_clk),
 	.sb_clk(SB_clock),
 	.rst(SystemReset),
@@ -114,12 +111,12 @@ upper_layer_if       u_if(SystemClock,gen2_fsm_clk,gen3_fsm_clk,gen4_fsm_clk,Sys
 	.enable_scr(e_if.enable_rs),
 	.cl0_s(u_if.cl0_s),
 	.transport_data_flag(u_if.transport_data_flag)
-);*/
-
+);
+*/
 
 
 assign e_if.cl0_s = u_if.cl0_s;
-
+parameter num =7 ;  //number of the sending data in phase 5
 
 
 // TEST 
@@ -169,9 +166,7 @@ endtask
 
 	always #((10**15)/(2*freq_80)) local_clk = ~local_clk;
 
-	//always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // SB CLK FOR BY HAND DUT
-
-    always #((10**15)/(10*SB_freq)) SB_clock = ~SB_clock; // SB CLK FOR Ai DUT(adddd*5)
+	always #((10**15)/(2*SB_freq)) SB_clock = ~SB_clock; // sideband clock
 	
 	always #((10**15)/(2*freq_10)) gen2_lane_clk = ~gen2_lane_clk;
 	

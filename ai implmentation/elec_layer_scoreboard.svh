@@ -5,6 +5,8 @@ class elec_scoreboard;
                   gen_tr;
     env_cfg_class env_cfg_mem;
 
+    event recieved_on_elec_sboard;
+
     // Mailboxes for module and monitor transactions
     mailbox #(elec_layer_tr) elec_mod_sboard,
                              elec_mon_sboard,
@@ -13,19 +15,19 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem,elec_layer_tr monitor_tr);
+                           env_cfg_class env_cfg_mem);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
-        this.monitor_tr=monitor_tr;
         
     endfunction: new
 
     // Main task to run the scoreboard
     task run();
         forever begin
-
+            model_tr = new();
+            monitor_tr = new();
          fork
             begin
                 $display("\n[ELEC SCOREBOARD] waiting for monitor transaction");
@@ -39,26 +41,23 @@ class elec_scoreboard;
 
                 case (monitor_tr.phase)
                 3'd0: begin
-                      PH2_SBTX: assert (model_tr.sbtx == monitor_tr.sbtx)
+                       assert (model_tr.sbtx == monitor_tr.sbtx)
                             $display("[ELEC SCOREBOARD] CORRECT SBTX HIGH ");
                         else $error("[[ELEC SCOREBOARD] case sbtx=1 is failed!");
-
-                        env_cfg_mem.recieved_on_elec_sboard =1;
                 end
                3'd2:begin                  //check on AT_Cmd transaction 
-                    PH3_AT_TYPE:assert (model_tr.transaction_type == monitor_tr.transaction_type)
+                    assert (model_tr.transaction_type == monitor_tr.transaction_type)
                         else $error("[ELEC SCOREBOARD] case transaction_type is failed!");
-                    PH3_AT_CMR:assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
+                    assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                         else $error("[ELEC SCOREBOARD] case cmd_rsp_data is failed!");
-                    PH3_AT_CRC:assert (model_tr.crc_received == monitor_tr.crc_received)
+                    assert (model_tr.crc_received == monitor_tr.crc_received)
                         else $error("[ELEC SCOREBOARD] case crc_received is failed!");
-                    PH3_AT_LEN:assert (model_tr.len == monitor_tr.len)
+                    assert (model_tr.len == monitor_tr.len)
                         else $error("[ELEC SCOREBOARD] case len is failed!");
-                    PH3_AT_ADD:assert (model_tr.address == monitor_tr.address)
+                    assert (model_tr.address == monitor_tr.address)
                         else $error("[ELEC SCOREBOARD] case address is failed!");
-                    PH3_AT_RW:assert (model_tr.read_write == monitor_tr.read_write)
+                    assert (model_tr.read_write == monitor_tr.read_write)
                         else $error("[ELEC SCOREBOARD] case read_write is failed!");
-                        env_cfg_mem.recieved_on_elec_sboard =1;
 
                 end
 
@@ -83,9 +82,8 @@ class elec_scoreboard;
                         begin
                             assert (model_tr.cmd_rsp_data == monitor_tr.cmd_rsp_data)
                             else $error("[ELEC SCOREBOARD] (%p)case cmd_rsp_data is failed!",model_tr.transaction_type);
-                            env_cfg_mem.recieved_on_elec_sboard =1;
                         end 
-                       
+                        ->recieved_on_elec_sboard;
                     end
                     endcase
                 end
@@ -112,7 +110,7 @@ class elec_scoreboard;
                     end
 
                     endcase
-                   
+                    ->recieved_on_elec_sboard;
                 end
 
                 //***this thread check it after reciecve on descision***/
@@ -136,7 +134,9 @@ class elec_scoreboard;
             end
 
             begin  
+               // $display("before get");
                 ele_generator_sboard.get(gen_tr);
+                //$display("after get");
                 env_cfg_mem.phase=gen_tr.phase;
                 env_cfg_mem.transaction_type=gen_tr.transaction_type;
                 env_cfg_mem.gen_speed=gen_tr.gen_speed;
@@ -152,15 +152,7 @@ class elec_scoreboard;
 
 
 
-//--------for test model only -----------//
-    
-    // Main task to run the scoreboard
-    task run_m();
-            begin
-                elec_mod_sboard.get(monitor_tr);
-                $display("\n[ELEC SCOREBOURD FROM MODEL]at time (%t) is : %p", $time ,model_tr.convert2string());
-            end
-    endtask
+
 endclass
  
 

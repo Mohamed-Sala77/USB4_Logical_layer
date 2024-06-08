@@ -49,7 +49,7 @@ class electrical_layer_generator;
     transaction.sbrx = 1'b1;                // Set transaction.sbrx to 1'b1
     transaction.phase = 3'd2;               // Set transaction.phase to 3'd2
     elec_gen_drv.put(transaction);          // Put the transaction on the elec_gen_drv mailbox
-    elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
+    //elec_gen_mod.put(transaction);          // Put the transaction on the elec_gen_mod mailbox
     elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
     $display("[ELEC GENERATOR] : sbrx send high");
      @(elec_gen_driver_done);               // Blocking with the event elec_gen_driver_done
@@ -82,6 +82,7 @@ class electrical_layer_generator;
       endcase
 
       elec_gen_drv.put(transaction);       // Sending transaction to the Driver
+      if(transaction.transaction_type != AT_rsp)
       elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
@@ -111,7 +112,7 @@ class electrical_layer_generator;
         $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
-
+        
       end
     endtask
 
