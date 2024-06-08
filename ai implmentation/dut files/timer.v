@@ -22,7 +22,7 @@ module timer (
     );
 
 // Parameter values
-parameter TDISCONNECT_TX   = 50;
+parameter TDISCONNECT_TX   = 1;
 parameter TDISCONNECT_RX   = 14;
 parameter TCONNECT_RX      = 25;
 parameter TDISABLED        = 10;
