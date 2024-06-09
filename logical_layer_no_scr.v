@@ -85,6 +85,7 @@ wire         tdisabled_min,
              ttraining_error_timeout,
              tgen4_ts1_timeout,
              tgen4_ts2_timeout, 			
+             tCmdResponse_timeout, 			
              fsm_disabled,
              fsm_training,
              ts1_gen4_s,
@@ -151,6 +152,7 @@ control_fsm ctrl_fsm
   .ttraining_error_timeout ( ttraining_error_timeout ),
   .tgen4_ts1_timeout       ( tgen4_ts1_timeout       ),
   .tgen4_ts2_timeout       ( tgen4_ts2_timeout       ), 
+  .tCmdResponse_timeout    ( tCmdResponse_timeout    ), 
   .trans_sel               ( trans_sel               ),
   .trans_sent              ( trans_sent              ),
   .disconnect_sbtx         ( disconnect_sbtx         ),
@@ -255,7 +257,7 @@ lanes_ser_deser #(.WIDTH(132)) lanes_serializer_deserializer
   .clk                     ( ser_clk                 ), 
   .rst                     ( rst                     ),
   .enable_ser              ( enable_ser              ),
-  .enable_deser            ( enable_deser           ),
+  .enable_deser            ( enable_deser            ),
   .lane_0_tx_parallel      ( lane_0_tx_enc_ser       ),
   .lane_1_tx_parallel      ( lane_1_tx_enc_ser       ),
   .gen_speed               ( gen_speed               ),
@@ -403,7 +405,10 @@ timer timer
   .tdisabled_min           ( tdisabled_min           ),
   .ttraining_error_timeout ( ttraining_error_timeout ),
   .tgen4_ts1_timeout       ( tgen4_ts1_timeout       ),
-  .tgen4_ts2_timeout       ( tgen4_ts2_timeout       )      
+  .tgen4_ts2_timeout       ( tgen4_ts2_timeout       ),      
+  .cmd_cnt_start           ( trans_sel_pul == 'h2    ),      
+  .cmd_cnt_end             ( t_valid_lvl || trans_error_lvl ),      
+  .tCmdResponse_timeout    ( tCmdResponse_timeout    )      
 );
 
 clock_div clk_div
