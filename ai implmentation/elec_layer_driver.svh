@@ -15,6 +15,10 @@
 
    env_cfg_class env_cfg_mem;
 
+   //Data to be sent to the transport layer
+    bit [7:0] elec_to_trans_lane_0 [$];
+	  bit [7:0] elec_to_trans_lane_1 [$];
+
  // Constructor
 function new(event  elec_gen_driver_done,mailbox #(elec_layer_tr) elec_drv_gen,virtual electrical_layer_if ELEC_vif,env_cfg_class env_cfg_mem);
  this.elec_gen_driver_done=elec_gen_driver_done;
@@ -780,38 +784,75 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
    ELEC_vif.data_incoming <=1;
    case(gen_speed)
      gen2: begin
-      /* case(lane)
-         lane_0: begin  
-            foreach(data_2_DUT[i]) begin
-             ELEC_vif.lane_0_rx <=data_2_DUT[i];
-             @(posedge ELEC_vif.gen2_lane_clk);
-            end
-          end
-         lane_1: begin
-           foreach(data_2_DUT[i]) begin
-             ELEC_vif.lane_1_rx <=data_2_DUT[i];
-             @(posedge ELEC_vif.gen2_lane_clk);
-         end
-         end
-       
-       endcase*/
+      if (elec_to_trans_lane_0.size() == 8)
+      begin
+
+        $display("[ELEC DRIVER] elec_to_trans_lane_0: %p",elec_to_trans_lane_0);  
+        $display("[ELEC DRIVER] elec_to_trans_lane_1: %p", elec_to_trans_lane_1);
+
+        @(negedge ELEC_vif.gen2_lane_clk);
+        ELEC_vif.lane_0_rx = 1'b0;
+        ELEC_vif.lane_1_rx = 1'b0;
+
+         @(negedge ELEC_vif.gen2_lane_clk);
+        ELEC_vif.lane_0_rx = 1'b1;
+        ELEC_vif.lane_1_rx = 1'b1;
+
+        
+        foreach(elec_to_trans_lane_0[i,j]) begin
+          @(negedge ELEC_vif.gen2_lane_clk);
+
+          ELEC_vif.lane_0_rx <=elec_to_trans_lane_0[i][7-j];
+          ELEC_vif.lane_1_rx <=elec_to_trans_lane_1[i][7-j];
+          //$display("[ELEC DRIVER] elec_to_trans_lane_0[%0d][7-%0d]: %b",i,j,elec_to_trans_lane_0[i][7-j]);  
+          //$display("[ELEC DRIVER] elec_to_trans_lane_1[%0d][7-%0d]: %b",i,j,elec_to_trans_lane_1[i][7-j]);
+        end
+
+      end
+
      end
+
      gen3: begin
-       /*case(lane)
-         lane_0: begin  
-            foreach(data_2_DUT[i]) begin
-             ELEC_vif.lane_0_rx <=data_2_DUT[i];
-              @(posedge ELEC_vif.gen3_lane_clk);
-            end
-          end
-         lane_1: begin
-           foreach(data_2_DUT[i]) begin
-             ELEC_vif.lane_1_rx <=data_2_DUT[i];
-             @(posedge ELEC_vif.gen3_lane_clk);
-         end
-         end
-       endcase*/
+      if (elec_to_trans_lane_0.size() == 16)
+      begin
+
+        
+        $display("[ELEC DRIVER] elec_to_trans_lane_0: %p",elec_to_trans_lane_0);  
+        $display("[ELEC DRIVER] elec_to_trans_lane_1: %p", elec_to_trans_lane_1);
+
+        @(negedge ELEC_vif.gen3_lane_clk);
+        
+        env_cfg_mem.Data_flag = 1; ////////////////////////////////////////////////////////////////
+
+        ELEC_vif.lane_0_rx = 1'b0;
+        ELEC_vif.lane_1_rx = 1'b0;
+
+         @(negedge ELEC_vif.gen3_lane_clk);
+        ELEC_vif.lane_0_rx = 1'b1;
+        ELEC_vif.lane_1_rx = 1'b1;
+
+         @(negedge ELEC_vif.gen3_lane_clk);
+        ELEC_vif.lane_0_rx = 1'b0;
+        ELEC_vif.lane_1_rx = 1'b0;
+
+         @(negedge ELEC_vif.gen3_lane_clk);
+        ELEC_vif.lane_0_rx = 1'b1;
+        ELEC_vif.lane_1_rx = 1'b1;
+        
+        foreach(elec_to_trans_lane_0[i,j]) begin
+          @(negedge ELEC_vif.gen3_lane_clk);
+
+          ELEC_vif.lane_0_rx <=elec_to_trans_lane_0[i][7-j];
+          ELEC_vif.lane_1_rx <=elec_to_trans_lane_1[i][7-j];
+          //$display("[ELEC DRIVER] elec_to_trans_lane_0[%0d][7-%0d]: %b",i,j,elec_to_trans_lane_0[i][7-j]);  
+          //$display("[ELEC DRIVER] elec_to_trans_lane_1[%0d][7-%0d]: %b",i,j,elec_to_trans_lane_1[i][7-j]); 
+
+        end
+
+      end
+       
      end
+
 
      gen4: begin
        repeat(data_width)begin

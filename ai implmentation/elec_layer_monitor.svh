@@ -24,6 +24,12 @@ class electrical_layer_monitor;
 
     //declare varsual interface
     virtual electrical_layer_if ELEC_vif; 
+
+	//declare the queues
+	logic [131:0] captured_lane0, captured_lane1;
+    logic [127:0] processed_lane0, processed_lane1;
+
+
     // Constructor
   function new(mailbox #(elec_layer_tr) elec_mon_2_Sboard,virtual electrical_layer_if ELEC_vif
                ,event correct_OS ,env_cfg_class env_cfg_mem );
@@ -385,6 +391,11 @@ begin
 					end
 					else
 					begin
+						// $display("recieved_TS_lane0: %p",recieved_TS_lane0);
+						// $display("recieved_TS_lane1: %p",recieved_TS_lane1);
+						// $display("correct_TS2_lane0: %p",correct_TS2_lane0);
+						// $display("correct_TS2_lane1: %p",correct_TS2_lane1);
+						// $stop;
 						recieved_TS_lane0.delete(0);
 						recieved_TS_lane1.delete(0);
 					end
@@ -470,7 +481,7 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 					mon_2_Sboard_trans=new();
 					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 					mon_2_Sboard_trans.phase=3'd4;
-					mon_2_Sboard_trans.gen_speed=gen2;
+					mon_2_Sboard_trans.gen_speed=gen3;
 					mon_2_Sboard_trans.o_sets=SLOS2;
 					mon_2_Sboard_trans.sbtx='b1;
 					mon_2_Sboard_trans.tr_os=ord_set;
@@ -1001,38 +1012,154 @@ case (speed)
  task electrical_layer_monitor::get_transport_data();
                     trans_to_ele_lane0.push_back(ELEC_vif.lane_0_tx);
 					trans_to_ele_lane1.push_back(ELEC_vif.lane_1_tx);
-					if(trans_to_ele_lane0.size()==8)
-					begin
-						mon_2_Sboard_trans=new();
-						//$display("[ELEC MONITOR]the value of trans_to_ele_lane0: %p",trans_to_ele_lane0);
-						//$display("[ELEC MONITOR]the value of trans_to_ele_lane1: %p",trans_to_ele_lane1);
-						/*foreach(trans_to_ele_lane0[i])
-						begin
-                        mon_2_Sboard_trans.transport_to_electrical[i]=trans_to_ele_lane0[i];
-						end
-						foreach(mon_2_Sboard_trans.transport_to_electrical[i])
-						begin
-                        mon_2_Sboard_trans.transport_to_electrical[i]=trans_to_ele_lane1[i];
-						end*/
-						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane0}};
-						mon_2_Sboard_trans.lane=lane_0;
-						mon_2_Sboard_trans.phase=5; //Karim 10/6 ////////////////////////////////////////////////////
-						$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
-						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-						
-						mon_2_Sboard_trans=new(); //Kariiiiiiiiiiiim 10/6 /////////////////////////////////////////
-						
-						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane1}};
-						mon_2_Sboard_trans.lane=lane_1;
-						mon_2_Sboard_trans.phase=5; //Karim 10/6 ////////////////////////////////////////////////////
 
-						$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
-						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-					
-						$display("[ELEC MONITOR]down to sboard");
-                        trans_to_ele_lane0.delete();
-					    trans_to_ele_lane1.delete();
+					case (env_cfg_mem.gen_speed)
+						gen2: begin
+							
+							// Capture 66 bits on each lane
+							for (int i = 0; i < 66; i++) begin
+								@(negedge ELEC_vif.gen2_lane_clk);
+								#1; /////////////////////////////////////////////////////
+
+								captured_lane0[i] = ELEC_vif.lane_0_rx;
+								captured_lane1[i] = ELEC_vif.lane_1_rx;
+								//$display("Time: %t [ELEC MONITOR] captured_lane0[%0d]: %b",$time, i,captured_lane0[i]);
+								//$display("Time: %t [ELEC MONITOR] captured_lane1[%0d]: %b",$time, i,captured_lane1[i]);
+
+							end
+
+							$display("[ELEC MONITOR]captured_lane0: %b",captured_lane0);
+							$display("[ELEC MONITOR]captured_lane1: %b",captured_lane1);
+
+							$stop;
+
+							// Remove the first 2 sync bits
+							processed_lane0 = captured_lane0[2+:64];
+							processed_lane1 = captured_lane1[2+:64];
+
+							$display("[ELEC MONITOR]processed_lane0: %b",processed_lane0);
+							$display("[ELEC MONITOR]processed_lane1: %b",processed_lane1);
+
+							// Send each byte to the scoreboard
+							for (int i = 0; i < 8; i++) begin
+
+								
+								mon_2_Sboard_trans.phase=6;
+								mon_2_Sboard_trans.lane=lane_0;
+								mon_2_Sboard_trans.transport_to_electrical = processed_lane0[i*8+:8];
+								$display("[ELEC MONITOR] mon_2_Sboard on lane 0: %b",mon_2_Sboard_trans.transport_to_electrical);
+								
+								elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+
+								mon_2_Sboard_trans = new();
+
+								mon_2_Sboard_trans.phase=6;
+								mon_2_Sboard_trans.lane=lane_1;
+								mon_2_Sboard_trans.transport_to_electrical = processed_lane1[i*8+:8];
+								$display("[ELEC MONITOR] mon_2_Sboard on lane 1: %b",mon_2_Sboard_trans.transport_to_electrical);
+
+
+								elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+
+								mon_2_Sboard_trans = new();
+								
+								
+							end
+
+						end
+
+						gen3: begin
+							$stop;
+							// Capture 132 bits on each lane
+							for (int i = 0; i < 132; i++) begin
+								@(negedge ELEC_vif.gen3_lane_clk);
+								#1; /////////////////////////////////////////////////////
+
+								captured_lane0[i] = ELEC_vif.lane_0_rx;
+								captured_lane1[i] = ELEC_vif.lane_1_rx;
+								//$display("Time: %t [ELEC MONITOR] captured_lane0[%0d]: %b",$time, i,captured_lane0[i]);
+								//$display("Time: %t [ELEC MONITOR] captured_lane1[%0d]: %b",$time, i,captured_lane1[i]);
+
+							end
+
+							$display("[ELEC MONITOR]captured_lane0: %b",captured_lane0);
+							$display("[ELEC MONITOR]captured_lane1: %b",captured_lane1);
+
+							$stop;
+
+							// Remove the first 4 sync bits
+							processed_lane0 = captured_lane0[4+:128];
+							processed_lane1 = captured_lane1[4+:128];
+
+							$display("[ELEC MONITOR]processed_lane0: %b",processed_lane0);
+							$display("[ELEC MONITOR]processed_lane1: %b",processed_lane1);
+
+							// Send each byte to the scoreboard
+							for (int i = 0; i < 16; i++) begin
+
+								
+								mon_2_Sboard_trans.phase=6;
+								mon_2_Sboard_trans.lane=lane_0;
+								mon_2_Sboard_trans.transport_to_electrical = processed_lane0[i*8+:8];
+								$display("[ELEC MONITOR] mon_2_Sboard on lane 0: %b",mon_2_Sboard_trans.transport_to_electrical);
+								
+								elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+
+								mon_2_Sboard_trans = new();
+
+								mon_2_Sboard_trans.phase=6;
+								mon_2_Sboard_trans.lane=lane_1;
+								mon_2_Sboard_trans.transport_to_electrical = processed_lane1[i*8+:8];
+								$display("[ELEC MONITOR] mon_2_Sboard on lane 1: %b",mon_2_Sboard_trans.transport_to_electrical);
+
+
+								elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+
+								mon_2_Sboard_trans = new();
+								
+								
+							end
+
+						end
+
+
+						gen4: begin
+
+						if(trans_to_ele_lane0.size()==8)
+						begin
+							mon_2_Sboard_trans=new();
+							//$display("[ELEC MONITOR]the value of trans_to_ele_lane0: %p",trans_to_ele_lane0);
+							//$display("[ELEC MONITOR]the value of trans_to_ele_lane1: %p",trans_to_ele_lane1);
+							/*foreach(trans_to_ele_lane0[i])
+							begin
+							mon_2_Sboard_trans.transport_to_electrical[i]=trans_to_ele_lane0[i];
+							end
+							foreach(mon_2_Sboard_trans.transport_to_electrical[i])
+							begin
+							mon_2_Sboard_trans.transport_to_electrical[i]=trans_to_ele_lane1[i];
+							end*/
+							mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane0}};
+							mon_2_Sboard_trans.lane=lane_0;
+							mon_2_Sboard_trans.phase=5;
+							$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
+							elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+							
+							mon_2_Sboard_trans=new(); 
+							
+							mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane1}};
+							mon_2_Sboard_trans.lane=lane_1;
+							mon_2_Sboard_trans.phase=5;
+
+							$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
+							elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+						
+							$display("[ELEC MONITOR]down to sboard");
+							trans_to_ele_lane0.delete();
+							trans_to_ele_lane1.delete();
+						end
 					end
+				endcase
+
  endtask:get_transport_data
 
        ////***run task***/////
@@ -1263,23 +1390,39 @@ case (speed)
 		  while(ELEC_vif.sbtx)begin
 		  wait(env_cfg_mem.Data_flag == 1);
 		  $display("[ELEC MONITOR]the value of env_cfg_mem.Data_flag=%0d and the value of env_cfg_mem.data_count=%0d ",env_cfg_mem.Data_flag,env_cfg_mem.data_count); //active on simulation
-		 repeat(1) @(negedge ELEC_vif.gen4_lane_clk);
+		 //repeat(1) @(negedge ELEC_vif.gen4_lane_clk);
 
-		  repeat(8*env_cfg_mem.data_count)begin
+		  //repeat(8*env_cfg_mem.data_count)begin
           case(SPEED)
             gen2: begin
-				// @(negedge ELEC_vif.gen2_lane_clk);
-                get_transport_data();
-                
-            end
-            gen3: begin
-				@(negedge ELEC_vif.gen3_lane_clk);
+
+				repeat(env_cfg_mem.data_count/8) 
+				begin
                  get_transport_data();
+				end
+            end
+
+            gen3: begin
+				repeat(env_cfg_mem.data_count/16) 
+				begin
+
+                 get_transport_data();
+
+				end
                  
             end
             gen4: begin
+				
+				repeat(8*env_cfg_mem.data_count) 
+				begin
+					repeat(1) @(negedge ELEC_vif.gen4_lane_clk);
+
+				 	get_transport_data();
+
+				end
+				
+
 				 get_transport_data();
-				 @(negedge ELEC_vif.gen4_lane_clk);
                  
             end
           endcase
@@ -1288,7 +1431,7 @@ case (speed)
 		 $display("[ELEC MONITOR] at time (%0t)the value of env_cfg_mem.Data_flag=%0d and the value of env_cfg_mem.data_count=%0d ",$time,env_cfg_mem.Data_flag,env_cfg_mem.data_count); 
           end
 
-		  end
+		  
 
         join
       

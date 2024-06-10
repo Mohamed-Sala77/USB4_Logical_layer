@@ -104,16 +104,20 @@ gen3:begin
 
       /////////////////////////gen3////////////////////////
         virtual_cfg_gen.generate_stimulus() ;
-        virtual_elec_gen.wake_up(2,speed);
         $display("[virtual_sequence]:waiting for sbtx_transition_high event");
+      
       ///phase 2///
+        virtual_elec_gen.wake_up(2,speed);
         wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
         cfg_class.recieved_on_elec_sboard =0;
         virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
+     
      ///phase 3///
+        virtual_elec_gen.wake_up(3, speed);
+
         wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
         cfg_class.recieved_on_elec_sboard =0;
-        virtual_elec_gen.wake_up(3);
+        
         virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,24'h013303,gen3);  
         virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen3);
         
