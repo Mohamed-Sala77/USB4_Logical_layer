@@ -82,8 +82,12 @@ class electrical_layer_generator;
       endcase
 
       elec_gen_drv.put(transaction);       // Sending transaction to the Driver
+      
       if(transaction.transaction_type != AT_rsp)
-      elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
+      begin
+        elec_gen_mod.put(transaction);       // Sending transaction to the Reference model
+      end
+     
       elec_gen_2_scoreboard.put(transaction); // Put the transaction on the elec_gen_2_scoreboard mailbox
       @(elec_gen_driver_done);
       $display("at time(%0t)[ELEC GENERATOR] SUCCESSFULLY SENT ******>>>> [%p]",$time,trans_type);
@@ -112,7 +116,7 @@ class electrical_layer_generator;
         $display("[ELEC GENERATOR] SENDING [%p]", OS);
         @(elec_gen_driver_done);               // To wait for the driver to finish driving the data
         $display("[ELEC GENERATOR] [%p] SENT SUCCESSFULLY ", OS);
-        
+
       end
     endtask
 
@@ -158,7 +162,7 @@ class electrical_layer_generator;
       elec_gen_mod.put(transaction);           // Sending transaction to the Driver
     endtask
 
-
+//vsequance ,,elec_gnenerator ,,elec_transaction,,env subscriber,,
 
 
 

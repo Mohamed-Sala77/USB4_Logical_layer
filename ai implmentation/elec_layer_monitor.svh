@@ -117,19 +117,15 @@ TS1_gen2_3:
 
 			reverse_8bits_in_Gen4(temp_TS_lane0);
 			reverse_8bits_in_Gen4(temp_TS_lane1);
-
-			$display("[ELEC MONITOR]the value of TS1_gen2_3_lane0 is %p",temp_TS_lane0);
-			//$display("[ELEC MONITOR]the value of TS1_gen2_3_lane1 is %p",env_cfg_mem.TS1_gen23_lane1);
 			
 		case(speed)
 		   gen2:begin
-			$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p",env_cfg_mem.TS1_gen23_lane0);
 			///////////////////generate 32TS1 FOR GEN2///////////////////////////
 			repeat(32)begin
-				correct_TS1_lane0.push_back(1'b1);
-				correct_TS1_lane1.push_back(1'b1);
-				correct_TS1_lane0.push_back(1'b0);
-				correct_TS1_lane1.push_back(1'b0);
+			correct_TS1_lane0.push_back(1'b1);
+			correct_TS1_lane1.push_back(1'b1);
+			correct_TS1_lane0.push_back(1'b0);
+			correct_TS1_lane1.push_back(1'b0);
 			foreach(temp_TS_lane0[i])begin	
 			correct_TS1_lane0.push_back(temp_TS_lane0[i]);
 			correct_TS1_lane1.push_back(temp_TS_lane1[i]);
@@ -143,12 +139,11 @@ TS1_gen2_3:
 				recieved_TS_lane0.push_back(ELEC_vif.lane_0_tx);
 				recieved_TS_lane1.push_back(ELEC_vif.lane_1_tx);
 				if(correct_TS1_lane0.size()==recieved_TS_lane0.size())begin
-					//$display("[ELEC MONITOR]the value of recieved_TS_lane0 is %p",recieved_TS_lane0);
 				if((recieved_TS_lane0 ==correct_TS1_lane0)&&(recieved_TS_lane1 ==correct_TS1_lane1))begin
 					$display("[ELEC MONITOR] ****************TS1 IS CORRECT ON GEN2****************");
-					env_cfg_mem.TS1_gen23_lane0=recieved_TS_lane0[0:135];
-					env_cfg_mem.TS1_gen23_lane1=recieved_TS_lane1[0:135];
-					//$stop;
+					env_cfg_mem.TS1_gen23_lane0=correct_TS1_lane0[0:65];
+					env_cfg_mem.TS1_gen23_lane1=correct_TS1_lane1[0:65];
+					
 					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 					mon_2_Sboard_trans.phase=3'd4;
 					mon_2_Sboard_trans.gen_speed=gen2;
@@ -174,8 +169,8 @@ TS1_gen2_3:
 					end
 				
 		    end
-			    $display("[ELEC MONITOR] the size of correct_TS1_lane0 is %0d for GEN2",correct_TS1_lane0.size());
-				$display("[ELEC MONITOR] the size of correct_TS1_lane1 is %0d for GEN2",correct_TS1_lane1.size());
+			    //$display("[ELEC MONITOR] the size of correct_TS1_lane0 is %0d for GEN2",correct_TS1_lane0.size());
+				//$display("[ELEC MONITOR] the size of correct_TS1_lane1 is %0d for GEN2",correct_TS1_lane1.size());
 
 		//////////////////delete the recieved TS////////////////////////
 			recieved_TS_lane0.delete();
@@ -202,7 +197,7 @@ gen3:begin
 					end
 				end
 			end
-			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS1_lane0);
+			//$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS1_lane0);
 			/////////////////////////////////////////////////////
 			while(1)    
 		       begin                                                 
@@ -214,6 +209,10 @@ gen3:begin
 					$display("[ELEC MONITOR] ****************TS1 IS CORRECT ON GEN3****************");
 					env_cfg_mem.TS1_gen23_lane0=recieved_TS_lane0[0:131];
 					env_cfg_mem.TS1_gen23_lane1=recieved_TS_lane1[0:131];
+
+					if((env_cfg_mem.TS1_gen23_lane0==recieved_TS_lane0[0:131]) && (env_cfg_mem.TS1_gen23_lane1==recieved_TS_lane1[0:131]))begin
+					$display("[ELEC MONITOR] ****************TS1 IS CORRECT ON GEN3 YA NEGN****************");
+					end
 					$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane0,env_cfg_mem.TS1_gen23_lane0.size());
 					$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane1 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane1,env_cfg_mem.TS1_gen23_lane0.size());
 					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
@@ -260,6 +259,7 @@ begin
 				temp_TS_lane1.push_back(TS2_gen2_3_lane1[i]);
 			end
 			$display("[ELEC MONITOR]the value of temp_TS_lane0 is %p",temp_TS_lane0);
+			//$stop;
 			reverse_8bits_in_Gen4(temp_TS_lane0);
 			reverse_8bits_in_Gen4(temp_TS_lane1);
 
@@ -278,6 +278,7 @@ begin
 
 			end
 			$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p",env_cfg_mem.TS2_gen23_lane0);
+			
 			///////////////////generate 16TS2 FOR GEN2///////////////////////////
 			repeat(16)begin
 				correct_TS2_lane0.push_back(1'b1);
@@ -325,8 +326,8 @@ begin
 					end
 				
 		    end
-			    $display("[ELEC MONITOR] the size of correct_TS1_lane0 is %0d for GEN2",correct_TS1_lane0.size());
-				$display("[ELEC MONITOR] the size of correct_TS1_lane1 is %0d for GEN2",correct_TS1_lane1.size());
+			    //$display("[ELEC MONITOR] the size of correct_TS1_lane0 is %0d for GEN2",correct_TS1_lane0.size());
+				//$display("[ELEC MONITOR] the size of correct_TS1_lane1 is %0d for GEN2",correct_TS1_lane1.size());
 
 		//////////////////delete the recieved TS////////////////////////
 			recieved_TS_lane0.delete();
@@ -334,22 +335,6 @@ begin
 		end
 	gen3:
 	begin
-		///////////////////generate 2TS2 FOR GEN3 in arow///////////////////////////
-			
-				env_cfg_mem.TS2_gen23_lane0.push_back(1'b1);
-				env_cfg_mem.TS2_gen23_lane1.push_back(1'b1);
-				env_cfg_mem.TS2_gen23_lane0.push_back(1'b0);
-				env_cfg_mem.TS2_gen23_lane1.push_back(1'b0);
-				env_cfg_mem.TS2_gen23_lane0.push_back(1'b1);
-				env_cfg_mem.TS2_gen23_lane1.push_back(1'b1);
-				env_cfg_mem.TS2_gen23_lane0.push_back(1'b0);
-				env_cfg_mem.TS2_gen23_lane1.push_back(1'b0);
-				repeat(2)begin
-				foreach(temp_TS_lane0[i])begin	
-				env_cfg_mem.TS2_gen23_lane0.push_back(temp_TS_lane0[i]);
-				env_cfg_mem.TS2_gen23_lane1.push_back(temp_TS_lane1[i]);
-				end
-				end
  			///////////////////generate TS FOR GEN3///////////////////////////
 			//$display("[ELEC MONITOR]the value of correct_TS1_lane0 before is %p",correct_TS1_lane0);
 			repeat(4)begin
@@ -368,7 +353,9 @@ begin
 					end
 				end
 			end
-			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p and size %0d",correct_TS1_lane0,correct_TS1_lane0.size());
+			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p and size %0d",correct_TS2_lane0,correct_TS2_lane0.size());
+			$display("[ELEC MONITOR]the value of correct_TS1_lane1 is %p and size %0d",correct_TS2_lane1,correct_TS2_lane1.size());
+			
 			/////////////////////////////////////////////////////
 		while(1)    
 		       begin                                                 
@@ -377,9 +364,12 @@ begin
 				recieved_TS_lane1.push_back(ELEC_vif.lane_1_tx);
 				if(correct_TS2_lane0.size()==recieved_TS_lane0.size())begin
 				if((recieved_TS_lane0 ==correct_TS2_lane0)&&(recieved_TS_lane1 ==correct_TS2_lane1))begin
-					
 					$display("[ELEC MONITOR] ****************TS2 IS CORRECT ON GEN3****************");
-					
+					env_cfg_mem.TS2_gen23_lane0=recieved_TS_lane0[0:131];
+					env_cfg_mem.TS2_gen23_lane1=recieved_TS_lane1[0:131];
+					$display("[ELEC MONITOR]env_cfg_mem.TS2_gen23_lane0 =%p",env_cfg_mem.TS2_gen23_lane0);
+					$display("[ELEC MONITOR]env_cfg_mem.TS2_gen23_lane1 =%p",env_cfg_mem.TS2_gen23_lane1);
+					//$stop;
 					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 					mon_2_Sboard_trans.phase=3'd4;
 					mon_2_Sboard_trans.gen_speed=gen3;
@@ -502,8 +492,8 @@ task electrical_layer_monitor::recieved_SLOS2_gen23(input GEN speed);
 					end
 		end
 
-	$display("the size of recieved_SLOS2_lane0 is %0d for GEN3",recieved_SLOS2_lane0.size());
-	$display("the size of recieved_SLOS2_lane1 is %0d for GEN3",recieved_SLOS2_lane1.size());
+	//$display("the size of recieved_SLOS2_lane0 is %0d for GEN3",recieved_SLOS2_lane0.size());
+	//$display("the size of recieved_SLOS2_lane1 is %0d for GEN3",recieved_SLOS2_lane1.size());
 	end
 endtask:recieved_SLOS2_gen23
 
@@ -728,10 +718,10 @@ i++;
 end
 
 ////////////////////////////////////////////// 
-	$display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p and size %0d ",recieved_TS1_lane0[0:31],recieved_TS1_lane0.size());
+	/*$display("[ELEC MONITOR]the value of recieved_TS1_lane0 on lane0 is %p and size %0d ",recieved_TS1_lane0[0:31],recieved_TS1_lane0.size());
 	$display("[ELEC MONITOR]the value of TS1_total_lane0    on lane0 is %p and size %0d",TS1_total_lane0[0:31],TS1_total_lane0.size());
 	$display("[ELEC MONITOR]the value of recieved_TS1_lane1 on lane0 is %p and size %0d",recieved_TS1_lane1[0:31],recieved_TS1_lane1.size());
-	$display("[ELEC MONITOR]the value of TS1_total_lane1    on lane0 is %p and size %0d",TS1_total_lane1[0:31],TS1_total_lane1.size());
+	$display("[ELEC MONITOR]the value of TS1_total_lane1    on lane0 is %p and size %0d",TS1_total_lane1[0:31],TS1_total_lane1.size());*/
 /////////////////////////////////////
 
 foreach(TS1_total_lane0[i])
@@ -983,16 +973,18 @@ case (speed)
 			$display("[ELEC MONITOR]AT_rsp transaction is correct");
 			mon_2_Sboard_trans.transaction_type=AT_rsp;
 			mon_2_Sboard_trans.read_write=recieved_transaction_data_symb[3][1];
-
-			mon_2_Sboard_trans.crc_received[15:8] = {<<{recieved_transaction_data_symb[8][8:1]}}; //check crc on scoreboard
-			mon_2_Sboard_trans.crc_received[7:0] = {<<{recieved_transaction_data_symb[7][8:1]}};
+			
 			mon_2_Sboard_trans.address = {<<{recieved_transaction_data_symb[2][8:1]}};
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
+			mon_2_Sboard_trans.crc_received[7:0] = {<<{recieved_transaction_data_symb[7][8:1]}};
+			mon_2_Sboard_trans.crc_received[15:8] = {<<{recieved_transaction_data_symb[8][8:1]}}; //check crc on scoreboard
 			mon_2_Sboard_trans.phase=3'd3;  
 			mon_2_Sboard_trans.cmd_rsp_data={{<<{q[6][8:1]}},{<<{q[5][8:1]}},{<<{q[4][8:1]}}};
-
+			$display("[ELEC MONITOR]THE VALUE OF CRC IS =%b",mon_2_Sboard_trans.crc_received);
+            $display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%b ",mon_2_Sboard_trans.cmd_rsp_data);
+			$display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%p ",mon_2_Sboard_trans);
 			env_cfg_mem.done = 1;
-			
+			//$stop;
 			end
 		else
 		begin
@@ -1024,16 +1016,17 @@ case (speed)
 						end*/
 						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane0}};
 						mon_2_Sboard_trans.lane=lane_0;
-						mon_2_Sboard_trans.phase=6;
-						$display("[ELEC MONITOR]the value of data from %p : %d",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
+						mon_2_Sboard_trans.phase=5; //Karim 10/6 ////////////////////////////////////////////////////
+						$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
 						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 						
-						elec_mon_2_Sboard=new();
+						mon_2_Sboard_trans=new(); //Kariiiiiiiiiiiim 10/6 /////////////////////////////////////////
 						
 						mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane1}};
 						mon_2_Sboard_trans.lane=lane_1;
-						mon_2_Sboard_trans.phase=6;
-						$display("[ELEC MONITOR]the value of data from %p : %d",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
+						mon_2_Sboard_trans.phase=5; //Karim 10/6 ////////////////////////////////////////////////////
+
+						$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
 						elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 					
 						$display("[ELEC MONITOR]down to sboard");
@@ -1132,18 +1125,21 @@ case (speed)
 						begin
 							//$display("[ELEC MONITOR]the value of recieved_transaction_byte=%p",recieved_transaction_byte);
 							recieved_transaction_data_symb.push_back({>>{recieved_transaction_byte}});  //check the corectness of the data.......
+							if(recieved_transaction_data_symb.size()==4)
+							$display("[ELEC MONITOR]{%0t}time for receive cmd rsp",$time);
 							recieved_transaction_byte.delete();
 							///////////////////////////////////////////////////////////////////////////////////////////
 							if(recieved_transaction_data_symb.size()==11 /*&&recieved_transaction_data_symb[10]=={<<{1'b1,ETX,1'b0}}*/) 
 							 begin
 								$display("[ELEC MONITOR]reiceved AT_rsp with size of AT 11 symbols");
+								$display("[ELEC MONITOR]the value of AT_rsp with size of AT 11 symbols =%p",recieved_transaction_data_symb);
 								break;
 							 end
 							else if(recieved_transaction_data_symb.size()>11)
 							 begin
 								$error("[ELEC MONITOR]the size of AT rsp transaction is more than 11 symbols");
 							 end
-
+    
 						end
 					end
 				     check_AT_transaction(recieved_transaction_data_symb,AT_rsp);
@@ -1274,17 +1270,17 @@ case (speed)
             gen2: begin
 				// @(negedge ELEC_vif.gen2_lane_clk);
                 get_transport_data();
-               
+                
             end
             gen3: begin
 				@(negedge ELEC_vif.gen3_lane_clk);
                  get_transport_data();
-                
+                 
             end
             gen4: begin
 				 get_transport_data();
 				 @(negedge ELEC_vif.gen4_lane_clk);
-               
+                 
             end
           endcase
 		  end

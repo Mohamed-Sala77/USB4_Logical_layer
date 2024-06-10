@@ -42,8 +42,8 @@
   //parameter   [63:0]      TS1_gen2_3_lane0= {5'd0,3'd1,lane_number_0,32'd0,TSID_TS1,SCR};//64'h01000000040098f2 ;//
   parameter   [63:0]      TS1_gen2_3_lane1=64'h01010000040098f2;// {5'd0,3'd1,lane_number_1,32'd0,TSID_TS1,SCR};////
   parameter   [63:0]      TS1_gen2_3_lane0=64'h01000000040098f2;
-  parameter   [63:0]      TS2_gen2_3_lane0=64'h01000000040064f2 ;//{5'd0,3'd1,lane_number_0,32'd0,TSID_TS2,SCR};//64'h01000000040064f2 ;//
-  parameter   [63:0]      TS2_gen2_3_lane1=64'h01010000040064f2 ;//{5'd0,3'd1,lane_number_1,32'd0,TSID_TS2,SCR};//64'h01010000040064f2;//
+  parameter   [63:0]      TS2_gen2_3_lane0=64'h01000000040064f2;//{5'd0,3'd1,lane_number_0,32'd0,TSID_TS2,SCR};//64'h01000000040064f2 ;//
+  parameter   [63:0]      TS2_gen2_3_lane1=64'h01010000040064f2;//{5'd0,3'd1,lane_number_1,32'd0,TSID_TS2,SCR};//64'h01010000040064f2;//
 
 	//Parameters for TS symbols for Gen 4
   parameter        CURSOR = 12'h07E;

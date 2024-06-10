@@ -5,12 +5,12 @@ class up_transport_scoreboard;
 
   upper_layer_tr mod_tr, mon_tr; 
 
-  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr);
+  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr, upper_layer_tr mon_tr);
     this.UL_mod_scr = UL_mod_scr;
     this.UL_mon_scr = UL_mon_scr;
-    mod_tr = new();
-    mon_tr = new();
-
+    //mod_tr = new();
+    //mon_tr = new();
+    this.mon_tr = mon_tr;
   endfunction: new
 
   task run_scr();
@@ -18,10 +18,10 @@ class up_transport_scoreboard;
     forever begin
       // Get transactions from both mailboxes
       UL_mod_scr.get(mod_tr);
-      $display("\n[Scoreboard Upper layer From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
+      $display("\n[Upper Layer Scoreboard From Model] at time (%t) is --> %p", $time, mod_tr.convert2string());
       
       UL_mon_scr.get(mon_tr);
-      $display("\n[Scoreboard Upper layer From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
+      $display("\n[Upper Layer Scoreboard From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
       
       //* we campare here first the data from lane 0 then lane 1
       

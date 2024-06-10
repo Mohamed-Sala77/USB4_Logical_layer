@@ -10,14 +10,15 @@ class config_scoreboard;
     event next_stimulus;
 
     // Constructor
-    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox , event next_stimulus, env_cfg_class env_cfg_mem);
+    function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox ,
+                           event next_stimulus, env_cfg_class env_cfg_mem,config_transaction mon_trans);
         this.ref_mbox = ref_mbox;
         this.mon_mbox = mon_mbox;
         this.next_stimulus = next_stimulus;
         this.env_cfg_mem=env_cfg_mem;
-        ref_trans = new();
-        mon_trans = new();
-
+        //ref_trans = new();
+        //mon_trans = new();
+        this.mon_trans=mon_trans;
     endfunction
 
     // Task to compare transactions

@@ -475,6 +475,3 @@ always @(posedge sb_clk or negedge rst) begin
 
 endmodule
 `resetall	
-
-
-

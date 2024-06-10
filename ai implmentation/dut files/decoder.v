@@ -80,7 +80,7 @@ always @(posedge enc_clk or negedge rst) begin
             if (mem_index==0) begin
                     for (i = 0; i < 16; i = i + 1) begin
                         mem_0[i] <= lane_0_rx_enc[i*8 +: 8];
-                         mem_1[i] <= lane_0_rx_enc[i*8 +: 8];
+                         mem_1[i] <= lane_1_rx_enc[i*8 +: 8];
                     end
                   end
                 
@@ -158,14 +158,14 @@ always @(posedge enc_clk or negedge rst) begin
                 mem_0 [16] <= lane_0_rx_enc[1 : 0];
                 
                 
-                mem_1 [0] <= lane_0_rx_enc[9 : 2];
-                mem_1 [1] <= lane_0_rx_enc[17 : 10];
-                mem_1 [2] <= lane_0_rx_enc[25 : 18];
-                mem_1 [3] <= lane_0_rx_enc[33 : 26];
-                mem_1 [4] <= lane_0_rx_enc[41 : 34];
-                mem_1 [5] <= lane_0_rx_enc[49 : 42];
-                mem_1 [6] <= lane_0_rx_enc[57 : 50];
-                mem_1 [7] <= lane_0_rx_enc[65 : 58];
+                mem_1 [0] <= lane_1_rx_enc[9 : 2];
+                mem_1 [1] <= lane_1_rx_enc[17 : 10];
+                mem_1 [2] <= lane_1_rx_enc[25 : 18];
+                mem_1 [3] <= lane_1_rx_enc[33 : 26];
+                mem_1 [4] <= lane_1_rx_enc[41 : 34];
+                mem_1 [5] <= lane_1_rx_enc[49 : 42];
+                mem_1 [6] <= lane_1_rx_enc[57 : 50];
+                mem_1 [7] <= lane_1_rx_enc[65 : 58];
                 mem_1 [16] <= lane_1_rx_enc[1 : 0];
 
 end 	

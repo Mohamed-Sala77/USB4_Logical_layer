@@ -34,9 +34,11 @@ class elec_layer_tr;
 	
 	LANE lane;
 
-	//constraints
-    constraint elec_2_transport_data{electrical_to_transport dist {0:=10 , [33000:40000]:=80, 65535:=10};}
 
+
+	//constraints
+    constraint elec_2_transport_data{electrical_to_transport dist {0:=30 , [33000:40000]:/40, 65535:=30};}
+   
 
 
 	

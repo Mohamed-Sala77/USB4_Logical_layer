@@ -38,4 +38,3 @@ always @(posedge fsm_clk or negedge rst) begin
 end
 
 endmodule
-

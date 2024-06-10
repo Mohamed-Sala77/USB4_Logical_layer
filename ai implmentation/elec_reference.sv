@@ -81,6 +81,7 @@ class elec_ref_AI;
                   SLOS1,SLOS2,TS1_gen2_3,TS2_gen2_3: 
                   begin
                       elec_layer_inst.tr_os = ord_set;
+                      elec_layer_inst.lane = both; //both lanes
                       elec_S.put(elec_layer_inst);
                    end
 
@@ -89,6 +90,7 @@ class elec_ref_AI;
                    begin
                       elec_layer_inst.tr_os = ord_set;
                       elec_layer_inst.gen_speed = gen4;
+                      elec_layer_inst.lane = both; //both lanes
                       elec_S.put(elec_layer_inst); 
                    end
 
@@ -114,10 +116,15 @@ class elec_ref_AI;
             elec_layer_inst = new();
             upper_layer_inst = new();
             upper_to_elec.get(upper_layer_inst);
+           // $stop;
             if (upper_layer_inst.phase == 5) begin
               elec_layer_inst.transport_to_electrical = upper_layer_inst.T_Data;
               elec_S.put(elec_layer_inst);
+              elec_layer_inst = new();
+              elec_layer_inst.transport_to_electrical = upper_layer_inst.T_Data_1;
+              elec_S.put(elec_layer_inst);
             end
+            //$stop;
           end
           
         end

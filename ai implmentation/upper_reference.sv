@@ -28,10 +28,13 @@ class upper_ref_AI;
                 begin
                     upper_layer_tr_inst = new(); // New instance at the beginning of each loop
                     upper_G.get(upper_layer_tr_inst); // Get operation before the if condition
+                    $display("DATA OBTAINED from transport layer %p", upper_layer_tr_inst);
+                    //$stop;
                     //$display("DATA OBTAINED from transport layer");
                     //$display("T_DATA = %0D, phase = %0D",upper_layer_tr_inst.T_Data, upper_layer_tr_inst.phase);
                     if (upper_layer_tr_inst.phase == 5) 
                     begin
+                        //$stop;
                         upper_to_elec.put(upper_layer_tr_inst); // Put operation inside the if condition
                     end
                 end

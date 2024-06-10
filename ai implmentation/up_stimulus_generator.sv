@@ -37,6 +37,8 @@ class up_transport_generator;
             // Generate random variables for the transaction
             void'(tr.randomize(T_Data)) ;
             void'(tr.randomize(T_Data_1)) ;
+
+            tr.phase = 5;
             
             
             $display("[UPPER GENERATOR] data sent to lane 0: %0d      at %t", tr.T_Data, $time);

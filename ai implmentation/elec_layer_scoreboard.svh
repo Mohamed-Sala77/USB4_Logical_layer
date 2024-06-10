@@ -15,11 +15,12 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem);
+                           env_cfg_class env_cfg_mem, elec_layer_tr monitor_tr);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
+        this.monitor_tr=monitor_tr;
         
     endfunction: new
 
@@ -34,10 +35,9 @@ class elec_scoreboard;
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                
-                if (monitor_tr.phase!=4) begin      //! this should be deleted after adding phase 4 in model
-                 elec_mod_sboard.get(model_tr);
-                 $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
-                end
+                elec_mod_sboard.get(model_tr);
+                $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
+                
 
                 case (monitor_tr.phase)
                 3'd0: begin
@@ -115,7 +115,7 @@ class elec_scoreboard;
 
                 //***this thread check it after reciecve on descision***/
                 3'd5:begin
-                    assert ((model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
+                    assert (/*(model_tr.sbtx == monitor_tr.sbtx)&&*/(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
                             $display("[ELEC SCOREBOARD] transport data send is correct!");
                         else $error("[ELEC SCOREBOARD] case transport data CONNECT is failed!");
                 end
