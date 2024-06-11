@@ -133,6 +133,37 @@ gen3:begin
     $display("[virtual_sequence]:waiting for cl0_s event");
     @(vif.cl0_s);         // transport is ready to send and recieve data  
     $display("[virtual_sequence]:cl0_s event triggered");
+
+      //****** sending from electrical to transport layer*******//
+  fork
+
+    begin
+      virtual_elec_gen.send_data(speed,num);
+    end
+
+    begin
+        // start receiving data on the transport layer
+        vif.enable_receive = 1'b1;
+    end
+
+    join
+      
+     repeat(1) @(negedge  vif.gen3_fsm_clk);
+    
+      vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
+   
+   ////////////////////////////////////////////////////////////////
+     //**** sending from transport to electrical layer****//
+        // start sending data from the transport layer
+        vif.enable_sending = 1'b1;
+        $display("[virtual_sequence]:enable_sending data from transport layer");
+         // Send data num times
+            virtual_up_gen.run(num);
+            @(negedge  vif.gen3_fsm_clk);
+
+
+
+
     $stop;
 end
 gen2:begin

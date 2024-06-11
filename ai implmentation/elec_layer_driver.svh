@@ -782,6 +782,12 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
    int i=0;                                       
    ELEC_vif.sbrx <=1; 
    ELEC_vif.data_incoming <=1;
+
+   elec_to_trans_lane_0.push_back(data_2_DUT[7:0]);
+  elec_to_trans_lane_1.push_back(data_2_DUT[15:8]);
+  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 0 %b",data_2_DUT[7:0]);  
+  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 1 %b",data_2_DUT[15:8]);
+  
    case(gen_speed)
      gen2: begin
       if (elec_to_trans_lane_0.size() == 8)
@@ -816,13 +822,13 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
       if (elec_to_trans_lane_0.size() == 16)
       begin
 
-        
+        //$stop;
         $display("[ELEC DRIVER] elec_to_trans_lane_0: %p",elec_to_trans_lane_0);  
         $display("[ELEC DRIVER] elec_to_trans_lane_1: %p", elec_to_trans_lane_1);
 
         @(negedge ELEC_vif.gen3_lane_clk);
         
-        env_cfg_mem.Data_flag = 1; ////////////////////////////////////////////////////////////////
+        //env_cfg_mem.Data_flag = 1; ////////////////////////////////////////////////////////////////
 
         ELEC_vif.lane_0_rx = 1'b0;
         ELEC_vif.lane_1_rx = 1'b0;
