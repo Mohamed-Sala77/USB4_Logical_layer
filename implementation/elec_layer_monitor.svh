@@ -18,7 +18,6 @@
 		event sbtx_high_recieved;
 		event elec_AT_cmd_received; // to Trigger the appropriate AT response when AT CMD is received
 		*/
-
 		logic [65:0] expected;
 		// Flags
 		logic sbtx_high_flag = 0; // to indicate that sbtx high was received

@@ -78,7 +78,7 @@ task run_phase5();
             if(!E_transaction.sbrx)      
             begin
              // E_transaction.phase = 1;         //! should we go to phase 1 or 2 
-                //$display ("we are in sbrx =0 case action");
+                $display ("we are in sbrx =0 case action");
               E_transaction.sbtx = 0;         
               elec_ag_Tx.put(E_transaction) ;
                     E_transaction = new();
@@ -86,7 +86,7 @@ task run_phase5();
             end
             else if (C_transaction.lane_disable && (E_transaction.phase == 5) ) 
             begin       
-                //$display ("we are in disable case action");
+                $display ("we are in disable case action");
                E_transaction.sbtx  = 0;
                elec_ag_Tx.put(E_transaction) ;
                                    E_transaction = new();
@@ -94,7 +94,7 @@ task run_phase5();
              end
              else if (E_transaction.transaction_type==3'b001 && E_transaction.phase == 5)    // L_T fall  come
              begin
-                //$display ("we are in LT_fall case action");
+                $display ("we are in LT_fall case action");
                 E_transaction.sbtx = 1;         
                 elec_ag_Tx.put(E_transaction) ;
                 E_transaction = new();

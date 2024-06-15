@@ -366,7 +366,7 @@ endtask
         if(!E_transaction.sbrx)      
                 begin
                  // E_transaction.phase = 1;         //! should we go to phase 1 or 2 
-                    //$display ("we are in sbrx =0 case action");
+                    $display ("we are in sbrx =0 case action");
                   E_transaction.sbtx = 0;         
                   elec_ag_Tx.put(E_transaction) ;
                     E_transaction = new();
@@ -374,7 +374,7 @@ endtask
                 end
                 else if (C_transaction.lane_disable && (E_transaction.phase == 4) ) 
                 begin       
-                    //$display ("we are in disable case action");
+                    $display ("we are in disable case action");
                    E_transaction.sbtx  = 0;
                    elec_ag_Tx.put(E_transaction) ;
                     E_transaction = new();

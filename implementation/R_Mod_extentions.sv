@@ -199,6 +199,7 @@ task  get_values ();
 
 
     int_ag.get(i_transaction);
+    $display ("at walid function i_transaction %p",i_transaction);
     ////$display ("[wellooooooo]i_transaction = %0d",i_transaction.At_sel);
     ////$display ("[wellooooooo]i_transaction.tran_en = %0d",i_transaction.tran_en);
    if (i_transaction.gen_res==0)      //  genrate command only for phase 3 
@@ -219,7 +220,6 @@ task  get_values ();
           // for generate response 
             trans_type(.sel(i_transaction.At_sel),.tran_en(1));
             generate_AT();
-            $stop;
           
             
         end

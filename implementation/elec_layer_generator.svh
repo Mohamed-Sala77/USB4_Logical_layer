@@ -103,10 +103,7 @@
 		transaction.error = wrong; 
 		elec_gen_drv.put(transaction); // Sending transaction to the Driver
 
-		if (wrong != short_SBRX)
-		begin
-			//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
-		end
+		
 
 		$display("[ELEC GENERATOR] SENDING phase 2 SBRX low to DISCONNECT");
 		@(elec_gen_drv_done); // wait for the driver to send SBRX high for tConnectRx 
@@ -130,8 +127,8 @@
 					transaction.sbrx = 1; // for the model only
 					$display("[ELEC GENERATOR] sending [LT_FALL] Transaction");
 					elec_gen_drv.put(transaction); // Sending transaction to the Driver
-					elec_gen_mod.put(transaction); // Sending transaction to the Reference model
-
+					//elec_gen_mod.put(transaction); // Sending transaction to the Reference model
+					//* we will send only to dut since model need to get phase =2 only by sbrx_high function
 					@(elec_gen_drv_done);
 				end
 

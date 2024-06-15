@@ -124,7 +124,7 @@ module top;
 		test = new (UL_if, elec_if, config_if);
 		reset();
 		//test.run("normal_scenario_gen_4");
-		test.run("Late_AT_rsp");
+		test.run("LT_fall_gen_4");
 		
 	end
 

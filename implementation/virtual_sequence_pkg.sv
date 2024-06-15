@@ -655,10 +655,10 @@
 			v_upper_layer_generator.disable_monitor(gen4);
 				$display("[Virtual Sequence] Monitor disabled: %t", $time);
 
+			//*! only one of the following two lines be active 
+			//v_elec_layer_generator.send_transaction(LT_fall);  // Testing LT Fall 
 
-			v_elec_layer_generator.send_transaction(LT_fall);  // Testing LT Fall 
-
-			v_elec_layer_generator.sbrx_low(); // To lower sbrx
+			v_elec_layer_generator.sbrx_low(); // To lower sbrx 
 
 		
 			//$stop();
@@ -670,7 +670,9 @@
 			v_elec_layer_generator.send_transaction(AT_rsp,3,0,8'd78,7'd3,24'h053303);  
 			v_elec_layer_generator.send_transaction(AT_cmd,3,0,8'd78,7'd3,24'h000000); 
 
+			$stop;
 			
+
 			// // Phase 4
 			v_elec_layer_generator.phase_force(4, gen4);
 			v_upper_layer_generator.generation_assignment(gen4);

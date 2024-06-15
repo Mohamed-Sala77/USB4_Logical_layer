@@ -31,8 +31,8 @@ class phase3 extends primary_steps;
         // task to get transactions from the mailboxes
         task  get_transactions();
             elec_ag_Rx.get(E_transaction);
+            $display("in phase 3 E_transaction = %p",E_transaction);
             mem_ag.peek(m_transaction);
-            //$display("m_transaction = %p",m_transaction);
             config_ag_Rx.try_get(C_transaction);
             //$display ("in phase3 E_transaction = %p",E_transaction);
             ////$display ("in phase3 C_transaction = %p",C_transaction);
@@ -50,11 +50,15 @@ class phase3 extends primary_steps;
             begin
                 i_transaction.sb_en = 0;        // turn off sideband
             end
-        //i_transaction.mem_gen = 1;       //  sb work as a genrator
-        int_ag.put(i_transaction) ;         // socend put in the mailbox 
-        i_transaction = new();
-
-        if(E_transaction.transaction_type!=AT_rsp)  extention.get_values ();
+            
+            if(E_transaction.transaction_type!=AT_rsp) 
+            begin 
+                int_ag.put(i_transaction) ;         // socend put in the mailbox 
+                //display the data sent 
+                $display ("data sent to walid i_transaction = %p",i_transaction); 
+                i_transaction = new();
+                extention.get_values ();
+            end
 
         endtask
  
@@ -125,7 +129,7 @@ class phase3 extends primary_steps;
             end
 
             int_ag.put(i_transaction) ;         // first put in the mailbox 
-            //$display ("send_command done . i_transaction = %p",i_transaction);
+            $display ("send_command done . i_transaction = %p",i_transaction);
             i_transaction = new();
 
             extention.get_values ();
@@ -146,7 +150,7 @@ class phase3 extends primary_steps;
                 // ----------------------- handle actions ----------------------
                 if(!E_transaction.sbrx)      
                 begin
-                    //$display ("we are in sbrx =0 case action");
+                    $display ("we are in sbrx =0 case action");
                     // E_transaction.phase = 1;         //! should we go to phase 1 or 2 
                     E_transaction.sbtx = 0;         
                     elec_ag_Tx.put(E_transaction) ;
@@ -154,7 +158,7 @@ class phase3 extends primary_steps;
                 end
                 else if (C_transaction.lane_disable && (E_transaction.phase == 3) ) 
                 begin       
-                    //$display ("we are in lane disable case action");
+                    $display ("we are in lane disable case action");
                    E_transaction.sbtx  = 0;
                    elec_ag_Tx.put(E_transaction) ;
                    E_transaction = new();
