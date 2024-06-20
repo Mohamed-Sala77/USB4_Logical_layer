@@ -785,8 +785,8 @@ task electrical_layer_driver:: send_data_2_DUT(input logic[15:0] data_2_DUT,
 
    elec_to_trans_lane_0.push_back(data_2_DUT[7:0]);
   elec_to_trans_lane_1.push_back(data_2_DUT[15:8]);
-  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 0 %b",data_2_DUT[7:0]);  
-  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 1 %b",data_2_DUT[15:8]);
+  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 0 %h",data_2_DUT[7:0]);  
+  $display("[ELEC DRIVER] Data to be sent to the transport layer on lane 1 %h",data_2_DUT[15:8]);
   
    case(gen_speed)
      gen2: begin

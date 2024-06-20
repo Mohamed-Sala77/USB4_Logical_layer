@@ -135,7 +135,7 @@ gen3:begin
     $display("[virtual_sequence]:cl0_s event triggered");
 
       //****** sending from electrical to transport layer*******//
-  fork
+ /* fork
 
     begin
       virtual_elec_gen.send_data(speed,num);
@@ -150,7 +150,7 @@ gen3:begin
       
      repeat(1) @(negedge  vif.gen3_fsm_clk);
     
-      vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
+      vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out*/
    
    ////////////////////////////////////////////////////////////////
      //**** sending from transport to electrical layer****//
@@ -164,7 +164,7 @@ gen3:begin
 
 
 
-    $stop;
+   // $stop;
 end
 gen2:begin
 
@@ -177,9 +177,11 @@ gen2:begin
         cfg_class.recieved_on_elec_sboard =0;
         virtual_elec_gen.sbrx_after_sbtx_high; // Call the sbrx_after_sbtx_high task
      ///phase 3///
+        virtual_elec_gen.wake_up(3);
+        
         wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
         cfg_class.recieved_on_elec_sboard =0;
-        virtual_elec_gen.wake_up(3);
+        //$display("[virtual_sequence]:waiting for walllooooooooo");
         virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,24'h011303,gen2);  
         virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen2);
         
@@ -196,6 +198,37 @@ gen2:begin
         $display("[virtual_sequence]:waiting for cl0_s event");
         @(vif.cl0_s);         // transport is ready to send and recieve data  
         $display("[virtual_sequence]:cl0_s event triggered"); 
+
+
+        //**** sending from transport to electrical layer****//
+        // start sending data from the transport layer
+        /*vif.enable_sending = 1'b1;
+        $display("[virtual_sequence]:enable_sending data from transport layer");
+         // Send data num times
+            virtual_up_gen.run(num);
+            @(negedge  vif.gen3_fsm_clk);*/
+
+            //****** sending from electrical to transport layer*******//
+            fork
+
+              begin
+                virtual_elec_gen.send_data(speed,num);
+              end
+
+              begin
+                  // start receiving data on the transport layer
+                  vif.enable_receive = 1'b1;
+              end
+
+              join
+                
+              repeat(1) @(negedge  vif.gen3_fsm_clk);
+              
+                vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
+
+
+
+
 end
 default:begin
   ///////////////////////////////gen4////////////////////////
