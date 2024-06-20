@@ -18,6 +18,7 @@ module Ai_top;
 	logic gen2_fsm_clk, gen3_fsm_clk, gen4_fsm_clk;
 	logic SystemReset;
 
+
     parameter num =7 ;  //number of the sending data in phase 5
 
 	parameter Sys_clock_cycle = 1 * 10**6; 
@@ -135,7 +136,7 @@ initial begin
     //-------main test----------//
     //logical_layer_test.run(speed);
     //envo.run(gen4, num);
-    envo.run(gen2,8);
+    envo.run("normal",gen3,16);
 
 end
 

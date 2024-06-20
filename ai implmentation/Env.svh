@@ -136,7 +136,7 @@ class env;
 
 
         // for compare the performance of the dut with the model
-        task run(input GEN speed, input int num);
+        task run(input string scenario, input GEN speed, input int num);
             fork
 
             //**********Run the components**********//
@@ -156,7 +156,7 @@ class env;
                 
 
                 //Virtual Sequence
-                virtual_seq.run(speed,num);
+                virtual_seq.run(scenario,speed,num);
 
                 //ref_model
                 model.run();
