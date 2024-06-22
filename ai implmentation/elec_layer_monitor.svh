@@ -137,7 +137,7 @@ TS1_gen2_3:
 			correct_TS1_lane1.push_back(temp_TS_lane1[i]);
 			end
 			end
-			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS1_lane0);
+			//$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS1_lane0);
 			/////////////////////////////////////////////////////
 			while(1)    
 		       begin                                                 
@@ -219,8 +219,8 @@ gen3:begin
 					if((env_cfg_mem.TS1_gen23_lane0==recieved_TS_lane0[0:131]) && (env_cfg_mem.TS1_gen23_lane1==recieved_TS_lane1[0:131]))begin
 					$display("[ELEC MONITOR] ****************TS1 IS CORRECT ON GEN3 YA NEGN****************");
 					end
-					$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane0,env_cfg_mem.TS1_gen23_lane0.size());
-					$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane1 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane1,env_cfg_mem.TS1_gen23_lane0.size());
+					//$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane0,env_cfg_mem.TS1_gen23_lane0.size());
+					//$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane1 is %p and size is %0d",env_cfg_mem.TS1_gen23_lane1,env_cfg_mem.TS1_gen23_lane0.size());
 					env_cfg_mem.correct_OS=1;   //do that on all first OS on each gen
 					mon_2_Sboard_trans.phase=3'd4;
 					mon_2_Sboard_trans.gen_speed=gen3;
@@ -283,7 +283,7 @@ begin
 				end
 
 			end
-			$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p",env_cfg_mem.TS2_gen23_lane0);
+			//$display("[ELEC MONITOR]the value of env_cfg_mem.TS1_gen23_lane0 is %p",env_cfg_mem.TS2_gen23_lane0);
 			
 			///////////////////generate 16TS2 FOR GEN2///////////////////////////
 			repeat(16)begin
@@ -296,7 +296,7 @@ begin
 			correct_TS2_lane1.push_back(temp_TS_lane1[i]);
 			end
 			end
-			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS2_lane0);
+			//$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p",correct_TS2_lane0);
 		while(1)    
 		       begin                                                 
 			    @(negedge ELEC_vif.gen2_lane_clk);
@@ -359,8 +359,8 @@ begin
 					end
 				end
 			end
-			$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p and size %0d",correct_TS2_lane0,correct_TS2_lane0.size());
-			$display("[ELEC MONITOR]the value of correct_TS1_lane1 is %p and size %0d",correct_TS2_lane1,correct_TS2_lane1.size());
+			//$display("[ELEC MONITOR]the value of correct_TS1_lane0 is %p and size %0d",correct_TS2_lane0,correct_TS2_lane0.size());
+			//$display("[ELEC MONITOR]the value of correct_TS1_lane1 is %p and size %0d",correct_TS2_lane1,correct_TS2_lane1.size());
 			
 			/////////////////////////////////////////////////////
 		while(1)    
@@ -880,10 +880,10 @@ else if(speed==gen2)begin
 	end
 
 end
-$display("SLOS1_Total_With_sync size =%0d and SLOS1_Total_With_sync is= %p",SLOS1_Total_With_sync.size(),SLOS1_Total_With_sync);
+//$display("SLOS1_Total_With_sync size =%0d and SLOS1_Total_With_sync is= %p",SLOS1_Total_With_sync.size(),SLOS1_Total_With_sync);
 //////////////////////////////
 
-$display("the value of recieved_SLOS1_lane1 is =%p",recieved_SLOS1_lane1);
+//$display("the value of recieved_SLOS1_lane1 is =%p",recieved_SLOS1_lane1);
 //----compare----//
 case (speed)
 	gen2:begin
@@ -976,6 +976,7 @@ case (speed)
 			mon_2_Sboard_trans.address = {<<{recieved_transaction_data_symb[2][8:1]}};
 			mon_2_Sboard_trans.len = {<<{recieved_transaction_data_symb[3][8:2]}};
 			mon_2_Sboard_trans.phase=3'd3;
+			elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 			//error warning
 			$display("the value of crc is=%0d",mon_2_Sboard_trans.crc_received);
 			$display("[ELEC MONITOR] the value of mon_2_Sboard_trans %p",mon_2_Sboard_trans.convert2string());
@@ -1000,6 +1001,8 @@ case (speed)
 			$display("[ELEC MONITOR]THE VALUE OF CRC IS =%b",mon_2_Sboard_trans.crc_received);
             $display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%b ",mon_2_Sboard_trans.cmd_rsp_data);
 			$display("[ELEC MONITOR]THE VALUE OF cmd_rsp_data ON AT_RST=%p ",mon_2_Sboard_trans);
+			 elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+			 #1ns;
 			env_cfg_mem.done = 1;
 			//$stop;
 			end
@@ -1010,14 +1013,15 @@ case (speed)
 		end
 	end
 	endcase
-    elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+   
+	
 	//$display("[ELEC MONITOR]MONITOR SENT TO SBOARD");
 	endtask:check_AT_transaction
 
 //task to get the transport data
  task electrical_layer_monitor::get_transport_data();
-                    
-
+                    mon_2_Sboard_trans = new();
+ 
 					case (env_cfg_mem.gen_speed)
 						gen2: begin
 
@@ -1143,6 +1147,7 @@ case (speed)
 						
 						trans_to_ele_lane0.push_back(ELEC_vif.lane_0_tx);
 					    trans_to_ele_lane1.push_back(ELEC_vif.lane_1_tx);
+						//$display("[elec_monitor]trans_to_ele_lane0.size is %p",trans_to_ele_lane0.size);
 						if(trans_to_ele_lane0.size()==8)
 						begin
 							mon_2_Sboard_trans=new();
@@ -1159,9 +1164,11 @@ case (speed)
 							mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane0}};
 							mon_2_Sboard_trans.lane=lane_0;
 							mon_2_Sboard_trans.phase=5;
-							$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
-							elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 							
+							elec_mon_2_Sboard.put(mon_2_Sboard_trans);
+							$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
+							//#10000000;
+							//$stop;
 							mon_2_Sboard_trans=new(); 
 							
 							mon_2_Sboard_trans.transport_to_electrical={>>{trans_to_ele_lane1}};
@@ -1170,7 +1177,7 @@ case (speed)
 
 							$display("[ELEC MONITOR]the value of data from %p : %h",mon_2_Sboard_trans.lane ,mon_2_Sboard_trans.transport_to_electrical);
 							elec_mon_2_Sboard.put(mon_2_Sboard_trans);
-						
+						    
 							$display("[ELEC MONITOR]down to sboard");
 							trans_to_ele_lane0.delete();
 							trans_to_ele_lane1.delete();
@@ -1381,12 +1388,15 @@ case (speed)
           3'd6: //case to disconnect
           begin
 			@(negedge ELEC_vif.sbtx)
-			#(tDisconnectTx);
-			if(!ELEC_vif.sbtx && !ELEC_vif.lane_0_tx && !ELEC_vif.lane_1_tx && !ELEC_vif.enable_rs)
+			#(tDisconnectRx);
+			$display("catch  %b  %b  %b",ELEC_vif.sbtx,!ELEC_vif.lane_0_tx,ELEC_vif.enable_rs);
+			$stop;
+			if(ELEC_vif.sbtx && !ELEC_vif.lane_0_tx && !ELEC_vif.lane_1_tx && ELEC_vif.enable_rs)
 			begin
 				$display("[ELEC MONITOR]DISCONNECT IS SUCCEESS");
-				mon_2_Sboard_trans.sbtx='b0;
+				mon_2_Sboard_trans.sbtx='b1;
                 mon_2_Sboard_trans.transport_to_electrical='b0;
+				//mon_2_Sboard_trans.phase='b2;
 				
 				elec_mon_2_Sboard.put(mon_2_Sboard_trans);
 			end
@@ -1435,11 +1445,11 @@ case (speed)
 				begin
 					repeat(1) @(negedge ELEC_vif.gen4_lane_clk);
 
-				 	//get_transport_data();
+				 	get_transport_data();
                 end
 				
 
-				 get_transport_data();
+				// get_transport_data();
                  
             end
           endcase

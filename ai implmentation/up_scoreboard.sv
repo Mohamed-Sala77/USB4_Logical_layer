@@ -5,12 +5,18 @@ class up_transport_scoreboard;
 
   upper_layer_tr mod_tr, mon_tr; 
 
-  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr, upper_layer_tr mon_tr);
+  env_cfg_class    env_cfg;
+  event            up_trigger_event;
+
+  function new(mailbox #(upper_layer_tr) UL_mod_scr, mailbox #(upper_layer_tr) UL_mon_scr, 
+                         upper_layer_tr mon_tr ,env_cfg_class env_cfg,event up_trigger_event);
     this.UL_mod_scr = UL_mod_scr;
     this.UL_mon_scr = UL_mon_scr;
+    this.env_cfg =env_cfg;
     //mod_tr = new();
     //mon_tr = new();
     this.mon_tr = mon_tr;
+    this.up_trigger_event = up_trigger_event;
   endfunction: new
 
   task run_scr();
@@ -22,7 +28,9 @@ class up_transport_scoreboard;
       
       UL_mon_scr.get(mon_tr);
       $display("\n[Upper Layer Scoreboard From Dut ]at time (%t) --> %p", $time, mon_tr.convert2string());
-      
+      env_cfg.transport_sboard_subscriber_tr =mon_tr;
+      -> up_trigger_event;
+      env_cfg.up_trigger_event=1;
       //* we campare here first the data from lane 0 then lane 1
       
          // Assertion to compare the values from the two mailboxes

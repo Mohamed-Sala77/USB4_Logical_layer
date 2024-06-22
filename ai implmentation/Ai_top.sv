@@ -9,7 +9,10 @@
 `include "upper_layer_if.sv"
 `include "electrical_layer_if.sv"
 
-module Ai_top;
+module Ai_top;  
+    
+	senario_t senario;
+	GEN generation;
 
 	logic SystemClock; logic Rx_Clock;  //
 	logic local_clk;
@@ -19,7 +22,7 @@ module Ai_top;
 	logic SystemReset;
 
 
-    parameter num =7 ;  //number of the sending data in phase 5
+   
 
 	parameter Sys_clock_cycle = 1 * 10**6; 
 	parameter Rx_clock_cycle = 50;
@@ -126,18 +129,49 @@ assign e_if.cl0_s = u_if.cl0_s;
 // TEST 
 initial begin 
     //TEST logical_layer_test;
-	env envo ;
+	env envo;
     //logical_layer_test = new(e_if, c_if ,u_if); 
     envo = new(e_if, c_if ,u_if); 
 	
 	
     reset();
-
+    senario=normal;
+	generation=gen4;
     //-------main test----------//
     //logical_layer_test.run(speed);
-    //envo.run(gen4, num);
-    envo.run("normal",gen3,16);
-
+    case(senario)
+		normal:begin
+			case(generation)
+				"gen2":begin
+					envo.run("normal",generation,num_gen4);
+				end
+				"gen3":begin
+					envo.run("normal",generation,num_gen3);
+				end
+				"gen4":begin
+					envo.run("normal",generation,num_gen2);
+				end
+				default:begin
+					envo.run("normal",generation,num_gen3);
+				end
+            endcase
+		end
+		EarlyCommand:begin
+			envo.run("EarlyCommand",generation);
+		end
+		LT_FALL:begin
+			envo.run("LT_fall",generation);
+		end
+		SBRX_LOW:begin
+			envo.run("SBRX_LOW",generation);
+		end
+		default:begin
+			envo.run("normal",generation);
+		end
+	endcase
+	//envo.run("normal",gen4,num_gen4);
+   // envo.run("normal",gen3,num_gen3);
+    //envo.run("normal",gen2,num_gen2);
 end
 
 

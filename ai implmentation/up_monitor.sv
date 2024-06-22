@@ -32,6 +32,8 @@ class up_transport_monitor;
                         
                         tr = new; 
                         tr.T_Data = vif.transport_layer_data_out; 
+                        tr.cl0_s = vif.cl0_s;
+                        tr.enable_receive = vif.enable_receive;
                         mb_mon_scr.put(tr); 
                         $display("[UPPER MONITOR ]data recieved on transport : %0d at %t", tr.T_Data , $time);
                         

@@ -28,7 +28,7 @@
 
   //timing parameters
   parameter tConnectRx = 25;        //min is 25us
-  parameter tDisconnectRx = 1500;   //max is 1000us
+  parameter tDisconnectRx = 1ps;   //max is 1000us
   parameter	tDisconnectTx =	100000; //min is 50ms
  
 	//Parameters for TS1 and TS2 symbols for Gen 2 and Gen 3
@@ -85,3 +85,11 @@ parameter NO_SLOS_SYNC_GEN3=16,
 
 
 parameter data_width =8 ;
+
+////number of byte sent on phase5
+parameter num_gen4=14,   //7  on each lane
+		  num_gen3=48,  //16 on each lane
+		  num_gen2=24;   //8  on each lane
+
+
+typedef enum logic [2:0]  {normal,EarlyCommand,LT_FALL,SBRX_LOW} senario_t;		  

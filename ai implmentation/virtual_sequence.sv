@@ -57,7 +57,7 @@ gen3: run_gen3(num,speed);
 gen2: run_gen2(num,speed);
 default: run_default(num,speed);
  endcase
-endtask //normal
+endtask 
 
 
 
@@ -73,7 +73,7 @@ case (speed)
 
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
           $stop;
@@ -86,7 +86,7 @@ case (speed)
           virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4);
 
           run_phase2(gen3);
-          run_phase3(gen3, 24'h013303, gen3);
+          run_phase3(gen3, 24'h013303);
           run_phase4(gen3, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen3, num);
           $stop;
@@ -99,7 +99,7 @@ case (speed)
           virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4);
 
           run_phase2(gen2);
-          run_phase3(gen2, 24'h011303, gen2);
+          run_phase3(gen2, 24'h011303);
           run_phase4(gen2, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen2, num);
           $stop;
@@ -112,7 +112,7 @@ case (speed)
           virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4);
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
           $stop;
@@ -135,7 +135,7 @@ case (speed)
 
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
           virtual_elec_gen.send_transaction_2_driver(LT_fall);  
@@ -148,7 +148,7 @@ case (speed)
 
 
           run_phase2(gen3);
-          run_phase3(gen3, 24'h013303, gen3);
+          run_phase3(gen3, 24'h013303);
           run_phase4(gen3, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen3, num);
           virtual_elec_gen.send_transaction_2_driver(LT_fall);  
@@ -161,7 +161,7 @@ case (speed)
 
 
           run_phase2(gen2);
-          run_phase3(gen2, 24'h011303, gen2);
+          run_phase3(gen2, 24'h011303);
           run_phase4(gen2, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen2, num);
           virtual_elec_gen.send_transaction_2_driver(LT_fall);  
@@ -174,7 +174,7 @@ case (speed)
 
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
           virtual_elec_gen.send_transaction_2_driver(LT_fall);  
@@ -198,11 +198,19 @@ case (speed)
 
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
-            virtual_elec_gen.Disconnect();
-          $stop;
+          virtual_elec_gen.Disconnect();
+          #(tDisconnectRx);
+          //$stop;
+          //run_phase5(gen4, num);
+
+          run_phase2(gen4);
+          run_phase3(gen4, 24'h053303);
+          run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
+          run_phase5(gen4, num);
+          //$stop;
      end
      gen3: begin
           virtual_cfg_gen.generate_stimulus();
@@ -210,7 +218,7 @@ case (speed)
 
 
           run_phase2(gen3);
-          run_phase3(gen3, 24'h013303, gen3);
+          run_phase3(gen3, 24'h013303);
           run_phase4(gen3, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen3, num);
             virtual_elec_gen.Disconnect();
@@ -222,7 +230,7 @@ case (speed)
 
 
           run_phase2(gen2);
-          run_phase3(gen2, 24'h011303, gen2);
+          run_phase3(gen2, 24'h011303);
           run_phase4(gen2, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
           run_phase5(gen2, num);
             virtual_elec_gen.Disconnect();
@@ -234,7 +242,7 @@ case (speed)
 
 
           run_phase2(gen4);
-          run_phase3(gen4, 24'h053303, gen4);
+          run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
             virtual_elec_gen.Disconnect();
@@ -261,7 +269,7 @@ task run_gen4(input int num, input GEN speed);
         run_phase2(speed);
 
         // Phase 3
-        run_phase3(speed, 24'h053303, gen4);
+        run_phase3(speed, 24'h053303);
 
         // Phase 4
         run_phase4(speed, TS1_gen4, TS2_gen4, TS3, TS4);
@@ -269,7 +277,10 @@ task run_gen4(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //disconnect
+
+
+        //$stop;
 
     endtask
 
@@ -282,7 +293,7 @@ task run_gen3(input int num, input GEN speed);
         run_phase2(speed);
 
         // Phase 3
-        run_phase3(speed, 24'h013303, gen3);
+        run_phase3(speed, 24'h013303);
 
         // Phase 4
         run_phase4(speed, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
@@ -290,7 +301,7 @@ task run_gen3(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //$stop;
 endtask
 
 task run_gen2(input int num, input GEN speed);
@@ -302,7 +313,7 @@ task run_gen2(input int num, input GEN speed);
         run_phase2(speed);
 
         // Phase 3
-        run_phase3(speed, 24'h011303, gen2);
+        run_phase3(speed, 24'h011303);
 
         // Phase 4
         run_phase4(speed, SLOS1, SLOS2, TS1_gen2_3, TS2_gen2_3);
@@ -310,7 +321,7 @@ task run_gen2(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //$stop;
 endtask
 
 task run_default(input int num, input GEN speed);
@@ -322,7 +333,7 @@ task run_default(input int num, input GEN speed);
         run_phase2(speed);
 
         // Phase 3
-        run_phase3(speed, 24'h053303, gen4);
+        run_phase3(speed, 24'h053303);
 
         // Phase 4
         run_phase4(speed, TS1_gen4, TS2_gen4, TS3, TS4);
@@ -352,15 +363,15 @@ endtask
 
 
 /////////////////////////pahse 3////////////////////////
-task run_phase3(input GEN speed, input int cmd, input GEN gen);
+task run_phase3(input GEN speed, input int cmd);
 
 virtual_elec_gen.wake_up(3,speed);
 
 wait(cfg_class.recieved_on_elec_sboard ==1); // wait first AT_cmd fro dut to trigger
 cfg_class.recieved_on_elec_sboard =0;
 //virtual_elec_gen.wake_up(3);
-virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,cmd,gen4);  
-virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,gen4);
+virtual_elec_gen.send_transaction_2_driver(AT_rsp,0,8'd78,7'd3,cmd,speed);  
+virtual_elec_gen.send_transaction_2_driver(AT_cmd,0,8'd78,7'd3,24'h000000,speed);
 
 endtask
 
@@ -391,7 +402,11 @@ task run_phase5(input GEN speed, input int num);
 @(vif.cl0_s);         // transport is ready to send and recieve data  
 //$display("[virtual_sequence]:cl0_s event triggered");
 
+if(speed ==gen4)begin
+
+
 //****** sending from electrical to transport layer*******//
+
 fork
 
 begin
@@ -409,15 +424,26 @@ join
 
   vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
 
-
+//repeat(32) @(negedge  vif.gen4_fsm_clk);
 ////////////////////////////////////////////////////////////////
  //**** sending from transport to electrical layer****//
+    // start sending data from the transport layer
+   /* vif.enable_sending = 1'b1;
+    $display("[virtual_sequence]:enable_sending data from transport layer");
+     // Send data num times
+        virtual_up_gen.run(num);
+        @(negedge  vif.gen4_fsm_clk);*/
+
+end
+else begin
+  //**** sending from transport to electrical layer****//
     // start sending data from the transport layer
     vif.enable_sending = 1'b1;
     $display("[virtual_sequence]:enable_sending data from transport layer");
      // Send data num times
         virtual_up_gen.run(num);
         @(negedge  vif.gen4_fsm_clk);
+     end
 
 endtask
 
