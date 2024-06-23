@@ -5,20 +5,22 @@ class config_scoreboard;
 
     config_transaction ref_trans;
     config_transaction mon_trans;
-    env_cfg_class env_cfg_mem;
+    env_cfg_class env_cfg;
 
     event next_stimulus;
+    event cfg_trigger_event;
 
     // Constructor
     function new(mailbox #(config_transaction) ref_mbox, mailbox #(config_transaction) mon_mbox ,
-                           event next_stimulus, env_cfg_class env_cfg_mem,config_transaction mon_trans);
+                           event next_stimulus, env_cfg_class env_cfg,config_transaction mon_trans,event cfg_trigger_event);
         this.ref_mbox = ref_mbox;
         this.mon_mbox = mon_mbox;
         this.next_stimulus = next_stimulus;
-        this.env_cfg_mem=env_cfg_mem;
+        this.env_cfg=env_cfg;
         //ref_trans = new();
         //mon_trans = new();
         this.mon_trans=mon_trans;
+        this.cfg_trigger_event = cfg_trigger_event;
     endfunction
 
     // Task to compare transactions
@@ -47,6 +49,10 @@ class config_scoreboard;
     
           mon_mbox.get(mon_trans);
           $display("\n[Config Scoreboard From Dut] at time (%t) is --> %p", $time ,mon_trans.convert2string());
+          env_cfg.config_sboard_subscriber_tr =mon_trans;
+          -> cfg_trigger_event;
+          env_cfg.cfg_trigger_event=1;
+
            
        
     endtask
@@ -57,7 +63,7 @@ class config_scoreboard;
         if ((mon_trans.c_address == 'd18) && (mon_trans.c_read))
         begin
             ->next_stimulus;
-            env_cfg_mem.ready_phase2=1;
+            env_cfg.ready_phase2=1;
         end
     endtask
 

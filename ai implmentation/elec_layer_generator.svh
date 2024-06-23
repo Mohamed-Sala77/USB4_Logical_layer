@@ -145,11 +145,12 @@ class electrical_layer_generator;
       transaction = new();                     // Instantiate the transaction object using the default constructor
       transaction.sbrx = 0;
       transaction.phase = 3'd6;                //not real phase but for env only
+      elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
       elec_gen_drv.put(transaction);           // Sending transaction to the Driver
       elec_gen_mod.put(transaction);           // Sending transaction to the Reference model
-      elec_gen_2_scoreboard.put(transaction);  // Put the transaction on the elec_gen_2_scoreboard mailbox
+     
       @(elec_gen_driver_done);
-      $display("[ELEC GENERATOR] Disconnect order sent to driver");
+      $display("[ELEC GENERATOR]at time(%0t) Disconnect order sent to driver",$time);
       endtask
   
 

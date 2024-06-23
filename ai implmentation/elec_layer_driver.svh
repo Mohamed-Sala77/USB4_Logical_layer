@@ -66,6 +66,8 @@ task electrical_layer_driver::Disconnect_2_DUT();
  @(negedge ELEC_vif.SB_clock);
  ELEC_vif.sbrx = 1'b0;
  #(tDisconnectRx);
+ //$stop;
+ //$display
 endtask: Disconnect_2_DUT
 
 // Task to calculate the CRC

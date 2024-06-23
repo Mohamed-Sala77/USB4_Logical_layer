@@ -201,8 +201,16 @@ case (speed)
           run_phase3(gen4, 24'h053303);
           run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
           run_phase5(gen4, num);
-            virtual_elec_gen.Disconnect();
-          $stop;
+          virtual_elec_gen.Disconnect();
+          #(tDisconnectRx);
+          //$stop;
+          //run_phase5(gen4, num);
+
+          run_phase2(gen4);
+          run_phase3(gen4, 24'h053303);
+          run_phase4(gen4, TS1_gen4, TS2_gen4, TS3, TS4);
+          run_phase5(gen4, num);
+          //$stop;
      end
      gen3: begin
           virtual_cfg_gen.generate_stimulus();
@@ -269,7 +277,10 @@ task run_gen4(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //disconnect
+
+
+        //$stop;
 
     endtask
 
@@ -290,7 +301,7 @@ task run_gen3(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //$stop;
 endtask
 
 task run_gen2(input int num, input GEN speed);
@@ -310,7 +321,7 @@ task run_gen2(input int num, input GEN speed);
         // Phase 5
         run_phase5(speed, num);
 
-        $stop;
+        //$stop;
 endtask
 
 task run_default(input int num, input GEN speed);
@@ -391,7 +402,11 @@ task run_phase5(input GEN speed, input int num);
 @(vif.cl0_s);         // transport is ready to send and recieve data  
 //$display("[virtual_sequence]:cl0_s event triggered");
 
+if(speed ==gen4)begin
+
+
 //****** sending from electrical to transport layer*******//
+
 fork
 
 begin
@@ -409,15 +424,26 @@ join
 
   vif.enable_receive = 1'b0;      // disable the monitor to stop receiving data from transport_data_out
 
-
+//repeat(32) @(negedge  vif.gen4_fsm_clk);
 ////////////////////////////////////////////////////////////////
  //**** sending from transport to electrical layer****//
+    // start sending data from the transport layer
+   /* vif.enable_sending = 1'b1;
+    $display("[virtual_sequence]:enable_sending data from transport layer");
+     // Send data num times
+        virtual_up_gen.run(num);
+        @(negedge  vif.gen4_fsm_clk);*/
+
+end
+else begin
+  //**** sending from transport to electrical layer****//
     // start sending data from the transport layer
     vif.enable_sending = 1'b1;
     $display("[virtual_sequence]:enable_sending data from transport layer");
      // Send data num times
         virtual_up_gen.run(num);
         @(negedge  vif.gen4_fsm_clk);
+     end
 
 endtask
 

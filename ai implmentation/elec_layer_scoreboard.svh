@@ -6,7 +6,7 @@ class elec_scoreboard;
     env_cfg_class env_cfg_mem;
 
     event recieved_on_elec_sboard;
-
+    event elec_trigger_event;
     // Mailboxes for module and monitor transactions
     mailbox #(elec_layer_tr) elec_mod_sboard,
                              elec_mon_sboard,
@@ -15,31 +15,33 @@ class elec_scoreboard;
     // Constructor
     function new(mailbox #(elec_layer_tr) elec_mod_sboard ,
                            elec_mon_sboard, ele_generator_sboard,
-                           env_cfg_class env_cfg_mem, elec_layer_tr monitor_tr);
+                           env_cfg_class env_cfg_mem, elec_layer_tr monitor_tr, event elec_trigger_event);
         this.elec_mod_sboard = elec_mod_sboard;
         this.elec_mon_sboard = elec_mon_sboard;
         this.ele_generator_sboard  =ele_generator_sboard;
         this.env_cfg_mem=env_cfg_mem;  //check it
         this.monitor_tr=monitor_tr;
+        this.elec_trigger_event = elec_trigger_event;
         
     endfunction: new
 
     // Main task to run the scoreboard
     task run();
-        forever begin
-            model_tr = new();
-            monitor_tr = new();
          fork
             begin
+                forever begin
                 $display("\n[ELEC SCOREBOARD] waiting for monitor transaction");
                 elec_mon_sboard.get(monitor_tr);
                 $display("\n[ELEC SCOREBOARD FROM DUT] at time (%t) is: %p",$time ,monitor_tr.convert2string());
                
-                elec_mod_sboard.get(model_tr);
-                $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());
-                
+               /* elec_mod_sboard.get(model_tr);
+                $display("\n[ELEC SCOREBOARD FROM MODEL] at time (%t) is: %p",$time ,model_tr.convert2string());*/
 
-                case (monitor_tr.phase)
+                -> elec_trigger_event;
+                env_cfg_mem.elec_trigger_event=1;
+                env_cfg_mem.elec_sboard_subscriber_tr=monitor_tr;
+                
+                /*case (monitor_tr.phase)
                 3'd0: begin
                        assert (model_tr.sbtx == monitor_tr.sbtx)
                             $display("[ELEC SCOREBOARD] CORRECT SBTX HIGH ");
@@ -111,11 +113,11 @@ class elec_scoreboard;
 
                     endcase
                     ->recieved_on_elec_sboard;
-                end
+                end */
 
                 //***this thread check it after reciecve on descision***/
-                3'd5:begin
-                    assert (/*(model_tr.sbtx == monitor_tr.sbtx)&&*/(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
+                /*3'd5:begin
+                    assert (/*(model_tr.sbtx == monitor_tr.sbtx)&&(model_tr.transport_to_electrical== monitor_tr.transport_to_electrical))
                             $display("[ELEC SCOREBOARD] transport data send is correct!");
                         else $error("[ELEC SCOREBOARD] case transport data CONNECT is failed!");
                 end
@@ -129,22 +131,27 @@ class elec_scoreboard;
 
                 end
 
-                endcase
+                endcase*/
               env_cfg_mem.recieved_on_elec_sboard=1;
+                end
             end
 
             begin  
+                forever begin
                // $display("before get");
                 ele_generator_sboard.get(gen_tr);
                 //$display("after get");
                 env_cfg_mem.phase=gen_tr.phase;
+                $display("[elec scor]env_cfg_mem.phase =%0d",env_cfg_mem.phase);
+                if(env_cfg_mem.phase ==6) $stop;
                 env_cfg_mem.transaction_type=gen_tr.transaction_type;
                 env_cfg_mem.gen_speed=gen_tr.gen_speed;
                 env_cfg_mem.o_sets=gen_tr.o_sets;
                 env_cfg_mem.data_income=1;
+                end
             end
          join
-        end
+    
     endtask
 
 

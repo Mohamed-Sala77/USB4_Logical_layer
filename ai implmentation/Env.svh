@@ -36,13 +36,14 @@ class env;
 
          //--------Declare the events -----------//
          
-        event elec_gen_driver_done;    //elec_gen with elec_agent(driver)
-        event correct_OS;              //elec_gen with elec_agent(monitor)
-        event sbtx_transition_high;    //v_sequance with elec_agent(monitor)
-        event sbtx_response;           //v_sequance with elec_agent(monitor)  
-        event cfg_driverDone;
-        event cfg_next_stimulus;
-        event up_driveDone;
+        event                    elec_gen_driver_done;    //elec_gen with elec_agent(driver)
+        event                    correct_OS;              //elec_gen with elec_agent(monitor) 
+        event                    cfg_driverDone;
+        event                    cfg_next_stimulus;
+        event                    up_driveDone;
+        event                    elec_trigger_event; //to trigger the elec_covergroup in the env_subscriber
+        event                    cfg_trigger_event;  //to trigger the cfg_covergroup in the env_subscriber
+        event                    up_trigger_event;   //to trigger the up_covergroup in the env_subscriber
         
 
 
@@ -89,7 +90,7 @@ class env;
             up_mon_scr = new();
              up_drv_gen = new();
              up_mod_gen = new();
-              up_mod_scr = new();
+             up_mod_scr = new();
             cfg_mod_scr =new();
 
         //--------Initialize the ref_model-----------//  
@@ -108,9 +109,10 @@ class env;
         virtual_seq =new(env_cfg_mem,up_if);
 
         // Scoreboards
-        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,env_cfg_mem,elec_sboard_subscriber_tr);
-        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem,config_sboard_subscriber_tr);
-        up_scoreboard  = new(up_mod_scr, up_mon_scr,transport_sboard_subscriber_tr);
+        elec_sboard    = new(elec_model_2_sboard,elec_monitor_2_Sboard,elec_gen_2_scoreboard,
+                             env_cfg_mem,elec_sboard_subscriber_tr,elec_trigger_event);
+        cfg_scoreboard = new(cfg_mod_scr, cfg_mon_scr, cfg_next_stimulus,env_cfg_mem,config_sboard_subscriber_tr,cfg_trigger_event);
+        up_scoreboard  = new(up_mod_scr, up_mon_scr,transport_sboard_subscriber_tr,env_cfg_mem,up_trigger_event);
         
         // Generators
         elec_gen = new(elec_gen_driver_done,correct_OS,elec_gen_2_driver,elec_gen_2_model,elec_gen_2_scoreboard,env_cfg_mem);
@@ -118,7 +120,8 @@ class env;
         up_gen = new(up_mod_gen, up_drv_gen, up_driveDone, up_if, env_cfg_mem);
 
        // Subscriber
-        env_subscriber = new(config_sboard_subscriber_tr,elec_sboard_subscriber_tr,transport_sboard_subscriber_tr);
+        env_subscriber = new(config_sboard_subscriber_tr,elec_sboard_subscriber_tr,transport_sboard_subscriber_tr,env_cfg_mem,
+                             elec_trigger_event,cfg_trigger_event,up_trigger_event);
 
         
         // Virtual Sequence connections
@@ -136,7 +139,7 @@ class env;
 
 
         // for compare the performance of the dut with the model
-        task run(input string scenario, input GEN speed, input int num);
+        task run(input string scenario, input GEN speed = gen4, input int num=16);
             fork
 
             //**********Run the components**********//
@@ -160,6 +163,10 @@ class env;
 
                 //ref_model
                 model.run();
+
+
+                //env_subscriber
+                env_subscriber.run;
                 
             join
         endtask 
