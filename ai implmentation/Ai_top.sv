@@ -136,7 +136,7 @@ initial begin
     //-------main test----------//
     //logical_layer_test.run(speed);
     //envo.run(gen4, num);
-    envo.run("normal",gen3,16);
+    envo.run("normal",gen4,5);
 
 end
 
